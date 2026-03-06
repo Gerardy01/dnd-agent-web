@@ -33,6 +33,9 @@ export default function useMap() {
     const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
     const [transformMode, setTransformMode] = useState<'move' | 'resize' | 'rotate' | null>(null);
     const transformStartRef = useRef<{ x: number, y: number, initialArea?: AreaShape, handleIndex?: number }>({ x: 0, y: 0 });
+    // Holds the ID of an area that was JUST created, so the cursorMode effect
+    // doesn't immediately clear the selection it set.
+    const justCreatedIdRef = useRef<string | null>(null);
 
     // Dirty tracking: shape IDs that have been transformed but not yet saved
     const [dirtyShapeIds, setDirtyShapeIds] = useState<Set<string>>(new Set());
@@ -61,12 +64,20 @@ export default function useMap() {
         }));
     }, [areas, dirtyShapeIds]);
 
-    // Cancel incomplete drawing and clear selection when cursor mode changes
+    // Cancel incomplete drawing and clear selection when cursor mode changes.
+    // Exception: if an area was just created (justCreatedIdRef is set), keep that
+    // selection intact and restore it after the effect clears state.
     useEffect(() => {
+        const preservedId = justCreatedIdRef.current;
+        justCreatedIdRef.current = null;
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setDrawArea(null);
-        setSelectedShapeId(null);
         setTransformMode(null);
+        if (preservedId) {
+            setSelectedShapeId(preservedId);
+        } else {
+            setSelectedShapeId(null);
+        }
     }, [viewport.cursorMode]);
 
     useEffect(() => {
@@ -468,7 +479,12 @@ export default function useMap() {
             console.error(error);
             return;
         }
+        // Stash the ID before setAreas triggers any downstream effects,
+        // so the cursorMode effect (which runs on mode→'default') can
+        // preserve this selection instead of nulling it out.
+        justCreatedIdRef.current = area.areaId;
         setAreas(prev => [...prev, area]);
+        setSelectedShapeId(area.areaId);
     };
 
     const saveChanges = async () => {

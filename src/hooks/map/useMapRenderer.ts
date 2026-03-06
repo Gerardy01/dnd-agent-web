@@ -147,6 +147,9 @@ export default function useMapRenderer({
         const allRects = [...areas];
         if (drawArea) allRects.push(drawArea);
 
+        // Collect label positions for a top-most second pass
+        const labels: { cx: number; cy: number; name: string }[] = [];
+
         allRects.forEach(area => {
             ctx.save();
             const scaleX = area.scaleX || 1;
@@ -238,6 +241,11 @@ export default function useMapRenderer({
                     ctx.strokeStyle = '#e74c3c';
                     ctx.strokeRect(scaledRx, scaledRy, scaledW, scaledH);
                 }
+            }
+
+            // Collect label for top-most pass (skip while actively drawing)
+            if (area !== drawArea && area.areaName) {
+                labels.push({ cx, cy, name: area.areaName });
             }
 
             ctx.restore();
@@ -371,23 +379,26 @@ export default function useMapRenderer({
                 }
             }
             ctx.stroke();
-
-            // Axes
-            ctx.lineWidth = 2 / transform.scale;
-            ctx.strokeStyle = THEME.axisX;
-            ctx.beginPath();
-            if (startY <= 0 && endY >= 0) {
-                ctx.moveTo(Math.max(-10000, startX), 0); ctx.lineTo(Math.min(10000, endX), 0);
-            }
-            ctx.stroke();
-
-            ctx.strokeStyle = THEME.axisY;
-            ctx.beginPath();
-            if (startX <= 0 && endX >= 0) {
-                ctx.moveTo(0, Math.max(-10000, startY)); ctx.lineTo(0, Math.min(10000, endY));
-            }
-            ctx.stroke();
         }
+
+        // --- Labels pass: drawn last so they sit above grid and shapes ---
+        const fontSize = 20; // constant apparent px size on screen
+        ctx.font = `600 ${fontSize / transform.scale}px Inter, Arial, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 3.5 / transform.scale;
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
+
+        labels.forEach(({ cx, cy, name }) => {
+            // Dark outline stroke drawn first
+            ctx.strokeText(name, cx, cy);
+        });
+
+        ctx.fillStyle = '#ffffff';
+        labels.forEach(({ cx, cy, name }) => {
+            ctx.fillText(name, cx, cy);
+        });
 
         ctx.restore();
 
