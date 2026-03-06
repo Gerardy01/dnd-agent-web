@@ -42,7 +42,7 @@ export default function Map() {
                     style={{ ...styles.btn, backgroundColor: viewport.cursorMode === 'default' ? '#666' : '#444' }}
                     onClick={() => viewport.handleChangeCursorMode('default')}
                 >
-                    Pointer
+                    Select
                 </button>
                 {hasDirty && (
                     <button

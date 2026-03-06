@@ -506,18 +506,19 @@ export default function useMap() {
             return;
         }
 
-        const [error, saved] = await mapApi.bulkUpdateArea(payload);
-        if (error) {
-            console.error('Failed to save areas:', error);
+        try {
+            const [error, saved] = await mapApi.bulkUpdateArea(payload);
+            if (error) {
+                console.error('Failed to save areas:', error);
+                return;
+            }
+            // Sync areas with successful updates and clear dirty set
+            setAreas(prev => prev.map(a => saved.find(s => s.areaId === a.areaId) ?? a));
+            setDirtyShapeIds(new Set());
+
+        } finally {
             setIsSaving(false);
-            return;
         }
-
-        // Sync areas with successful updates and clear dirty set
-        setAreas(prev => prev.map(a => saved.find(s => s.areaId === a.areaId) ?? a));
-        setDirtyShapeIds(new Set());
-
-        setIsSaving(false);
     };
 
     return {
