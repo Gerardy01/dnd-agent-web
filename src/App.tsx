@@ -1,14 +1,20 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-// components
-import Map from "@/components/map/Map"
+// pages
+import Register from "@/pages/Register";
+import Verification from "@/pages/Verification";
+
 
 
 function App() {
 
     return (
-        <div>
-            <Map />
-        </div>
+        <Router>
+            <Routes>
+                <Route path="/register" element={<Register />} />
+                <Route path="/verification" element={<Verification />} />
+            </Routes>
+        </Router>
     )
 }
 

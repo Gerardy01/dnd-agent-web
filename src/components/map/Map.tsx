@@ -87,7 +87,7 @@ export default function Map() {
 }
 
 
-const styles: Record<string, React.CSSProperties> = {
+const styles: { [key: string]: React.CSSProperties } = {
     container: {
         position: 'relative',
         width: '100vw',
