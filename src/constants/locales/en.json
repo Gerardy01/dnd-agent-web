@@ -1,0 +1,38 @@
+{
+    "global": {
+        "fieldRequired": "This field is required.",
+        "continue": "Continue",
+        "signIn": "Sign in",
+        "success": "Success",
+        "information": "Information",
+        "warning": "Warning",
+        "error": "Global",
+        "close": "Close",
+        "wentWrong": "Something went wrong",
+        "unexpectedError": "An unexpected error has occured. Please try again later. Contact support if the error persists.",
+        "goBack": "Go Back",
+        "ok": "Ok",
+        "cancel": "Cancel"
+    },
+    "register": {
+        "title": "Join the Quests",
+        "subTitle": "Create your account and start your adventure",
+        "email": "Email address",
+        "password": "Password",
+        "repeatPass": "Confirm Password",
+        "passwordNotMatch": "Password do not Match",
+        "validEmail": "Please input a valid email address.",
+        "minLength": "The password must be at least 8 characters long!",
+        "maxLength": "The password must be at most 100 characters long!",
+        "uppercase": "The password must contain at least one uppercase letter!",
+        "number": "The password must contain at least one number!",
+        "orRegisterWith": "Or register with",
+        "withGoogle": "Sign up with Google",
+        "haveAccount": "Already have an account?"
+    },
+    "error": {
+        "account": {
+            "ACCOUNT001": "Account with this email already exists"
+        }
+    }
+}
