@@ -48,6 +48,9 @@ export class AuthApi {
         const [error, res] = await catchFetchError(axiosPublic.post<FetchResponse<verifyOtpReturn>>(
             '/verify-otp',
             data,
+            {
+                withCredentials: true,
+            }
         ));
 
         if (error) return [error];

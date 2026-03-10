@@ -18,7 +18,7 @@ export default function useToken() {
 
         setAccessToken(data.accessToken);
 
-        return false;
+        return true;
     }
 
     return {
