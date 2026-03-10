@@ -6,10 +6,10 @@ interface TokenState {
     removeAccessToken: () => void;
 }
 
-const useToken = create<TokenState>((set) => ({
+const useTokenStore = create<TokenState>((set) => ({
     accessToken: "",
     setAccessToken: (token) => set({ accessToken: token }),
     removeAccessToken: () => set({ accessToken: "" }),
 }));
 
-export default useToken;
+export default useTokenStore;

@@ -1,5 +1,5 @@
 import axios from "axios";
-import useToken from "@/stores/useToken";
+import useTokenStore from "@/stores/useTokenStore";
 
 
 
@@ -14,7 +14,7 @@ export const axiosPrivate = axios.create({
 
 axiosPrivate.interceptors.request.use(
     config => {
-        const accessToken = useToken.getState().accessToken;
+        const accessToken = useTokenStore.getState().accessToken;
 
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
@@ -40,7 +40,7 @@ axiosPrivate.interceptors.response.use(
             const res = await axiosPrivate.get('/token');
             const newAccessToken = res.data.data.accessToken ? res.data.data.accessToken : "";
 
-            useToken.getState().setAccessToken(newAccessToken);
+            useTokenStore.getState().setAccessToken(newAccessToken);
 
             originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
 

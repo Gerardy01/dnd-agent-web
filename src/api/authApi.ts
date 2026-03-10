@@ -5,7 +5,7 @@ import { catchFetchError } from "@/utils/utility";
 
 // interfaces
 import type { FetchResponse, ErrorResponse } from "@/models/globalInterfaces";
-import type { LoginReturn, LoginDTO, GetAccessTokenReturn } from "@/models/authInterfaces";
+import type { LoginReturn, LoginDTO, GetAccessTokenReturn, verifyOtpReturn, VerifyOtpDTO } from "@/models/authInterfaces";
 
 
 
@@ -26,6 +26,28 @@ export class AuthApi {
             {
                 withCredentials: true,
             }
+        ));
+
+        if (error) return [error];
+        return [error, res.data.data]
+    }
+
+    async generateOtp(email: string): Promise<[undefined, boolean] | [ErrorResponse]> {
+        const [error] = await catchFetchError(axiosPublic.post<FetchResponse<boolean>>(
+            '/generate-otp',
+            {
+                email: email,
+            }
+        ));
+
+        if (error) return [error];
+        return [error, true]
+    }
+
+    async verifyOtp(data: VerifyOtpDTO): Promise<[undefined, verifyOtpReturn] | [ErrorResponse]> {
+        const [error, res] = await catchFetchError(axiosPublic.post<FetchResponse<verifyOtpReturn>>(
+            '/verify-otp',
+            data,
         ));
 
         if (error) return [error];

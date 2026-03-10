@@ -1,25 +1,36 @@
-import { Button, Input, Divider, Typography, Form } from 'antd';
+import { Button, Input, Divider, Typography, Form, Alert, Spin } from 'antd';
 import { MailOutlined, GoogleOutlined, LockOutlined } from '@ant-design/icons';
 
 // hooks
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import useLogin from '@/hooks/login/useLogin';
 
 const { Title, Text, Link } = Typography;
 
+
+
 export default function Login() {
 
-    const [loginForm] = Form.useForm();
+    const {
+        loginForm,
+        loading,
+        errorMsg,
+        pageLoad,
+        handleClickSignUp,
+        submitLoginData,
+    } = useLogin();
+
     const { t } = useTranslation();
-    const navigate = useNavigate();
 
-    const handleClickSignUp = () => {
-        navigate('/register');
-    };
-
-    const submitLoginData = (values: any) => {
-        console.log("Login data:", values);
-    };
+    if (pageLoad) {
+        return (
+            <div style={styles.page}>
+                <div style={styles.container}>
+                    <Spin size="large" />
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div style={styles.page}>
@@ -37,6 +48,15 @@ export default function Login() {
                         <Text type="secondary" style={styles.subtitle}>{t('login.subTitle')}</Text>
                     </div>
 
+                    {errorMsg && (
+                        <Alert
+                            title={t(`error.account.${errorMsg}`)}
+                            type="error"
+                            showIcon
+                            style={{ marginBottom: '16px' }}
+                        />
+                    )}
+
                     <Form
                         name="login"
                         form={loginForm}
@@ -45,16 +65,12 @@ export default function Login() {
                         autoComplete="off"
                     >
                         <Form.Item
-                            name="email"
+                            name="identifier"
                             validateTrigger="onSubmit"
                             rules={[
                                 {
                                     required: true,
                                     message: `${t('global.fieldRequired')}`,
-                                },
-                                {
-                                    type: 'email',
-                                    message: `${t('register.validEmail')}`,
                                 },
                             ]}
                         >
@@ -96,6 +112,7 @@ export default function Login() {
                                 size="large"
                                 block
                                 style={styles.continueButton}
+                                loading={loading}
                             >
                                 {t("login.enterRealm")}
                             </Button>
@@ -111,6 +128,7 @@ export default function Login() {
                         block
                         icon={<GoogleOutlined />}
                         style={styles.googleButton}
+                        disabled={loading}
                     >
                         {t("login.withGoogle")}
                     </Button>

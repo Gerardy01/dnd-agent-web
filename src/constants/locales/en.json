@@ -6,14 +6,15 @@
         "success": "Success",
         "information": "Information",
         "warning": "Warning",
-        "error": "Global",
+        "error": "Error",
         "close": "Close",
         "wentWrong": "Something went wrong",
         "unexpectedError": "An unexpected error has occured. Please try again later. Contact support if the error persists.",
         "goBack": "Go Back",
         "ok": "Ok",
         "cancel": "Cancel",
-        "password": "Password"
+        "password": "Password",
+        "invalid": "Invalid"
     },
     "register": {
         "title": "Join the Quests",
@@ -41,9 +42,21 @@
         "noAccount": "New to the adventure?",
         "createAccount": "Create an account"
     },
+    "verification": {
+        "title": "Verify OTP",
+        "subTitle": "Enter the 6-digit code sent to",
+        "didntReceive": "Didn't receive code?",
+        "resend": "Resend OTP",
+        "verify": "Verify OTP",
+        "expiredToken": "Verification link has expired."
+    },
     "error": {
         "account": {
-            "ACCOUNT001": "Account with this email already exists"
+            "ACCOUNT001": "Account with this email already exists",
+            "ACCOUNT002": "Incorrect username, email or password"
+        },
+        "auth": {
+            "AUTH002": "Invalid OTP. Please try again."
         }
     }
 }
