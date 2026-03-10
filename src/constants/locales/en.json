@@ -12,13 +12,13 @@
         "unexpectedError": "An unexpected error has occured. Please try again later. Contact support if the error persists.",
         "goBack": "Go Back",
         "ok": "Ok",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "password": "Password"
     },
     "register": {
         "title": "Join the Quests",
         "subTitle": "Create your account and start your adventure",
         "email": "Email address",
-        "password": "Password",
         "repeatPass": "Confirm Password",
         "passwordNotMatch": "Password do not Match",
         "validEmail": "Please input a valid email address.",
@@ -29,6 +29,17 @@
         "orRegisterWith": "Or register with",
         "withGoogle": "Sign up with Google",
         "haveAccount": "Already have an account?"
+    },
+    "login": {
+        "title": "Welcome, Adventurer",
+        "subTitle": "Begin your quest with the AI Dungeon Master",
+        "identifier": "Email or Username",
+        "forgotPassword": "Forgot password?",
+        "enterRealm": "Enter the Realm",
+        "orContinueWith": "Or continue with",
+        "withGoogle": "Sign in with Google",
+        "noAccount": "New to the adventure?",
+        "createAccount": "Create an account"
     },
     "error": {
         "account": {

@@ -91,7 +91,7 @@ export default function Register() {
                         >
                             <Input.Password
                                 size="large"
-                                placeholder={t('register.password')}
+                                placeholder={t('global.password')}
                                 prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
                                 maxLength={100}
                                 type="password"
@@ -137,8 +137,8 @@ export default function Register() {
                         </Form.Item>
                     </Form>
 
-                    <Divider style={styles.divider}>
-                        {t('register.orRegisterWith')}
+                    <Divider style={styles.divider} className="custom-divider">
+                        <Text>{t('register.orRegisterWith')}</Text>
                     </Divider>
 
                     <Button
@@ -170,7 +170,8 @@ const styles: { [key: string]: React.CSSProperties } = {
         minHeight: '100vh',
         display: 'flex',
         justifyContent: 'center',
-        backgroundColor: 'white'
+        backgroundColor: '#EAE3D2',
+        fontFamily: "'Palatino Linotype', 'Book Antiqua', Palatino, serif", // Adding a whimsical touch to font
     },
     container: {
         maxWidth: '75rem',
@@ -184,10 +185,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     contentHolder: {
         maxWidth: '30rem',
         flex: 1,
-        backgroundColor: '#f0f2f5',
+        backgroundColor: '#F5F1E7',
         padding: '40px 32px',
         borderRadius: '16px',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        border: '1px solid #C2BAA6',
+        boxShadow: '0 10px 25px -5px rgba(62, 74, 61, 0.15), 0 10px 10px -5px rgba(62, 74, 61, 0.1)',
     },
     header: {
         display: 'flex',
@@ -199,46 +201,37 @@ const styles: { [key: string]: React.CSSProperties } = {
     iconWrapper: {
         width: '64px',
         height: '64px',
-        backgroundColor: '#6366f1',
-        borderRadius: '16px',
+        backgroundColor: '#D95C14', // Autumn Rust
+        borderRadius: '50%', // More natural/whimsical shape than rigid square
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: '16px',
-        boxShadow: '0 4px 6px -1px rgba(99, 102, 241, 0.4), 0 2px 4px -1px rgba(99, 102, 241, 0.2)',
+        boxShadow: '0 4px 6px -1px rgba(217, 92, 20, 0.3), 0 2px 4px -1px rgba(217, 92, 20, 0.2)',
     },
     title: {
         margin: '0 0 8px 0',
         fontWeight: 600,
-        color: '#111827',
     },
     subtitle: {
         fontSize: '14px',
-        color: '#6b7280',
+        opacity: 0.9,
     },
     formSection: {
         marginBottom: '24px',
     },
     continueButton: {
-        borderRadius: '8px',
         fontWeight: 600,
         height: '48px',
-        backgroundColor: '#3b82f6',
-        borderColor: '#3b82f6',
-        boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.3)',
     },
     divider: {
-        borderColor: 'lightgray',
-        color: '#9ca3af',
         fontSize: '14px',
         margin: '24px 0',
     },
     googleButton: {
-        borderRadius: '8px',
         fontWeight: 500,
         height: '48px',
         marginBottom: '32px',
-        color: '#374151',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -247,4 +240,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         textAlign: 'center',
         fontSize: '14px',
     },
+    link: {
+        fontWeight: 600,
+    }
 };
