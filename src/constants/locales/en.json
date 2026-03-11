@@ -55,6 +55,19 @@
         "subTitle": "You seem to have wandered off the map, adventurer. The realm you seek does not exist.",
         "return": "Return to Town"
     },
+    "forgotPassword": {
+        "title": "Forgot Password",
+        "subTitle": "Enter the email associated with your account and we'll send you password reset instructions.",
+        "email": "Email address",
+        "sent": "Sent!",
+        "sentMsg": "We have sent a password reset link to your email. Please check your email.",
+        "validEmail": "Please input a valid email address.",
+        "resetPassword": "Reset Password",
+        "backToLogin": "Back to Login"
+    },
+    "resetPassword": {
+        "expiredToken": "Link has expired. Please retry."
+    },
     "error": {
         "account": {
             "ACCOUNT001": "Account with this email already exists",

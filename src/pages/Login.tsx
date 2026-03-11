@@ -1,5 +1,5 @@
 import { Button, Input, Divider, Typography, Form, Alert } from 'antd';
-import { MailOutlined, GoogleOutlined, LockOutlined } from '@ant-design/icons';
+import { GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 
 // components
 import PageLoading from '@/components/global/PageLoading';
@@ -21,6 +21,7 @@ export default function Login() {
         pageLoad,
         handleClickSignUp,
         submitLoginData,
+        handleClickForgotPassword,
     } = useLogin();
 
     const { t } = useTranslation();
@@ -77,7 +78,7 @@ export default function Login() {
                                 size="large"
                                 placeholder={t("login.identifier")}
                                 maxLength={50}
-                                prefix={<MailOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+                                prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
                             />
                         </Form.Item>
                         <Form.Item
@@ -101,7 +102,10 @@ export default function Login() {
                         </Form.Item>
 
                         <div style={styles.forgotPasswordContainer}>
-                            <Link style={styles.link}>{t("login.forgotPassword")}</Link>
+                            <Link
+                                style={styles.link}
+                                onClick={handleClickForgotPassword}
+                            >{t("login.forgotPassword")}</Link>
                         </div>
 
                         <Form.Item style={{ marginTop: '2rem' }}>

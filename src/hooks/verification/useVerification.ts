@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 // api
@@ -10,6 +9,7 @@ import useTokenStore from "@/stores/useTokenStore";
 
 // hooks
 import useStaticModal from "@/hooks/global/useStaticModal";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 // interfaces
@@ -118,6 +118,7 @@ export default function useVerification() {
                 }
 
                 serverErrorModal();
+                navigate("/login");
                 return;
             }
 

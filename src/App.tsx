@@ -13,6 +13,7 @@ import Register from "@/pages/Register";
 import Verification from "@/pages/Verification";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
+import ForgotPassword from "@/pages/ForgotPassword";
 import NotFound from "@/pages/NotFound";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                         <Route path="/register" element={<Register />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/verification" element={<Verification />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
 
                         <Route element={<ProtectedRoutes />}>
                             <Route path="/dashboard" element={<Dashboard />} />

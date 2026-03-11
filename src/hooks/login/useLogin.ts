@@ -45,6 +45,10 @@ export default function useLogin() {
         navigate('/register');
     };
 
+    const handleClickForgotPassword = () => {
+        navigate('/forgot-password');
+    };
+
     const submitLoginData: FormProps<LoginForm>['onFinish'] = async (values) => {
         setLoading(true);
 
@@ -85,5 +89,6 @@ export default function useLogin() {
         pageLoad,
         handleClickSignUp,
         submitLoginData,
+        handleClickForgotPassword,
     }
 }
