@@ -1,5 +1,8 @@
-import { Button, Input, Divider, Typography, Form, Alert, Spin } from 'antd';
+import { Button, Input, Divider, Typography, Form, Alert } from 'antd';
 import { MailOutlined, GoogleOutlined, LockOutlined } from '@ant-design/icons';
+
+// components
+import PageLoading from '@/components/global/PageLoading';
 
 // hooks
 import { useTranslation } from 'react-i18next';
@@ -24,11 +27,7 @@ export default function Login() {
 
     if (pageLoad) {
         return (
-            <div style={styles.page}>
-                <div style={styles.container}>
-                    <Spin size="large" />
-                </div>
-            </div>
+            <PageLoading />
         )
     }
 

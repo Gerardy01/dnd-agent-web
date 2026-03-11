@@ -50,6 +50,11 @@
         "verify": "Verify OTP",
         "expiredToken": "Verification link has expired."
     },
+    "notFound": {
+        "title": "404",
+        "subTitle": "You seem to have wandered off the map, adventurer. The realm you seek does not exist.",
+        "return": "Return to Town"
+    },
     "error": {
         "account": {
             "ACCOUNT001": "Account with this email already exists",

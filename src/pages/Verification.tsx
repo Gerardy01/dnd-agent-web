@@ -1,5 +1,8 @@
-import { Alert, Button, Input, Spin, Typography } from "antd";
+import { Alert, Button, Input, Typography } from "antd";
 import { MailOutlined } from "@ant-design/icons";
+
+// components
+import PageLoading from "@/components/global/PageLoading";
 
 // hooks
 import { useTranslation } from "react-i18next";
@@ -25,11 +28,7 @@ export default function Verification() {
 
     if (pageLoad) {
         return (
-            <div style={styles.page}>
-                <div style={styles.container}>
-                    <Spin size="large" />
-                </div>
-            </div>
+            <PageLoading />
         )
     }
 
