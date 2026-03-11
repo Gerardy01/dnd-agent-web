@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
+import { Form, type FormProps } from "antd";
 import { jwtDecode } from "jwt-decode";
+
+// api
+import { accountApi } from "@/api";
 
 // Hooks
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -12,15 +16,22 @@ interface VerificationTokenPayload {
     exp: number;
     iat: number;
 }
+interface ResetPasswordFrom {
+    password: string;
+    confirmPassword: string;
+}
 
 export default function useResetPassword() {
 
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { errorModal } = useStaticModal();
+    const { errorModal, serverErrorModal } = useStaticModal();
+
+    const [resetPassForm] = Form.useForm();
 
     const [pageLoad, setPageLoad] = useState<boolean>(true);
+    const [load, setLoad] = useState<boolean>(false);
 
     useEffect(() => {
         handleTokenCheck();
@@ -54,10 +65,44 @@ export default function useResetPassword() {
         } catch {
             navigate("/forgot-password");
         }
+    }
 
+    const submitResetPassword: FormProps<ResetPasswordFrom>['onFinish'] = async (values) => {
+        const token = searchParams.get("token");
+
+        setLoad(true);
+
+        try {
+            const [err] = await accountApi.resetPassword({
+                token: token || "",
+                newPassword: values.password
+            });
+
+            if (err) {
+
+                if (err.status === 401 || err.status === 404) {
+                    errorModal(t('global.invalid'), t('resetPassword.expiredToken'));
+                    navigate("/forgot-password");
+                    return;
+                }
+
+                serverErrorModal();
+                navigate("forgot-password");
+                return;
+            }
+
+            // TODO: notify success with notification
+            navigate('/login');
+
+        } finally {
+            setLoad(false);
+        }
     }
 
     return {
         pageLoad,
+        load,
+        resetPassForm,
+        submitResetPassword,
     }
 }

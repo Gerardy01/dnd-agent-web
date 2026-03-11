@@ -14,6 +14,7 @@ import Verification from "@/pages/Verification";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/verification" element={<Verification />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
 
                         <Route element={<ProtectedRoutes />}>
                             <Route path="/dashboard" element={<Dashboard />} />

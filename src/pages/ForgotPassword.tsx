@@ -27,7 +27,7 @@ export default function ForgotPassword() {
     if (pageLoad) return <PageLoading />;
 
     return (
-        <div style={styles.age}>
+        <div style={styles.page}>
             <div style={styles.container}>
                 <div style={styles.contentHolder}>
                     {success ? (
@@ -104,7 +104,7 @@ export default function ForgotPassword() {
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
-    age: {
+    page: {
         width: '100%',
         minHeight: '100vh',
         display: 'flex',

@@ -66,7 +66,16 @@
         "backToLogin": "Back to Login"
     },
     "resetPassword": {
-        "expiredToken": "Link has expired. Please retry."
+        "title": "Reset Password",
+        "subTitle": "Enter your new password below.",
+        "expiredToken": "Link has expired. Please retry.",
+        "minLength": "The password must be at least 8 characters long!",
+        "maxLength": "The password must be at most 100 characters long!",
+        "uppercase": "The password must contain at least one uppercase letter!",
+        "number": "The password must contain at least one number!",
+        "passwordNotMatch": "Password do not Match",
+        "repeatPass": "Confirm Password",
+        "reset": "Reset"
     },
     "error": {
         "account": {
