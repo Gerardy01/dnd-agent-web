@@ -5,7 +5,13 @@ import { catchFetchError } from "@/utils/utility";
 
 // interfaces
 import type { FetchResponse, ErrorResponse } from "@/models/globalInterfaces";
-import type { LoginReturn, LoginDTO, GetAccessTokenReturn, verifyOtpReturn, VerifyOtpDTO } from "@/models/authInterfaces";
+import type {
+    LoginReturn,
+    LoginDTO,
+    GetAccessTokenReturn,
+    verifyOtpReturn,
+    VerifyOtpDTO
+} from "@/models/authInterfaces";
 
 
 

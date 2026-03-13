@@ -6,6 +6,7 @@ import { theme } from "@/constants/theme";
 
 // components
 import ProtectedRoutes from "./components/global/ProtectedRoutes";
+import GlobalLogic from "./components/global/GlobalLogic";
 
 // pages
 import Home from "@/pages/Home";
@@ -31,7 +32,9 @@ function App() {
                         <Route path="/reset-password" element={<ResetPassword />} />
 
                         <Route element={<ProtectedRoutes />}>
-                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route element={<GlobalLogic />}>
+                                <Route path="/dashboard" element={<Dashboard />} />
+                            </Route>
                         </Route>
 
                         <Route path="*" element={<NotFound />} />

@@ -1,15 +1,30 @@
-import { axiosPublic } from "@/config/axiosConfig";
+import { axiosPrivate, axiosPublic } from "@/config/axiosConfig";
 
 // utils
 import { catchFetchError } from "@/utils/utility";
 
 // interfaces
 import type { FetchResponse, ErrorResponse } from "@/models/globalInterfaces";
-import type { ForgotPasswordReturn, RegisterDTO, RegisterReturn, ResetPasswordDTO } from "@/models/accountInterfaces";
+import type {
+    AccountReturn,
+    ForgotPasswordReturn,
+    RegisterDTO,
+    RegisterReturn,
+    ResetPasswordDTO
+} from "@/models/accountInterfaces";
 
 
 
 export class AccountApi {
+    async getUserAccoount(): Promise<[undefined, AccountReturn] | [ErrorResponse]> {
+        const [error, res] = await catchFetchError(axiosPrivate.get<FetchResponse<AccountReturn>>(
+            '/account/action/user',
+        ));
+
+        if (error) return [error];
+        return [error, res.data.data];
+    }
+
     async register(data: RegisterDTO): Promise<[undefined, RegisterReturn] | [ErrorResponse]> {
         const [error, res] = await catchFetchError(axiosPublic.post<FetchResponse<RegisterReturn>>(
             '/account/action/register',
@@ -38,5 +53,15 @@ export class AccountApi {
 
         if (error) return [error];
         return [error, true];
+    }
+
+    async changeUsername(newUsername: string): Promise<[undefined, AccountReturn] | [ErrorResponse]> {
+        const [error, res] = await catchFetchError(axiosPrivate.put<FetchResponse<AccountReturn>>(
+            '/account/action/change-username',
+            { username: newUsername }
+        ));
+
+        if (error) return [error];
+        return [error, res.data.data];
     }
 }

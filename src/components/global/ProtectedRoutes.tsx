@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 
+// hooks
 import useProtectedRoutes from "@/hooks/global/useProtectedRoutes";
 
 // componetns

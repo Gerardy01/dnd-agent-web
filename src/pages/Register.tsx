@@ -55,7 +55,7 @@ export default function Register() {
                                     message: `${t('register.validEmail')}`,
                                 },
                             ]}
-                            help={errorMsg ? t('error.account.ACCOUNT001') : undefined}
+                            help={errorMsg ? t(`error.account.${errorMsg}`) : undefined}
                             validateStatus={errorMsg ? 'error' : ''}
                         >
                             <Input

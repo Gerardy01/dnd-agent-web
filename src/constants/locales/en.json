@@ -14,7 +14,9 @@
         "ok": "Ok",
         "cancel": "Cancel",
         "password": "Password",
-        "invalid": "Invalid"
+        "invalid": "Invalid",
+        "submit": "Submit",
+        "and": "and"
     },
     "register": {
         "title": "Join the Quests",
@@ -77,10 +79,22 @@
         "repeatPass": "Confirm Password",
         "reset": "Reset"
     },
+    "initModal": {
+        "title": "Set your username",
+        "subTitle": "Please set your username to continue",
+        "terms": "I agree to the Terms and Conditions",
+        "termsMsg": "By selecting this option, you agree to our",
+        "invalid": "Username can only contain letters, numbers, and underscores",
+        "min": "Username must be at least 4 characters long",
+        "newUsername": "New username",
+        "termsOfService": "Terms of Service",
+        "privacyPolicy": "Privacy Policy"
+    },
     "error": {
         "account": {
             "ACCOUNT001": "Account with this email already exists",
-            "ACCOUNT002": "Incorrect username, email or password"
+            "ACCOUNT002": "Incorrect username, email or password",
+            "ACCOUNT003": "Username already exists"
         },
         "auth": {
             "AUTH002": "Invalid OTP. Please try again."

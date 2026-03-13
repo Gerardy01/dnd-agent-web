@@ -2,7 +2,11 @@
 
 // interface
 import type { FetchResponse, ErrorResponse } from "@/models/globalInterfaces";
-import type { Area, AreaShape, UpdateAreaPayload } from "@/models/mapInterfaces";
+import type {
+    Area,
+    AreaShape,
+    UpdateAreaPayload
+} from "@/models/mapInterfaces";
 
 export class MapApi {
 
