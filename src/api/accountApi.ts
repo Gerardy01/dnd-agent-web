@@ -7,7 +7,6 @@ import { catchFetchError } from "@/utils/utility";
 import type { FetchResponse, ErrorResponse } from "@/models/globalInterfaces";
 import type {
     AccountReturn,
-    ForgotPasswordReturn,
     RegisterDTO,
     RegisterReturn,
     ResetPasswordDTO
@@ -35,14 +34,14 @@ export class AccountApi {
         return [error, res.data.data];
     }
 
-    async forgotPasswordRequest(email: string): Promise<[undefined, ForgotPasswordReturn] | [ErrorResponse]> {
-        const [error, res] = await catchFetchError(axiosPublic.post<FetchResponse<ForgotPasswordReturn>>(
+    async forgotPasswordRequest(email: string): Promise<[undefined, boolean] | [ErrorResponse]> {
+        const [error] = await catchFetchError(axiosPublic.post<FetchResponse<boolean>>(
             '/account/action/forgot-password',
             { email },
         ));
 
         if (error) return [error];
-        return [error, res.data.data];
+        return [error, true];
     }
 
     async resetPassword(data: ResetPasswordDTO): Promise<[undefined, boolean] | [ErrorResponse]> {

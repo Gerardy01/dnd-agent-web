@@ -77,7 +77,8 @@
         "number": "The password must contain at least one number!",
         "passwordNotMatch": "Password do not Match",
         "repeatPass": "Confirm Password",
-        "reset": "Reset"
+        "reset": "Reset",
+        "success": "Password reset successfully!"
     },
     "initModal": {
         "title": "Set your username",

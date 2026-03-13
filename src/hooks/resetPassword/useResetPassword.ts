@@ -9,6 +9,7 @@ import { accountApi } from "@/api";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useStaticModal from "@/hooks/global/useStaticModal";
 import { useTranslation } from "react-i18next";
+import useNotification from "@/hooks/global/useNotification";
 
 // interfaces
 interface VerificationTokenPayload {
@@ -27,6 +28,7 @@ export default function useResetPassword() {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { errorModal, serverErrorModal } = useStaticModal();
+    const { successNotification } = useNotification();
 
     const [resetPassForm] = Form.useForm();
 
@@ -91,7 +93,7 @@ export default function useResetPassword() {
                 return;
             }
 
-            // TODO: notify success with notification
+            successNotification(t('global.success'), t('resetPassword.success'));
             navigate('/login');
 
         } finally {

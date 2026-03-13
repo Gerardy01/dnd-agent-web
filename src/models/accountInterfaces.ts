@@ -20,10 +20,6 @@ export type RegisterReturn = {
     verificationToken: string;
 }
 
-export type ForgotPasswordReturn = {
-    verificationToken: string;
-}
-
 export type AccountReturn = {
     accountId: string;
     username: string;
