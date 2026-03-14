@@ -1,4 +1,4 @@
-import { axiosPublic } from "@/config/axiosConfig";
+import { axiosPrivate, axiosPublic } from "@/config/axiosConfig";
 
 // utils
 import { catchFetchError } from "@/utils/utility";
@@ -61,5 +61,18 @@ export class AuthApi {
 
         if (error) return [error];
         return [error, res.data.data]
+    }
+
+    async logout(): Promise<[undefined, boolean] | [ErrorResponse]> {
+        const [error] = await catchFetchError(axiosPrivate.post<FetchResponse<boolean>>(
+            '/logout',
+            {},
+            {
+                withCredentials: true,
+            }
+        ));
+
+        if (error) return [error];
+        return [error, true]
     }
 }

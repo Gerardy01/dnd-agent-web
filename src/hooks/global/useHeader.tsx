@@ -1,13 +1,17 @@
 import { type MenuProps } from "antd"
 import { LogoutOutlined, SettingOutlined } from "@ant-design/icons"
 
+// api
+import { authApi } from "@/api";
+
 // hooks
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import useStaticModal from "./useStaticModal";
 
 // stores
-import useAccountStore from "@/stores/useAccountStore"
+import useAccountStore from "@/stores/useAccountStore";
+import useTokenStore from "@/stores/useTokenStore";
 
 
 
@@ -16,9 +20,10 @@ export default function useHeader() {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    const { confirmationModal } = useStaticModal();
+    const { confirmationModal, serverErrorModal } = useStaticModal();
 
-    const { username } = useAccountStore();
+    const { username, removeAccount } = useAccountStore();
+    const { removeAccessToken } = useTokenStore();
 
     const items: MenuProps['items'] = [
         {
@@ -46,12 +51,24 @@ export default function useHeader() {
                 title: t("global.logout"),
                 content: t("global.logoutConfirm"),
                 centered: true,
-                onOk: submitLogout
+                onOkWithPromise: submitLogout,
+
             })
         },
     ]
 
-    const submitLogout = () => {
+    const submitLogout = async () => {
+
+        const [err] = await authApi.logout();
+
+        if (err) {
+            serverErrorModal();
+            return;
+        }
+
+        removeAccount();
+        removeAccessToken();
+
         navigate("/login");
     }
 

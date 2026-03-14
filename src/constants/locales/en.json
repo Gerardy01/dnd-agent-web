@@ -22,7 +22,8 @@
         "workshop": "Workshop",
         "settings": "Settings",
         "logout": "Logout",
-        "account": "Account"
+        "account": "Account",
+        "logoutConfirm": "Are you sure you want to logout?"
     },
     "register": {
         "title": "Join the Quests",

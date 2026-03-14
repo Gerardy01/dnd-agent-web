@@ -16,11 +16,11 @@ import Verification from "@/pages/Verification";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Campaign from "@/pages/Campaign";
-import Workshop from "./pages/Workshop";
+import Workshop from "@/pages/Workshop";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
-import Settings from "./pages/Settings";
+import Settings from "@/pages/Settings";
 
 function App() {
     return (
