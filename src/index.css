@@ -3,3 +3,7 @@
     margin: 0px;
     box-sizing: border-box;
 }
+
+.profile-btn:hover {
+    background-color: #c2baa6 !important;
+}

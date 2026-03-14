@@ -1,12 +1,12 @@
 
-
 // components
 import Wrapper from "@/components/global/Wrapper";
 
-export default function Dashboard() {
+
+export default function Settings() {
     return (
-        <Wrapper>
-            Dashboard
+        <Wrapper width={74}>
+            Settings
         </Wrapper>
     )
 }

@@ -16,7 +16,13 @@
         "password": "Password",
         "invalid": "Invalid",
         "submit": "Submit",
-        "and": "and"
+        "and": "and",
+        "home": "Home",
+        "campaigns": "Campaigns",
+        "workshop": "Workshop",
+        "settings": "Settings",
+        "logout": "Logout",
+        "account": "Account"
     },
     "register": {
         "title": "Join the Quests",

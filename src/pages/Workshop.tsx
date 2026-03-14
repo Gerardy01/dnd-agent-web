@@ -1,12 +1,13 @@
 
 
+
 // components
 import Wrapper from "@/components/global/Wrapper";
 
-export default function Dashboard() {
+export default function Workshop() {
     return (
         <Wrapper>
-            Dashboard
+            Workshop
         </Wrapper>
     )
 }

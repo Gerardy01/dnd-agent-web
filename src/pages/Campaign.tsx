@@ -3,10 +3,11 @@
 // components
 import Wrapper from "@/components/global/Wrapper";
 
-export default function Dashboard() {
+
+export default function Campaign() {
     return (
         <Wrapper>
-            Dashboard
+            Campaign
         </Wrapper>
     )
 }

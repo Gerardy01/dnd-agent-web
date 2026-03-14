@@ -5,8 +5,9 @@ import { ConfigProvider, App as AntApp } from 'antd';
 import { theme } from "@/constants/theme";
 
 // components
-import ProtectedRoutes from "./components/global/ProtectedRoutes";
-import GlobalLogic from "./components/global/GlobalLogic";
+import ProtectedRoutes from "@/components/global/ProtectedRoutes";
+import GlobalLogic from "@/components/global/GlobalLogic";
+import MainCommonWrap from "@/components/global/MainCommonWrap";
 
 // pages
 import Home from "@/pages/Home";
@@ -14,9 +15,12 @@ import Register from "@/pages/Register";
 import Verification from "@/pages/Verification";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
+import Campaign from "@/pages/Campaign";
+import Workshop from "./pages/Workshop";
 import ForgotPassword from "@/pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
+import Settings from "./pages/Settings";
 
 function App() {
     return (
@@ -33,7 +37,12 @@ function App() {
 
                         <Route element={<ProtectedRoutes />}>
                             <Route element={<GlobalLogic />}>
-                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route element={<MainCommonWrap />}>
+                                    <Route path="/dashboard" element={<Dashboard />} />
+                                    <Route path="/campaigns" element={<Campaign />} />
+                                    <Route path="/workshop" element={<Workshop />} />
+                                    <Route path="/settings" element={<Settings />} />
+                                </Route>
                             </Route>
                         </Route>
 
