@@ -98,6 +98,12 @@
         "termsOfService": "Terms of Service",
         "privacyPolicy": "Privacy Policy"
     },
+    "settings": {
+        "title": "Settings",
+        "profile": "Profile",
+        "preferences": "Preferences",
+        "account": "Account"
+    },
     "error": {
         "account": {
             "ACCOUNT001": "Account with this email already exists",

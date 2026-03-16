@@ -13,6 +13,7 @@ export default function MainCommonWrap() {
 
     const {
         menuItems,
+        selectedSidebar,
     } = useMainCommonWrap();
 
     return (
@@ -21,7 +22,7 @@ export default function MainCommonWrap() {
             <div style={styles.container}>
                 <div style={styles.sidebar}>
                     <Menu
-                        defaultSelectedKeys={['1']}
+                        selectedKeys={[selectedSidebar]}
                         mode="inline"
                         inlineCollapsed={false}
                         items={menuItems}
@@ -46,7 +47,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         display: 'flex',
     },
     sidebar: {
-        width: '250px',
+        width: '230px',
         height: `calc(100vh - ${HEADER_SIZE}px)`,
         backgroundColor: '#EAE3D2',
         padding: '1rem 0px',

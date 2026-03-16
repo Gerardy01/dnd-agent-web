@@ -1,6 +1,9 @@
 import { type MenuProps } from "antd"
 import { LogoutOutlined, SettingOutlined } from "@ant-design/icons"
 
+// utils
+import { SettingsMenuEnum } from "@/utils/enums";
+
 // api
 import { authApi } from "@/api";
 
@@ -12,6 +15,7 @@ import useStaticModal from "./useStaticModal";
 // stores
 import useAccountStore from "@/stores/useAccountStore";
 import useTokenStore from "@/stores/useTokenStore";
+import useSidebarStore from "@/stores/useSIdebarStore";
 
 
 
@@ -24,6 +28,7 @@ export default function useHeader() {
 
     const { username, removeAccount } = useAccountStore();
     const { removeAccessToken } = useTokenStore();
+    const { setSelectedSidebar } = useSidebarStore();
 
     const items: MenuProps['items'] = [
         {
@@ -35,7 +40,10 @@ export default function useHeader() {
                     key: '1-1',
                     label: t("global.settings"),
                     icon: <SettingOutlined />,
-                    onClick: () => navigate("/settings")
+                    onClick: () => {
+                        navigate(`/settings?tab=${SettingsMenuEnum.PROFILE}`);
+                        setSelectedSidebar("");
+                    }
                 },
             ]
         },
