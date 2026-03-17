@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:dev": "vite --mode development",
-    "dev:staging": "vite --mode staging",
+    "dev:staging": "vite --host 0.0.0.0 --mode staging",
     "dev:global": "vite --mode global",
     "dev:production": "vite --mode production",
     "build": "tsc -b && vite build",
