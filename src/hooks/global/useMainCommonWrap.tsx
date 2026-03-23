@@ -11,7 +11,6 @@ import { SidebarMenuEnum } from "@/utils/enums";
 // stores
 import useSidebarStore from "@/stores/useSIdebarStore";
 import { useEffect } from "react";
-import Text from "antd/es/typography/Text";
 
 // interfaces
 type MenuItem = Required<MenuProps>['items'][number];
