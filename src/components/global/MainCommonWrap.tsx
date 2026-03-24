@@ -62,5 +62,6 @@ const styles: { [key: string]: React.CSSProperties } = {
         backgroundColor: '#EAE3D2',
         display: 'flex',
         justifyContent: 'center',
+        overflowY: 'auto',
     },
 }

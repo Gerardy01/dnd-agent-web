@@ -1,9 +1,6 @@
 import { type MenuProps } from "antd"
 import { LogoutOutlined, SettingOutlined } from "@ant-design/icons"
 
-// utils
-import { SettingsMenuEnum } from "@/utils/enums";
-
 // api
 import { authApi } from "@/api";
 
@@ -41,7 +38,7 @@ export default function useHeader() {
                     label: t("global.settings"),
                     icon: <SettingOutlined />,
                     onClick: () => {
-                        navigate(`/settings?tab=${SettingsMenuEnum.PROFILE}`);
+                        navigate("/settings");
                         setSelectedSidebar("");
                     }
                 },

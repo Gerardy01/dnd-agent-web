@@ -5,7 +5,7 @@ interface Props {
     children: React.ReactNode;
 }
 
-export default function Wrapper({ children, width = 90 }: Props) {
+export default function Wrapper({ children, width = 91 }: Props) {
     return (
         <div
             style={{

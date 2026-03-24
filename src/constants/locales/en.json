@@ -104,6 +104,19 @@
         "preferences": "Preferences",
         "account": "Account"
     },
+    "workshop": {
+        "title": "Workshop",
+        "description": "Forge your legacy and share the blueprints with the world",
+        "worlds": "Worlds",
+        "characters": "Characters",
+        "races": "Races",
+        "classes": "Classes",
+        "factions": "Factions",
+        "monsters": "Monsters",
+        "items": "Items",
+        "spells": "Spells",
+        "feats": "Feats"
+    },
     "error": {
         "account": {
             "ACCOUNT001": "Account with this email already exists",

@@ -25,7 +25,7 @@ export default function Header({ height = 64 }: Props) {
                     <div style={styles.imgHolder}>
                         {username ? username.charAt(0).toUpperCase() : "-"}
                     </div>
-                    <Text style={{ marginLeft: '0.5rem', fontWeight: 'bold' }}>{username ? username : "-"}</Text>
+                    <Text style={{ marginLeft: '0.7rem', fontWeight: 'bold' }}>{username ? username : "-"}</Text>
                 </div>
             </Dropdown>
         </div>
@@ -46,7 +46,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         justifyContent: 'space-between',
     },
     profileBtn: {
-        minWidth: '7rem',
+        minWidth: '8.5rem',
         borderRadius: '5px',
         backgroundColor: '#ededee',
         border: '2px solid #d8d2cc',
