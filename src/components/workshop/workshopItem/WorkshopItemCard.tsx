@@ -1,12 +1,11 @@
-import { useState } from "react";
 import { Divider, Tag, Typography } from "antd";
 import { SafetyOutlined } from "@ant-design/icons";
 
 // assets
 import { ScaleIcon, CoinsIcon, noItemImage } from "@/assets";
 
-// utils
-import { RarityEnum } from "@/utils/enums";
+// hooks
+import useWorkshopItemCard from "@/hooks/workshop/workshopItem/useWorkshopItemCard";
 
 // interfaces
 import type { WorkshopItemReturn } from "@/models/itemInterfaces";
@@ -19,18 +18,11 @@ const { Title, Paragraph, Text } = Typography;
 
 export default function WorkshopItemCard({ item }: Props) {
 
-    const [isHovered, setIsHovered] = useState(false);
-
-    function getRarityColor(rarity: string) {
-        switch (rarity.toLowerCase()) {
-            case RarityEnum.COMMON: return '#7f8c8d';
-            case RarityEnum.UNCOMMON: return '#27ae60';
-            case RarityEnum.RARE: return '#562973';
-            case RarityEnum.VERY_RARE: return '#d35400';
-            case RarityEnum.LEGENDARY: return '#f39c12';
-            default: return '#562973';
-        }
-    }
+    const {
+        isHovered,
+        handleHover,
+        getRarityColor,
+    } = useWorkshopItemCard();
 
     return (
         <div
@@ -38,8 +30,8 @@ export default function WorkshopItemCard({ item }: Props) {
                 ...styles.container,
                 boxShadow: isHovered ? '0 0 0px 2px orange' : 'none',
             }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onMouseEnter={() => handleHover(true)}
+            onMouseLeave={() => handleHover(false)}
         >
             <div style={styles.imageContainer}>
                 <img
@@ -98,7 +90,7 @@ export default function WorkshopItemCard({ item }: Props) {
                 <Title level={4} style={styles.title}>{item.name}</Title>
 
                 <Paragraph
-                    ellipsis={{ rows: 4 }}
+                    ellipsis={{ rows: 2 }}
                     style={styles.description}
                     italic
                 >
@@ -139,7 +131,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     },
     imageContainer: {
         width: '100%',
-        height: '240px',
+        aspectRatio: '1/1',
         position: 'relative',
         backgroundColor: 'white',
     },
@@ -161,7 +153,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     },
     content: {
         padding: '16px',
-        minHeight: '15rem',
         display: 'flex',
         flexDirection: 'column',
         flex: 1

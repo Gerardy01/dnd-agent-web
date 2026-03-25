@@ -91,3 +91,14 @@ export const CoinsIcon = (props: React.SVGProps<SVGSVGElement>) => (
         <path d="m16.71 13.88.7.71-2.82 2.82" />
     </svg>
 );
+
+export const SparklesIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 19" fill="currentColor" {...props}>
+        {/* Large sparkle – centre-left */}
+        <path d="M9 2 L10.2 6.8 L15 8 L10.2 9.2 L9 14 L7.8 9.2 L3 8 L7.8 6.8 Z" />
+        {/* Small sparkle – top-right */}
+        <path d="M18 2 L18.9 5.1 L22 6 L18.9 6.9 L18 10 L17.1 6.9 L14 6 L17.1 5.1 Z" />
+        {/* Tiny dot sparkle – bottom-right */}
+        <circle cx="20" cy="14" r="1.3" />
+    </svg>
+);

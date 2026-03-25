@@ -4,9 +4,10 @@ import { Empty, Typography } from "antd";
 import WorkshopControl from "@/components/workshop/WorkshopControl";
 import WorkshopItemCard from "./WorkshopItemCard";
 import CardSkeleton from "../CardSkeleton";
+import CreateItemModal from "./CreateItemModal";
 
 // hooks
-import useWorkshopItem from "@/hooks/workshop/useWorkshopItem";
+import useWorkshopItem from "@/hooks/workshop/workshopItem/useWorkshopItem";
 
 const { Text } = Typography;
 
@@ -62,6 +63,11 @@ export default function WorkshopItem() {
                     <Text style={{ fontSize: '1rem' }} strong>You reached the end</Text>
                 </div>
             )}
+
+            <CreateItemModal
+                open={createModalOpen}
+                onClose={() => handleCreateModal(false)}
+            />
 
         </div>
     );

@@ -10,6 +10,7 @@ import {
     WorldsIcon,
     ScaleIcon,
     CoinsIcon,
+    SparklesIcon,
 } from "@/assets/icons";
 import noItemImage from "@/assets/images/no-item.png";
 
@@ -25,5 +26,6 @@ export {
     WorldsIcon,
     ScaleIcon,
     CoinsIcon,
+    SparklesIcon,
     noItemImage,
 }

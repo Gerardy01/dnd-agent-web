@@ -7,7 +7,7 @@ import { workshopItemApi } from "@/api";
 import { SortEnum } from "@/utils/enums";
 
 // hooks
-import useStaticModal from "../global/useStaticModal";
+import useStaticModal from "@/hooks/global/useStaticModal";
 
 // interfaces
 import type { WorkshopItemReturn } from "@/models/itemInterfaces";
