@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Tag, Typography } from "antd";
+import { Divider, Tag, Typography } from "antd";
 import { SafetyOutlined } from "@ant-design/icons";
 
 // assets
@@ -52,7 +52,7 @@ export default function WorkshopItemCard({ item }: Props) {
                     }}
                 />
                 <div style={{ ...styles.rarityBadge, backgroundColor: getRarityColor(item.rarity) }}>
-                    {item.rarity}
+                    {item.rarity.toUpperCase()}
                 </div>
             </div>
 
@@ -70,9 +70,27 @@ export default function WorkshopItemCard({ item }: Props) {
                     )}
 
                     {item.armorProperties && (
-                        <div style={styles.pill}>
+                        <Tag
+                            color="orange"
+                            variant="outlined"
+                            style={styles.pill}
+                        >
                             <SafetyOutlined style={{ marginRight: 6, opacity: 0.8 }} />
                             {item.armorProperties.baseAc}
+                        </Tag>
+                    )}
+
+                    {item.weaponProperties && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            {item.weaponProperties.damageRoll.map(item => (
+                                <Tag
+                                    color="orange"
+                                    variant="outlined"
+                                    style={styles.pill}
+                                >
+                                    {item.count}d{item.dice}{item.bonus ? `+${item.bonus}` : ''} {item.damageType}
+                                </Tag>
+                            ))}
                         </div>
                     )}
                 </div>
@@ -80,10 +98,14 @@ export default function WorkshopItemCard({ item }: Props) {
                 <Title level={4} style={styles.title}>{item.name}</Title>
 
                 <Paragraph
-                    ellipsis={{ rows: 2 }}
-                    style={styles.description}>
-                    {item.description}
+                    ellipsis={{ rows: 4 }}
+                    style={styles.description}
+                    italic
+                >
+                    "{item.description}"
                 </Paragraph>
+
+                <Divider style={{ margin: '0px' }} />
 
                 <div style={styles.footer}>
                     <Text style={styles.weight}>
@@ -117,7 +139,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     },
     imageContainer: {
         width: '100%',
-        height: '260px',
+        height: '240px',
         position: 'relative',
         backgroundColor: 'white',
     },
@@ -134,11 +156,12 @@ const styles: { [key: string]: React.CSSProperties } = {
         borderRadius: '16px',
         color: 'white',
         fontWeight: 'bold',
-        fontSize: '12px',
+        fontSize: '10px',
         textTransform: 'capitalize'
     },
     content: {
         padding: '16px',
+        minHeight: '15rem',
         display: 'flex',
         flexDirection: 'column',
         flex: 1
@@ -146,14 +169,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     tagRow: {
         display: 'flex',
         justifyContent: 'space-between',
+        alignItems: 'flex-end',
         marginBottom: '16px'
     },
     pill: {
         display: 'flex',
         alignItems: 'center',
-        padding: '4px 12px',
+        padding: '0px 12px',
         borderRadius: '20px',
-        fontSize: '12px',
+        fontSize: '10px',
         fontWeight: 'bold'
     },
     title: {
@@ -161,15 +185,15 @@ const styles: { [key: string]: React.CSSProperties } = {
         lineHeight: 1.3
     },
     description: {
-        fontSize: '14px',
+        fontSize: '15px',
         marginBottom: '20px',
-        flex: 1
+        flex: 1,
     },
     footer: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingTop: '4px'
+        paddingTop: '0.8rem'
     },
     weight: {
         fontWeight: 'bold',

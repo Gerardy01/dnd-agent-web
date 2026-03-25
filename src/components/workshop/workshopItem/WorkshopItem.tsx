@@ -87,6 +87,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
-        padding: '1rem 0',
+        paddingTop: '3rem',
+        paddingBottom: '1rem',
     }
 }
