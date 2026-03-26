@@ -41,8 +41,8 @@ export default function WorkshopItem() {
             <div style={styles.listContainer}>
                 {loading ? (
                     Array.from({ length: 8 }).map((_, index) => (
-                        <div style={{ width: '24%' }}>
-                            <CardSkeleton key={`skeleton-${index}`} />
+                        <div key={`skeleton-${index}`} style={{ width: '24%' }}>
+                            <CardSkeleton />
                         </div>
                     ))
                 ) : items.length === 0 ? (
@@ -51,8 +51,8 @@ export default function WorkshopItem() {
                     </div>
                 ) : (
                     items.map((item) => (
-                        <div style={{ width: '24%' }}>
-                            <WorkshopItemCard key={item.workshopItemId} item={item} />
+                        <div key={item.workshopItemId} style={{ width: '24%' }}>
+                            <WorkshopItemCard item={item} />
                         </div>
                     ))
                 )}

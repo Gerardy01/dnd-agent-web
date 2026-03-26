@@ -15,6 +15,12 @@ export const theme = {
         },
         Input: {
             colorBgContainer: '#F5F1E7',
+        },
+        Select: {
+            colorBgContainer: '#F5F1E7',
+        },
+        InputNumber: {
+            colorBgContainer: '#F5F1E7',
         }
     }
 };

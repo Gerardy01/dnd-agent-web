@@ -19,7 +19,19 @@ export default function useWorkshopItemCard() {
             case RarityEnum.RARE: return '#562973';
             case RarityEnum.VERY_RARE: return '#d35400';
             case RarityEnum.LEGENDARY: return '#f39c12';
+            case RarityEnum.ARTIFACT: return '#e74c3c';
             default: return '#562973';
+        }
+    }
+
+    const getCurrencyColor = (currency: string) => {
+        switch (currency.toLowerCase()) {
+            case 'copper': return '#B77729';
+            case 'silver': return '#A5A9B4';
+            case 'electrum': return '#59A5A9';
+            case 'gold': return '#D4AF37';
+            case 'platinum': return '#BCC6CC';
+            default: return '#D4AF37';
         }
     }
 
@@ -27,5 +39,6 @@ export default function useWorkshopItemCard() {
         isHovered,
         handleHover,
         getRarityColor,
+        getCurrencyColor,
     }
 }

@@ -1,5 +1,10 @@
-import { useRef, useState } from "react";
-import { Button, Divider, Form, Modal, Typography, Upload } from "antd";
+import { Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Typography, Upload } from "antd";
+
+// utils
+import { ItemTypeEnum } from "@/utils/enums";
+
+// hooks
+import useCreateItem from "@/hooks/workshop/workshopItem/useCreateItem";
 
 // assets
 import { SparklesIcon } from "@/assets";
@@ -16,15 +21,28 @@ const { Title, Text } = Typography;
 
 export default function CreateItemModal({ open, onClose }: Props) {
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-    const handleFileChange = (file: File) => {
-        if (!file) return;
-        // Temporarily preview with a local object URL
-        // Replace setImageUrl call with the S3 URL returned from the API when wiring the real upload
-        setImageUrl(URL.createObjectURL(file));
-    };
+    const {
+        createItemForm,
+        fileInputRef,
+        imageUrl,
+        typeSelection,
+        selectedType,
+        gearCategoriesSelection,
+        weaponCategoriesSelection,
+        armorCategoriesSelection,
+        raritySelection,
+        isMagicItem,
+        currencyUnitSelection,
+        equipSlotSelection,
+        damageTypeSelection,
+        conditionSelection,
+        handleFileChange,
+        handleRemoveImage,
+        handleTypeChange,
+        restartForm,
+        handleMagicItemChange,
+        submitCreateItem,
+    } = useCreateItem();
 
     return (
         <Modal
@@ -62,6 +80,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                     <Button
                         style={{ padding: '1.2rem 1.5rem' }}
                         type="primary"
+                        onClick={() => createItemForm.submit()}
                     >
                         Create Item
                     </Button>
@@ -69,7 +88,10 @@ export default function CreateItemModal({ open, onClose }: Props) {
                     <Button
                         icon={<CloseOutlined />}
                         style={{ padding: '1.2rem', borderRadius: '50%' }}
-                        onClick={onClose}
+                        onClick={() => {
+                            onClose();
+                            restartForm();
+                        }}
                         type="text"
                     />
                 </div>
@@ -108,8 +130,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     style={styles.removeBtn}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setImageUrl(null);
-                                        if (fileInputRef.current) fileInputRef.current.value = '';
+                                        handleRemoveImage();
                                     }}
                                 >
                                     <DeleteOutlined style={{ fontSize: '1rem' }} />
@@ -143,7 +164,13 @@ export default function CreateItemModal({ open, onClose }: Props) {
                     </div>
                 </div>
                 <div style={{ flex: '1' }}>
-                    <Form>
+                    <Form
+                        name="createItem"
+                        layout="vertical"
+                        form={createItemForm}
+                        style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+                        onFinish={submitCreateItem}
+                    >
                         <div style={styles.formContainer}>
                             <div style={styles.formHeader}>
                                 <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
@@ -152,7 +179,288 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                 <Text type="secondary">Add basic information about your item</Text>
                             </div>
                             <div style={styles.formContent}>
+                                <Form.Item
+                                    name="name"
+                                    label="Item Name"
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please enter the item name',
+                                        },
+                                    ]}
+                                >
+                                    <Input
+                                        placeholder="Enter item name..."
+                                        size="large"
+                                        maxLength={100}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    name="type"
+                                    label="Item Type"
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    initialValue={ItemTypeEnum.GEAR}
+                                    required
+                                >
+                                    <Select
+                                        placeholder="Select item type..."
+                                        size="large"
+                                        options={typeSelection}
+                                        onChange={handleTypeChange}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    name="description"
+                                    label="Description"
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please enter the item description',
+                                        },
+                                    ]}
+                                >
+                                    <Input.TextArea
+                                        rows={5}
+                                        placeholder="What does the item do?"
+                                        maxLength={500}
+                                        showCount
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    name="appearance"
+                                    label="Appearance"
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please enter the item appearance',
+                                        },
+                                    ]}
+                                >
+                                    <Input.TextArea
+                                        rows={4}
+                                        placeholder="What does the item look like?"
+                                        maxLength={500}
+                                        showCount
+                                    />
+                                </Form.Item>
+                            </div>
+                        </div>
 
+                        <div style={styles.formContainer}>
+                            <div style={styles.formHeader}>
+                                <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                                    Item Properties
+                                </Title>
+                                <Text type="secondary">Add statistics and characteristics of your item</Text>
+                            </div>
+                            <div style={styles.formContent}>
+                                <Form.Item
+                                    name="category"
+                                    label="Category"
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please select the item category',
+                                        },
+                                    ]}
+                                >
+                                    <Select
+                                        placeholder="Select item category..."
+                                        size="large"
+                                        options={selectedType === ItemTypeEnum.GEAR ? gearCategoriesSelection : selectedType === ItemTypeEnum.WEAPON ? weaponCategoriesSelection : armorCategoriesSelection}
+                                    />
+                                </Form.Item>
+                                <Row style={styles.formRow}>
+                                    <Col style={{ width: '48%' }}>
+                                        <Form.Item
+                                            name="rarity"
+                                            label="Rarity"
+                                            labelCol={{ style: { fontWeight: 'bold' } }}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Please select the item rarity',
+                                                },
+                                            ]}
+                                        >
+                                            <Select
+                                                placeholder="Select item rarity..."
+                                                size="large"
+                                                options={raritySelection}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col style={{ width: '48%' }}>
+                                        <Form.Item
+                                            name="isMagicItem"
+                                            label="Magic Item"
+                                            labelCol={{ style: { fontWeight: 'bold' } }}
+                                            style={{ width: '100%' }}
+                                            required
+                                            initialValue={false}
+                                        >
+                                            <div style={styles.magicItemContainer}>
+                                                <Text>{isMagicItem ? 'Is Magic' : 'Not Magic'}</Text>
+                                                <Switch onChange={handleMagicItemChange} />
+                                            </div>
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row style={styles.formRow}>
+                                    <Col style={{ width: '48%' }}>
+                                        <Form.Item
+                                            name="weight"
+                                            label="Weight (lbs.)"
+                                            labelCol={{ style: { fontWeight: 'bold' } }}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Please enter the item weight',
+                                                },
+                                            ]}
+                                            initialValue={0}
+                                        >
+                                            <InputNumber
+                                                placeholder="Weight"
+                                                size="large"
+                                                min={0}
+                                                step={0.1}
+                                                mode="spinner"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                <Row style={styles.formRow}>
+                                    <Col style={{ width: '48%' }}>
+                                        <Form.Item
+                                            name="cost"
+                                            label="Cost"
+                                            labelCol={{ style: { fontWeight: 'bold' } }}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Please enter the item cost',
+                                                },
+                                            ]}
+                                            initialValue={0}
+                                        >
+                                            <InputNumber
+                                                placeholder="Cost"
+                                                size="large"
+                                                min={0}
+                                                mode="spinner"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col style={{ width: '48%' }}>
+                                        <Form.Item
+                                            name="currencyUnit"
+                                            label="Currency Unit"
+                                            labelCol={{ style: { fontWeight: 'bold' } }}
+                                            dependencies={['cost']}
+                                            rules={[
+                                                ({ getFieldValue }) => ({
+                                                    validator(_, value) {
+                                                        const costValue = getFieldValue('cost');
+                                                        if (costValue > 0 && !value) {
+                                                            return Promise.reject(new Error('Please select currency unit'));
+                                                        }
+                                                        return Promise.resolve();
+                                                    },
+                                                }),
+                                            ]}
+                                            initialValue=""
+                                        >
+                                            <Select
+                                                placeholder="Select currency unit..."
+                                                size="large"
+                                                options={currencyUnitSelection}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                {selectedType === ItemTypeEnum.GEAR && (
+                                    <Form.Item
+                                        name="equipSlot"
+                                        label="Equip Slot"
+                                        labelCol={{ style: { fontWeight: 'bold' } }}
+                                        initialValue=""
+                                    >
+                                        <Select
+                                            placeholder="Select equip slot..."
+                                            size="large"
+                                            options={equipSlotSelection}
+                                        />
+                                    </Form.Item>
+                                )}
+                            </div>
+                        </div>
+                        <div style={styles.formContainer}>
+                            <div style={styles.formHeader}>
+                                <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                                    Additional Properties
+                                </Title>
+                                <Text type="secondary">Extra properties of your item</Text>
+                            </div>
+                            <div style={styles.formContent}>
+                                <Form.Item
+                                    name="immunities"
+                                    label="Immunities"
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    initialValue={[]}
+                                >
+                                    <Select
+                                        mode="multiple"
+                                        placeholder="Select damage immunities..."
+                                        size="large"
+                                        options={damageTypeSelection}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    name="resistances"
+                                    label="Resistances"
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    initialValue={[]}
+                                >
+                                    <Select
+                                        mode="multiple"
+                                        placeholder="Select damage resistances..."
+                                        size="large"
+                                        options={damageTypeSelection}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    name="vulnerabilities"
+                                    label="Vulnerabilities"
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    initialValue={[]}
+                                >
+                                    <Select
+                                        mode="multiple"
+                                        placeholder="Select damage vulnerabilities..."
+                                        size="large"
+                                        options={damageTypeSelection}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    name="conditionImmunities"
+                                    label="Condition Immunities"
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    initialValue={[]}
+                                >
+                                    <Select
+                                        mode="multiple"
+                                        placeholder="Select conditions..."
+                                        size="large"
+                                        options={conditionSelection}
+                                    />
+                                </Form.Item>
                             </div>
                         </div>
                     </Form>
@@ -258,5 +566,21 @@ const styles: { [key: string]: React.CSSProperties } = {
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
+    },
+    magicItemContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        backgroundColor: '#F6F1E7',
+        padding: '0.5rem 1rem',
+        borderRadius: '0.6rem',
+        border: '1px solid #c9c6beff',
+    },
+    formRow: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
     }
 }

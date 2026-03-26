@@ -35,6 +35,21 @@ export const RarityEnum = {
     COMMON: "common",
     UNCOMMON: "uncommon",
     RARE: "rare",
-    VERY_RARE: "very rare",
+    VERY_RARE: "very_rare",
     LEGENDARY: "legendary",
+    ARTIFACT: "artifact",
+} as const;
+
+export const ItemTypeEnum = {
+    GEAR: "gear",
+    WEAPON: "weapon",
+    ARMOR: "armor",
+} as const;
+
+export const CurrencyUnitEnum = {
+    COPPER: "copper",
+    SILVER: "silver",
+    ELECTRUM: "electrum",
+    GOLD: "gold",
+    PLATINUM: "platinum",
 } as const;

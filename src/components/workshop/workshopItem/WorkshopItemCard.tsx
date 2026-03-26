@@ -6,6 +6,7 @@ import { ScaleIcon, CoinsIcon, noItemImage } from "@/assets";
 
 // hooks
 import useWorkshopItemCard from "@/hooks/workshop/workshopItem/useWorkshopItemCard";
+import { useTranslation } from "react-i18next";
 
 // interfaces
 import type { WorkshopItemReturn } from "@/models/itemInterfaces";
@@ -22,7 +23,10 @@ export default function WorkshopItemCard({ item }: Props) {
         isHovered,
         handleHover,
         getRarityColor,
+        getCurrencyColor,
     } = useWorkshopItemCard();
+
+    const { t } = useTranslation();
 
     return (
         <div
@@ -57,7 +61,7 @@ export default function WorkshopItemCard({ item }: Props) {
                             style={styles.pill}
 
                         >
-                            {item.equipSlot}
+                            {t(`items.${item.equipSlot}`)}
                         </Tag>
                     )}
 
@@ -73,17 +77,17 @@ export default function WorkshopItemCard({ item }: Props) {
                     )}
 
                     {item.weaponProperties && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            {item.weaponProperties.damageRoll.map(item => (
+                        <>
+                            {item.weaponProperties.damageRoll.length > 0 && (
                                 <Tag
                                     color="orange"
                                     variant="outlined"
                                     style={styles.pill}
                                 >
-                                    {item.count}d{item.dice}{item.bonus ? `+${item.bonus}` : ''} {item.damageType}
+                                    {item.weaponProperties.damageRoll[0].count}d{item.weaponProperties.damageRoll[0].dice}{item.weaponProperties.damageRoll[0].bonus ? `+${item.weaponProperties.damageRoll[0].bonus}` : ''} {t(`effects.${item.weaponProperties.damageRoll[0].damageType}`)}
                                 </Tag>
-                            ))}
-                        </div>
+                            )}
+                        </>
                     )}
                 </div>
 
@@ -102,12 +106,14 @@ export default function WorkshopItemCard({ item }: Props) {
                 <div style={styles.footer}>
                     <Text style={styles.weight}>
                         <ScaleIcon />
-                        {Number(item.weight).toFixed(1)} lb.
+                        {Number(item.weight).toFixed(1)} {t('effects.lbs')}
                     </Text>
-                    <Text style={styles.cost}>
-                        <CoinsIcon />
-                        {item.cost} {item.currencyUnit && item.currencyUnit.length > 0 ? item.currencyUnit : ''}
-                    </Text>
+                    {item.cost > 0 && (
+                        <Text style={styles.cost}>
+                            <CoinsIcon style={{ color: getCurrencyColor(item.currencyUnit), marginRight: '5px' }} />
+                            {item.cost} {item.currencyUnit && item.currencyUnit.length > 0 ? t(`items.${item.currencyUnit}`) : ''}
+                        </Text>
+                    )}
                 </div>
             </div>
         </div>
@@ -119,6 +125,7 @@ export default function WorkshopItemCard({ item }: Props) {
 const styles: { [key: string]: React.CSSProperties } = {
     container: {
         width: '100%',
+        height: '100%',
         maxWidth: '320px',
         backgroundColor: '#F5F1E7',
         borderRadius: '8px',
@@ -161,7 +168,8 @@ const styles: { [key: string]: React.CSSProperties } = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
-        marginBottom: '16px'
+        marginBottom: '16px',
+        minHeight: '1.8rem'
     },
     pill: {
         display: 'flex',
