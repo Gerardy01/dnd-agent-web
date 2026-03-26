@@ -23,6 +23,10 @@ interface CreateItemFormValues {
     cost: number;
     currencyUnit: string;
     equipSlot?: string;
+    immunities: string[];
+    resistances: string[];
+    vulnerabilities: string[];
+    conditionImmunities: string[];
 }
 
 
