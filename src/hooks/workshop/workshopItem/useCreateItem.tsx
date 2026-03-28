@@ -393,7 +393,7 @@ export default function useCreateItem() {
 
     const submitCreateItem: FormProps<CreateItemFormValues>['onFinish'] = async (values) => {
 
-        if (damageRollValue.length === 0) {
+        if (selectedType === ItemTypeEnum.WEAPON && damageRollValue.length === 0) {
             setDamageRollErrMsg("Please add at least one damage roll");
             return;
         }
@@ -472,7 +472,6 @@ export default function useCreateItem() {
             flatBonuses: flatBonusEnabled && flatBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? flatBonusTransformed : null,
             overrideBonuses: overrideBonusEnabled && overrideBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? overrideBonusTransformed : null,
             modifierBonuses: modifierBonusEnabled && modifierBonusFiltered.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? modifierBonusFiltered : null,
-            damageRolls: selectedType === ItemTypeEnum.WEAPON && damageRollValue.length > 0 ? damageRollValue : null,
         }
 
         console.log(submitData);
