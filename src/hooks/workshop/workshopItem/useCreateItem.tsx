@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Form, type FormProps } from "antd";
 
 // utils
-import { DamageTypeEnum, ItemTypeEnum } from "@/utils/enums";
+import { DamageTypeEnum, ItemTypeEnum, WeaponToggleEnum } from "@/utils/enums";
 
 // constants
 import { DICE_SELECTION } from "@/constants/selections";
@@ -30,6 +30,8 @@ interface CreateItemFormValues {
     resistances: string[];
     vulnerabilities: string[];
     conditionImmunities: string[];
+    normalRange?: number;
+    longRange?: number;
 }
 interface Bonus {
     stats: string;
@@ -45,6 +47,18 @@ interface DamageRoll {
     dice: number;
     bonus: number;
     damageType: string;
+}
+interface WeaponToggle {
+    light: boolean;
+    heavy: boolean;
+    finesse: boolean;
+    thrown: boolean;
+    twoHanded: boolean;
+    range: boolean;
+    versatile: boolean;
+    ammunition: boolean;
+    loading: boolean;
+    reach: boolean;
 }
 
 
@@ -70,8 +84,27 @@ export default function useCreateItem() {
     const [overrideBonusValue, setOverrideBonusValue] = useState<Bonus[]>([]);
     const [modifierBonusValue, setModifierBonusValue] = useState<ModBonus[]>([]);
     const [damageRollValue, setDamageRollValue] = useState<DamageRoll[]>([]);
+    const [weaponToggle, setWeaponToggle] = useState<WeaponToggle>({
+        light: false,
+        heavy: false,
+        finesse: false,
+        thrown: false,
+        twoHanded: false,
+        range: false,
+        versatile: false,
+        ammunition: false,
+        loading: false,
+        reach: false,
+    });
+    const [versatileDamageRoll, setVersatileDamageRoll] = useState<DamageRoll>({
+        count: 1,
+        dice: 6,
+        bonus: 0,
+        damageType: damageRollValue.length > 0 ? damageRollValue[0].damageType : DamageTypeEnum.ACID,
+    });
 
     const [damageRollErrMsg, setDamageRollErrMsg] = useState<string>('');
+    const [versatileDamageRollErrMsg, setVersatileDamageRollErrMsg] = useState<string>('');
 
     const typeSelection = itemOptions.itemType.map((itemType) => ({
         label: t(`items.${itemType}`),
@@ -133,6 +166,79 @@ export default function useCreateItem() {
         label: dice,
         value: dice,
     }));
+
+    const weaponToggleList = [
+        {
+            title: WeaponToggleEnum.LIGHT,
+            description: t('items.lightDescription'),
+            checked: weaponToggle.light,
+            expandable: false,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, light: val, heavy: val ? false : prev.heavy })),
+        },
+        {
+            title: WeaponToggleEnum.HEAVY,
+            description: t('items.heavyDescription'),
+            checked: weaponToggle.heavy,
+            expandable: false,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, heavy: val, light: val ? false : prev.light })),
+        },
+        {
+            title: WeaponToggleEnum.FINESSE,
+            description: t('items.finesseDescription'),
+            checked: weaponToggle.finesse,
+            expandable: false,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, finesse: val })),
+        },
+        {
+            title: WeaponToggleEnum.THROWN,
+            description: t('items.thrownDescription'),
+            checked: weaponToggle.thrown,
+            expandable: false,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, thrown: val })),
+        },
+        {
+            title: WeaponToggleEnum.TWO_HANDED,
+            description: t('items.twoHandedDescription'),
+            expandable: false,
+            checked: weaponToggle.twoHanded,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, twoHanded: val, versatile: val ? false : prev.versatile })),
+        },
+        {
+            title: WeaponToggleEnum.RANGE,
+            description: t('items.rangeDescription'),
+            expandable: true,
+            checked: weaponToggle.range,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, range: val, versatile: val ? false : prev.versatile })),
+        },
+        {
+            title: WeaponToggleEnum.VERSATILE,
+            description: t('items.versatileDescription'),
+            expandable: true,
+            checked: weaponToggle.versatile,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, versatile: val, range: val ? false : prev.range, twoHanded: val ? false : prev.twoHanded })),
+        },
+        {
+            title: WeaponToggleEnum.AMMUNITION,
+            description: t('items.ammunitionDescription'),
+            checked: weaponToggle.ammunition,
+            expandable: false,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, ammunition: val })),
+        },
+        {
+            title: WeaponToggleEnum.LOADING,
+            description: t('items.loadingDescription'),
+            checked: weaponToggle.loading,
+            expandable: false,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, loading: val })),
+        },
+        {
+            title: WeaponToggleEnum.REACH,
+            description: t('items.reachDescription'),
+            checked: weaponToggle.reach,
+            expandable: false,
+            onChange: (val: boolean) => setWeaponToggle(prev => ({ ...prev, reach: val })),
+        },
+    ];
 
     useEffect(() => {
         createItemForm.setFieldValue('category', null);
@@ -280,6 +386,11 @@ export default function useCreateItem() {
         setDamageRollValue((prev) => prev.filter((_, i) => i !== index));
     };
 
+    const handleUpdateVersatileDamageRoll = (value: DamageRoll) => {
+        setVersatileDamageRoll(value);
+        setVersatileDamageRollErrMsg("");
+    };
+
     const submitCreateItem: FormProps<CreateItemFormValues>['onFinish'] = async (values) => {
 
         if (damageRollValue.length === 0) {
@@ -287,11 +398,41 @@ export default function useCreateItem() {
             return;
         }
 
+        if (selectedType === ItemTypeEnum.WEAPON && weaponToggle.versatile) {
+            if (versatileDamageRoll.count === 0 || versatileDamageRoll.dice === 0 || versatileDamageRoll.damageType === '') {
+                setVersatileDamageRollErrMsg("Please input all field properly.");
+                return;
+            }
+            setVersatileDamageRollErrMsg("");
+        }
+
         const additionalProperties = {
             immunities: values.immunities,
             resistances: values.resistances,
             vulnerabilities: values.vulnerabilities,
             conditionImmunities: values.conditionImmunities,
+        }
+
+        const weaponProperties = {
+            damageRoll: damageRollValue,
+            light: weaponToggle.light,
+            heavy: weaponToggle.heavy,
+            finesse: weaponToggle.finesse,
+            thrown: weaponToggle.thrown,
+            twoHanded: weaponToggle.twoHanded,
+            range: weaponToggle.range ? {
+                normal: values.normalRange,
+                long: values.longRange ? values.longRange : null,
+            } : null,
+            versatileDamageRoll: weaponToggle.twoHanded ? {
+                count: versatileDamageRoll.count,
+                dice: versatileDamageRoll.dice,
+                bonus: versatileDamageRoll.bonus,
+                damageType: versatileDamageRoll.damageType,
+            } : null,
+            ammunition: weaponToggle.ammunition,
+            loading: weaponToggle.loading,
+            reach: weaponToggle.reach,
         }
 
         const flatBonusTransformed = {
@@ -326,6 +467,7 @@ export default function useCreateItem() {
             cost: values.cost,
             currencyUnit: values.cost > 0 ? values.currencyUnit : "",
             equipSlot: values.type === ItemTypeEnum.GEAR ? values.equipSlot : null,
+            weaponProperties: selectedType === ItemTypeEnum.WEAPON ? weaponProperties : null,
             additionalProperties: additionalProperties,
             flatBonuses: flatBonusEnabled && flatBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? flatBonusTransformed : null,
             overrideBonuses: overrideBonusEnabled && overrideBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? overrideBonusTransformed : null,
@@ -350,6 +492,18 @@ export default function useCreateItem() {
         setModifierBonusValue([]);
         setDamageRollValue([]);
         setDamageRollErrMsg("");
+        setWeaponToggle({
+            light: false,
+            heavy: false,
+            finesse: false,
+            thrown: false,
+            twoHanded: false,
+            range: false,
+            versatile: false,
+            ammunition: false,
+            loading: false,
+            reach: false,
+        });
     };
 
     return {
@@ -378,6 +532,9 @@ export default function useCreateItem() {
         damageRollValue,
         diceSelection,
         damageRollErrMsg,
+        weaponToggleList,
+        versatileDamageRoll,
+        versatileDamageRollErrMsg,
         handleFlatBonusChange,
         handleOverrideBonusChange,
         handleModifierBonusChange,
@@ -406,6 +563,7 @@ export default function useCreateItem() {
         restartForm,
         handleMagicItemChange,
         handleEquipSlotChange,
+        handleUpdateVersatileDamageRoll,
         submitCreateItem,
     }
 }

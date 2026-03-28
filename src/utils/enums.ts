@@ -69,3 +69,16 @@ export const DamageTypeEnum = {
     SLASHING: "slashing",
     THUNDER: "thunder",
 } as const;
+
+export const WeaponToggleEnum = {
+    LIGHT: "light",
+    HEAVY: "heavy",
+    FINESSE: "finesse",
+    THROWN: "thrown",
+    TWO_HANDED: "twoHanded",
+    RANGE: "range",
+    VERSATILE: "versatile",
+    AMMUNITION: "ammunition",
+    LOADING: "loading",
+    REACH: "reach",
+} as const;

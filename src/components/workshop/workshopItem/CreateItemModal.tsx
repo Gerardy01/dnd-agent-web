@@ -1,10 +1,11 @@
 import { AutoComplete, Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Typography, Upload } from "antd";
 
 // utils
-import { ItemTypeEnum } from "@/utils/enums";
+import { ItemTypeEnum, WeaponToggleEnum } from "@/utils/enums";
 
 // hooks
 import useCreateItem from "@/hooks/workshop/workshopItem/useCreateItem";
+import { useTranslation } from "react-i18next";
 
 // assets
 import { SparklesIcon } from "@/assets";
@@ -47,6 +48,9 @@ export default function CreateItemModal({ open, onClose }: Props) {
         modifierBonusValue,
         damageRollValue,
         damageRollErrMsg,
+        weaponToggleList,
+        versatileDamageRoll,
+        versatileDamageRollErrMsg,
         handleFlatBonusChange,
         handleOverrideBonusChange,
         handleModifierBonusChange,
@@ -75,8 +79,11 @@ export default function CreateItemModal({ open, onClose }: Props) {
         restartForm,
         handleMagicItemChange,
         handleEquipSlotChange,
+        handleUpdateVersatileDamageRoll,
         submitCreateItem,
     } = useCreateItem();
+
+    const { t } = useTranslation();
 
     return (
         <Modal
@@ -459,9 +466,9 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     <Text>d</Text>
                                                     <AutoComplete
                                                         style={{ width: '5rem' }}
-                                                        value={roll.dice}
+                                                        value={roll.dice.toString()}
                                                         options={diceSelection}
-                                                        onChange={(val) => handleUpdateDamageRollDice(index, val)}
+                                                        onChange={(val) => handleUpdateDamageRollDice(index, Number(val))}
                                                     />
                                                     <Text>+</Text>
                                                     <InputNumber
@@ -493,6 +500,105 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                             </Button>
                                         </>
                                     </Form.Item>
+                                    {weaponToggleList.map((item, index) => (
+                                        <div key={index} style={styles.bonusCard}>
+                                            <div style={styles.bonusCardHeader}>
+                                                <div>
+                                                    <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t(`items.${item.title}`)}</Text>
+                                                    <Text type="secondary" style={{ fontSize: '0.82rem' }}>{item.description}</Text>
+                                                </div>
+                                                <Switch
+                                                    checked={item.checked}
+                                                    onChange={(val) => item.onChange(val)}
+                                                />
+                                            </div>
+                                            {item.expandable && item.checked && item.title === WeaponToggleEnum.RANGE && (
+                                                <div style={styles.bonusCardContent}>
+                                                    <Row style={styles.formRow}>
+                                                        <Col style={{ width: '48%' }}>
+                                                            <Form.Item
+                                                                name="normalRange"
+                                                                label="Normal Range (ft)"
+                                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                                rules={[{ required: true, message: 'Please enter normal range' }]}
+                                                            >
+                                                                <InputNumber
+                                                                    style={{ width: '100%' }}
+                                                                    min={0}
+                                                                    placeholder="Enter normal range"
+                                                                />
+                                                            </Form.Item>
+                                                        </Col>
+                                                        <Col style={{ width: '48%' }}>
+                                                            <Form.Item
+                                                                name="longRange"
+                                                                label="Long Range"
+                                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                            >
+                                                                <InputNumber
+                                                                    style={{ width: '100%' }}
+                                                                    min={0}
+                                                                    placeholder="Enter long range"
+                                                                />
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
+                                                </div>
+                                            )}
+                                            {item.expandable && item.checked && item.title === WeaponToggleEnum.VERSATILE && (
+                                                <div style={{ ...styles.bonusCardContent, paddingBottom: versatileDamageRollErrMsg ? '1rem' : '0px' }}>
+                                                    <Form.Item
+                                                        name="versatileDamageRoll"
+                                                        help={versatileDamageRollErrMsg}
+                                                        validateStatus={versatileDamageRollErrMsg ? 'error' : ''}
+                                                    >
+                                                        <div style={{ ...styles.damageRollRow, marginBottom: '0px' }}>
+                                                            <InputNumber
+                                                                style={{ width: '4rem' }}
+                                                                min={1}
+                                                                value={versatileDamageRoll.count}
+                                                                onChange={(value) => handleUpdateVersatileDamageRoll({ ...versatileDamageRoll, count: Number(value) })}
+                                                            />
+                                                            <Text>d</Text>
+                                                            <AutoComplete
+                                                                style={{ width: '5rem' }}
+                                                                options={diceSelection}
+                                                                defaultValue={versatileDamageRoll.dice}
+                                                                onChange={(value) => handleUpdateVersatileDamageRoll({ ...versatileDamageRoll, dice: Number(value) })}
+                                                            />
+                                                            <Text>+</Text>
+                                                            <InputNumber
+                                                                style={{ width: '4.5rem' }}
+                                                                defaultValue={versatileDamageRoll.bonus}
+                                                                min={0}
+                                                                onChange={(value) => handleUpdateVersatileDamageRoll({ ...versatileDamageRoll, bonus: Number(value) })}
+                                                            />
+                                                            <Select
+                                                                style={{ flex: 1 }}
+                                                                placeholder="Damage type..."
+                                                                options={damageTypeSelection}
+                                                                value={versatileDamageRoll.damageType}
+                                                                onChange={(value) => handleUpdateVersatileDamageRoll({ ...versatileDamageRoll, damageType: value })}
+                                                            />
+                                                        </div>
+                                                    </Form.Item>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {selectedType === ItemTypeEnum.ARMOR && (
+                            <div style={styles.formContainer}>
+                                <div style={styles.formHeader}>
+                                    <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                                        Armor Properties
+                                    </Title>
+                                    <Text type="secondary">Properties of your Armor</Text>
+                                </div>
+                                <div style={styles.formContent}>
 
                                 </div>
                             </div>
@@ -767,8 +873,8 @@ export default function CreateItemModal({ open, onClose }: Props) {
                         )}
                     </Form>
                 </div>
-            </div>
-        </Modal>
+            </div >
+        </Modal >
     );
 }
 
