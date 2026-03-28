@@ -53,3 +53,19 @@ export const CurrencyUnitEnum = {
     GOLD: "gold",
     PLATINUM: "platinum",
 } as const;
+
+export const DamageTypeEnum = {
+    ACID: "acid",
+    BLUDGEONING: "bludgeoning",
+    COLD: "cold",
+    FIRE: "fire",
+    FORCE: "force",
+    LIGHTNING: "lightning",
+    NECROTIC: "necrotic",
+    PIERCING: "piercing",
+    POISON: "poison",
+    PSYCHIC: "psychic",
+    RADIANT: "radiant",
+    SLASHING: "slashing",
+    THUNDER: "thunder",
+} as const;

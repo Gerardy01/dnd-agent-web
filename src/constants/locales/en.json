@@ -180,15 +180,15 @@
         "left_hand": "Left Hand",
         "right_hand": "Right Hand",
         "two_handed": "Two Handed",
-        "strength": "Strength",
-        "dexterity": "Dexterity",
-        "constitution": "Constitution",
-        "intelligence": "Intelligence",
-        "wisdom": "Wisdom",
-        "charisma": "Charisma",
-        "armor_class": "Armor Class",
+        "str": "Strength",
+        "dex": "Dexterity",
+        "con": "Constitution",
+        "int": "Intelligence",
+        "wis": "Wisdom",
+        "cha": "Charisma",
+        "ac": "Armor Class",
         "speed": "Speed",
-        "max_hp": "Max HP"
+        "hp": "Max HP"
     },
     "effects": {
         "acid": "Acid",

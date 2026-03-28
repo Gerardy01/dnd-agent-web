@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Typography, Upload } from "antd";
+import { AutoComplete, Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Typography, Upload } from "antd";
 
 // utils
 import { ItemTypeEnum } from "@/utils/enums";
@@ -8,7 +8,7 @@ import useCreateItem from "@/hooks/workshop/workshopItem/useCreateItem";
 
 // assets
 import { SparklesIcon } from "@/assets";
-import { CloseOutlined, DeleteOutlined, PictureOutlined, UploadOutlined } from "@ant-design/icons";
+import { CloseOutlined, DeleteOutlined, PictureOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 
 // interfaces
 interface Props {
@@ -36,11 +36,45 @@ export default function CreateItemModal({ open, onClose }: Props) {
         equipSlotSelection,
         damageTypeSelection,
         conditionSelection,
+        itemBonusStatSelection,
+        diceSelection,
+        equipSlotValue,
+        flatBonusEnabled,
+        overrideBonusEnabled,
+        modifierBonusEnabled,
+        flatBonusValue,
+        overrideBonusValue,
+        modifierBonusValue,
+        damageRollValue,
+        damageRollErrMsg,
+        handleFlatBonusChange,
+        handleOverrideBonusChange,
+        handleModifierBonusChange,
+        handleAddFlatBonus,
+        handleUpdateFlatBonusStat,
+        handleUpdateFlatBonusValue,
+        handleDeleteFlatBonus,
+        handleAddOverrideBonus,
+        handleUpdateOverrideBonusStat,
+        handleUpdateOverrideBonusValue,
+        handleDeleteOverrideBonus,
+        handleAddModifierBonus,
+        handleUpdateModifierBonusFrom,
+        handleUpdateModifierBonusTo,
+        handleUpdateModifierBonusValue,
+        handleDeleteModifierBonus,
+        handleAddDamageRoll,
+        handleUpdateDamageRollCount,
+        handleUpdateDamageRollDice,
+        handleUpdateDamageRollBonus,
+        handleUpdateDamageRollType,
+        handleDeleteDamageRoll,
         handleFileChange,
         handleRemoveImage,
         handleTypeChange,
         restartForm,
         handleMagicItemChange,
+        handleEquipSlotChange,
         submitCreateItem,
     } = useCreateItem();
 
@@ -341,12 +375,6 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                             name="cost"
                                             label="Cost"
                                             labelCol={{ style: { fontWeight: 'bold' } }}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Please enter the item cost',
-                                                },
-                                            ]}
                                             initialValue={0}
                                         >
                                             <InputNumber
@@ -396,11 +424,80 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                             placeholder="Select equip slot..."
                                             size="large"
                                             options={equipSlotSelection}
+                                            onChange={handleEquipSlotChange}
                                         />
                                     </Form.Item>
                                 )}
                             </div>
                         </div>
+
+                        {selectedType === ItemTypeEnum.WEAPON && (
+                            <div style={styles.formContainer}>
+                                <div style={styles.formHeader}>
+                                    <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                                        Weapon Properties
+                                    </Title>
+                                    <Text type="secondary">Properties of your weapon</Text>
+                                </div>
+                                <div style={styles.formContent}>
+                                    <Form.Item
+                                        label="Damage Roll"
+                                        labelCol={{ style: { fontWeight: 'bold' } }}
+                                        help={damageRollErrMsg}
+                                        validateStatus={damageRollErrMsg ? 'error' : ''}
+                                    >
+                                        <>
+                                            {/* Rows */}
+                                            {damageRollValue.map((roll, index) => (
+                                                <div key={index} style={styles.damageRollRow}>
+                                                    <InputNumber
+                                                        style={{ width: '4rem' }}
+                                                        min={1}
+                                                        value={roll.count}
+                                                        onChange={(val) => handleUpdateDamageRollCount(index, val ?? 1)}
+                                                    />
+                                                    <Text>d</Text>
+                                                    <AutoComplete
+                                                        style={{ width: '5rem' }}
+                                                        value={roll.dice}
+                                                        options={diceSelection}
+                                                        onChange={(val) => handleUpdateDamageRollDice(index, val)}
+                                                    />
+                                                    <Text>+</Text>
+                                                    <InputNumber
+                                                        style={{ width: '4.5rem' }}
+                                                        value={roll.bonus}
+                                                        onChange={(val) => handleUpdateDamageRollBonus(index, val ?? 0)}
+                                                    />
+                                                    <Select
+                                                        style={{ flex: 1 }}
+                                                        placeholder="Damage type..."
+                                                        value={roll.damageType || undefined}
+                                                        options={damageTypeSelection}
+                                                        onChange={(val) => handleUpdateDamageRollType(index, val)}
+                                                    />
+                                                    <Button
+                                                        onClick={() => handleDeleteDamageRoll(index)}
+                                                        icon={<DeleteOutlined />}
+                                                    />
+                                                </div>
+                                            ))}
+
+                                            {/* Add button */}
+                                            <Button
+                                                onClick={handleAddDamageRoll}
+                                                style={styles.addBonusBtn}
+                                                icon={<PlusOutlined />}
+                                            >
+                                                Add Roll
+                                            </Button>
+                                        </>
+                                    </Form.Item>
+
+                                </div>
+                            </div>
+                        )}
+
                         <div style={styles.formContainer}>
                             <div style={styles.formHeader}>
                                 <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
@@ -463,6 +560,211 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                 </Form.Item>
                             </div>
                         </div>
+
+                        {(selectedType !== ItemTypeEnum.GEAR || equipSlotValue !== "") && (
+                            <div style={styles.formContainer}>
+                                <div style={styles.formHeader}>
+                                    <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                                        Item Bonuses
+                                    </Title>
+                                    <Text type="secondary">Add bonuses to your item</Text>
+                                </div>
+                                <div style={styles.formContent}>
+                                    {/* Flat Bonus */}
+                                    <div style={styles.bonusCard}>
+                                        <div style={styles.bonusCardHeader}>
+                                            <div>
+                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>Flat Bonus</Text>
+                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>Add a fixed value to the character's stats</Text>
+                                            </div>
+                                            <Switch
+                                                checked={flatBonusEnabled}
+                                                onChange={handleFlatBonusChange}
+                                            />
+                                        </div>
+                                        {flatBonusEnabled && (
+                                            <div style={styles.bonusCardContent}>
+                                                {/* Table header */}
+                                                {flatBonusValue.length > 0 && (
+                                                    <div style={styles.bonusTableHeader}>
+                                                        <Text strong style={{ flex: 1 }}>STAT</Text>
+                                                        <Text strong style={{ width: '7rem' }}>VALUE</Text>
+                                                        <Text style={{ width: '2.2rem' }} />
+                                                    </div>
+                                                )}
+
+                                                {/* Rows */}
+                                                {flatBonusValue.map((bonus, index) => {
+                                                    const usedStats = flatBonusValue
+                                                        .filter((_, i) => i !== index)
+                                                        .map((b) => b.stats)
+                                                        .filter(Boolean);
+                                                    const availableOptions = itemBonusStatSelection.filter(
+                                                        (opt) => !usedStats.includes(opt.value)
+                                                    );
+                                                    return (
+                                                        <div key={index} style={styles.bonusTableRow}>
+                                                            <Select
+                                                                style={{ flex: 1 }}
+                                                                size="middle"
+                                                                placeholder="Select stat..."
+                                                                value={bonus.stats || undefined}
+                                                                options={availableOptions}
+                                                                onChange={(val) => handleUpdateFlatBonusStat(index, val)}
+                                                            />
+                                                            <InputNumber
+                                                                style={{ width: '7rem' }}
+                                                                size="middle"
+                                                                value={bonus.value}
+                                                                onChange={(val) => handleUpdateFlatBonusValue(index, val ?? 0)}
+                                                            />
+                                                            <Button
+                                                                onClick={() => handleDeleteFlatBonus(index)}
+                                                                icon={<DeleteOutlined />}
+                                                            />
+                                                        </div>
+                                                    );
+                                                })}
+                                                <Button
+                                                    onClick={handleAddFlatBonus}
+                                                    style={styles.addBonusBtn}
+                                                    icon={<PlusOutlined />}
+                                                    disabled={flatBonusValue.length >= 9}
+                                                >
+                                                    Add Bonus
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Override Bonus */}
+                                    <div style={styles.bonusCard}>
+                                        <div style={styles.bonusCardHeader}>
+                                            <div>
+                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>Override Bonus</Text>
+                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>Replace the character's stat with a specific value</Text>
+                                            </div>
+                                            <Switch
+                                                checked={overrideBonusEnabled}
+                                                onChange={handleOverrideBonusChange}
+                                            />
+                                        </div>
+                                        {overrideBonusEnabled && (
+                                            <div style={styles.bonusCardContent}>
+                                                {/* Table header */}
+                                                {overrideBonusValue.length > 0 && (
+                                                    <div style={styles.bonusTableHeader}>
+                                                        <Text strong style={{ flex: 1 }}>STAT</Text>
+                                                        <Text strong style={{ width: '7rem' }}>VALUE</Text>
+                                                        <Text style={{ width: '2.2rem' }} />
+                                                    </div>
+                                                )}
+
+                                                {/* Rows */}
+                                                {overrideBonusValue.map((bonus, index) => {
+                                                    const usedStats = overrideBonusValue
+                                                        .filter((_, i) => i !== index)
+                                                        .map((b) => b.stats)
+                                                        .filter(Boolean);
+                                                    const availableOptions = itemBonusStatSelection.filter(
+                                                        (opt) => !usedStats.includes(opt.value)
+                                                    );
+                                                    return (
+                                                        <div key={index} style={styles.bonusTableRow}>
+                                                            <Select
+                                                                style={{ flex: 1 }}
+                                                                size="middle"
+                                                                placeholder="Select stat..."
+                                                                value={bonus.stats || undefined}
+                                                                options={availableOptions}
+                                                                onChange={(val) => handleUpdateOverrideBonusStat(index, val)}
+                                                            />
+                                                            <InputNumber
+                                                                style={{ width: '7rem' }}
+                                                                size="middle"
+                                                                value={bonus.value}
+                                                                onChange={(val) => handleUpdateOverrideBonusValue(index, val ?? 0)}
+                                                            />
+                                                            <Button
+                                                                onClick={() => handleDeleteOverrideBonus(index)}
+                                                                icon={<DeleteOutlined />}
+                                                            />
+                                                        </div>
+                                                    );
+                                                })}
+                                                <Button
+                                                    onClick={handleAddOverrideBonus}
+                                                    style={styles.addBonusBtn}
+                                                    icon={<PlusOutlined />}
+                                                    disabled={flatBonusValue.length >= 9}
+                                                >
+                                                    Add Bonus
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Modifier Bonus */}
+                                    <div style={styles.bonusCard}>
+                                        <div style={styles.bonusCardHeader}>
+                                            <div>
+                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>Modifier Bonus</Text>
+                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>Apply a modifier based on another stat</Text>
+                                            </div>
+                                            <Switch
+                                                checked={modifierBonusEnabled}
+                                                onChange={handleModifierBonusChange}
+                                            />
+                                        </div>
+                                        {modifierBonusEnabled && (
+                                            <div style={styles.bonusCardContent}>
+                                                {/* Rows */}
+                                                {modifierBonusValue.map((mod, index) => (
+                                                    <div key={index} style={styles.modifierBonusRow}>
+                                                        <Text>Add</Text>
+                                                        <Select
+                                                            style={{ flex: 1, minWidth: '5rem' }}
+                                                            placeholder="from stat"
+                                                            value={mod.from || undefined}
+                                                            options={itemBonusStatSelection}
+                                                            onChange={(val) => handleUpdateModifierBonusFrom(index, val)}
+                                                        />
+                                                        <Text>modifier to</Text>
+                                                        <Select
+                                                            style={{ flex: 1, minWidth: '5rem' }}
+                                                            placeholder="to stat"
+                                                            value={mod.to || undefined}
+                                                            options={itemBonusStatSelection}
+                                                            onChange={(val) => handleUpdateModifierBonusTo(index, val)}
+                                                        />
+                                                        <Text>up to</Text>
+                                                        <InputNumber
+                                                            style={{ width: '5rem' }}
+                                                            value={mod.value}
+                                                            min={0}
+                                                            onChange={(val) => handleUpdateModifierBonusValue(index, val ?? 0)}
+                                                        />
+                                                        <Button
+                                                            onClick={() => handleDeleteModifierBonus(index)}
+                                                            icon={<DeleteOutlined />}
+                                                        />
+                                                    </div>
+                                                ))}
+
+                                                {/* Add button */}
+                                                <Button
+                                                    onClick={handleAddModifierBonus}
+                                                    style={styles.addBonusBtn}
+                                                    icon={<PlusOutlined />}
+                                                >
+                                                    Add Bonus
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </Form>
                 </div>
             </div>
@@ -582,5 +884,54 @@ const styles: { [key: string]: React.CSSProperties } = {
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
-    }
+    },
+    bonusCard: {
+        backgroundColor: '#f5f2ea',
+        border: '1px solid #e0dcd3',
+        borderRadius: '0.6rem',
+        overflow: 'hidden',
+        marginBottom: '0.75rem',
+    },
+    bonusCardHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0.9rem 1.1rem',
+    },
+    bonusCardContent: {
+        padding: '1rem 1.1rem',
+        borderTop: '1px solid #e0dcd3',
+    },
+    bonusTableHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.6rem',
+        marginBottom: '0.5rem',
+        paddingBottom: '0.4rem',
+        borderBottom: '1px solid #e0dcd3',
+    },
+    bonusTableRow: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.6rem',
+        marginBottom: '0.5rem',
+    },
+    addBonusBtn: {
+        marginTop: '0.5rem',
+        width: '100%',
+    },
+    modifierBonusRow: {
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '0.5rem',
+        marginBottom: '0.6rem',
+    },
+    damageRollRow: {
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '0.5rem',
+        marginBottom: '0.6rem',
+    },
 }
