@@ -1,4 +1,4 @@
-import { AutoComplete, Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Typography, Upload } from "antd";
+import { AutoComplete, Button, Checkbox, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Typography, Upload } from "antd";
 
 // utils
 import { ItemTypeEnum, WeaponToggleEnum } from "@/utils/enums";
@@ -76,11 +76,11 @@ export default function CreateItemModal({ open, onClose }: Props) {
         handleFileChange,
         handleRemoveImage,
         handleTypeChange,
-        restartForm,
         handleMagicItemChange,
         handleEquipSlotChange,
         handleUpdateVersatileDamageRoll,
         submitCreateItem,
+        restartForm,
     } = useCreateItem();
 
     const { t } = useTranslation();
@@ -130,8 +130,8 @@ export default function CreateItemModal({ open, onClose }: Props) {
                         icon={<CloseOutlined />}
                         style={{ padding: '1.2rem', borderRadius: '50%' }}
                         onClick={() => {
-                            onClose();
                             restartForm();
+                            onClose();
                         }}
                         type="text"
                     />
@@ -599,7 +599,118 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     <Text type="secondary">Properties of your Armor</Text>
                                 </div>
                                 <div style={styles.formContent}>
-
+                                    <Row style={styles.formRow}>
+                                        <Col style={{ width: '48%' }}>
+                                            <Form.Item
+                                                name="baseAc"
+                                                label="Base Armor Class"
+                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                rules={[{ required: true, message: 'Please enter armor class' }]}
+                                                initialValue={10}
+                                            >
+                                                <InputNumber
+                                                    style={{ width: '100%' }}
+                                                    min={0}
+                                                    placeholder="e.g. 12"
+                                                    size="large"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col style={{ width: '48%' }}>
+                                            <Form.Item
+                                                name="strengthReq"
+                                                label="Strength Requirement"
+                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                initialValue={0}
+                                            >
+                                                <InputNumber
+                                                    style={{ width: '100%' }}
+                                                    min={0}
+                                                    placeholder="Minimum strength reqirement"
+                                                    size="large"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+                                    <Title style={{ fontWeight: 'bold', fontSize: '1rem' }}>Modifier</Title>
+                                    <div style={styles.armorModBox}>
+                                        <Row style={styles.formRow}>
+                                            <Col style={{ width: '32%' }}>
+                                                <Form.Item
+                                                    name="dexMod"
+                                                    initialValue={false}
+                                                    style={{ margin: '0px' }}
+                                                >
+                                                    <Checkbox>Add Dex Modifier</Checkbox>
+                                                </Form.Item>
+                                            </Col>
+                                            <Col style={{ width: '32%' }}>
+                                                <Form.Item
+                                                    name="conMod"
+                                                    initialValue={false}
+                                                    style={{ margin: '0px' }}
+                                                >
+                                                    <Checkbox>Add Con Modifier</Checkbox>
+                                                </Form.Item>
+                                            </Col>
+                                            <Col style={{ width: '32%' }}>
+                                                <Form.Item
+                                                    name="wisMod"
+                                                    initialValue={false}
+                                                    style={{ margin: '0px' }}
+                                                >
+                                                    <Checkbox>Add Wis Modifier</Checkbox>
+                                                </Form.Item>
+                                            </Col>
+                                        </Row>
+                                    </div>
+                                    <Row style={styles.formRow}>
+                                        <Col style={{ width: '48%' }}>
+                                            <Form.Item
+                                                name="flatAcBonus"
+                                                label="Flat AC Bonus"
+                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                initialValue={0}
+                                            >
+                                                <InputNumber
+                                                    style={{ width: '100%' }}
+                                                    min={0}
+                                                    placeholder="e.g. 12"
+                                                    size="large"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col style={{ width: '48%' }}>
+                                            <Form.Item
+                                                name="maxModifier"
+                                                label="Max Modifier"
+                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                initialValue={0}
+                                            >
+                                                <InputNumber
+                                                    style={{ width: '100%' }}
+                                                    min={0}
+                                                    placeholder="Maximum modifier"
+                                                    size="large"
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+                                    <Divider style={{ margin: '1rem 0' }} />
+                                    <div style={styles.bonusCard}>
+                                        <Form.Item
+                                            name="stealthDisadvantage"
+                                            initialValue={false}
+                                            style={{ display: 'flex', flexDirection: 'column', padding: '0.9rem 1.1rem', marginBottom: '0px' }}
+                                        >
+                                            <Checkbox>
+                                                <Text strong>Stealth Disadvantage</Text>
+                                            </Checkbox>
+                                            <div style={{ marginLeft: '1.5rem' }}>
+                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>Add a fixed value to the character's stats</Text>
+                                            </div>
+                                        </Form.Item>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -1040,4 +1151,15 @@ const styles: { [key: string]: React.CSSProperties } = {
         gap: '0.5rem',
         marginBottom: '0.6rem',
     },
+    armorModBox: {
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f5f2ea',
+        padding: '0.8rem 1rem',
+        borderRadius: '0.6rem',
+        border: '1px solid #c9c6beff',
+        marginBottom: '1.5rem'
+    }
 }

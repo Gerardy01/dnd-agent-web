@@ -12,6 +12,7 @@ import useReferenceStore from "@/stores/useReferenceStore";
 
 // hooks
 import { useTranslation } from "react-i18next";
+import useStaticModal from "@/hooks/global/useStaticModal";
 
 // interfaces
 interface CreateItemFormValues {
@@ -32,6 +33,14 @@ interface CreateItemFormValues {
     conditionImmunities: string[];
     normalRange?: number;
     longRange?: number;
+    baseAc?: number;
+    strengthReq?: number;
+    dexMod?: boolean;
+    conMod?: boolean;
+    wisMod?: boolean;
+    flatAcBonus?: number;
+    maxModifier?: number;
+    stealthDisadvantage?: boolean;
 }
 interface Bonus {
     stats: string;
@@ -65,6 +74,7 @@ interface WeaponToggle {
 export default function useCreateItem() {
 
     const { t } = useTranslation();
+    const { } = useStaticModal();
 
     const { itemOptions, effectOptions } = useReferenceStore();
 
@@ -422,7 +432,7 @@ export default function useCreateItem() {
             twoHanded: weaponToggle.twoHanded,
             range: weaponToggle.range ? {
                 normal: values.normalRange,
-                long: values.longRange ? values.longRange : null,
+                long: values.longRange && values.longRange > 0 ? values.longRange : null,
             } : null,
             versatileDamageRoll: weaponToggle.twoHanded ? {
                 count: versatileDamageRoll.count,
@@ -433,6 +443,21 @@ export default function useCreateItem() {
             ammunition: weaponToggle.ammunition,
             loading: weaponToggle.loading,
             reach: weaponToggle.reach,
+        }
+
+        const armorProperties = {
+            baseAc: values.baseAc,
+            strengthReq: values.strengthReq ? values.strengthReq : 0,
+            modifier: {
+                dexMod: values.dexMod,
+                conMod: values.conMod,
+                wisMod: values.wisMod,
+            },
+            flatAcBonus: values.flatAcBonus ? values.flatAcBonus : 0,
+            maxModifier: values.maxModifier ? values.maxModifier : 0,
+            other: {
+                stealthDisadvantage: values.stealthDisadvantage,
+            }
         }
 
         const flatBonusTransformed = {
@@ -468,6 +493,7 @@ export default function useCreateItem() {
             currencyUnit: values.cost > 0 ? values.currencyUnit : "",
             equipSlot: values.type === ItemTypeEnum.GEAR ? values.equipSlot : null,
             weaponProperties: selectedType === ItemTypeEnum.WEAPON ? weaponProperties : null,
+            armorProperties: selectedType === ItemTypeEnum.ARMOR ? armorProperties : null,
             additionalProperties: additionalProperties,
             flatBonuses: flatBonusEnabled && flatBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? flatBonusTransformed : null,
             overrideBonuses: overrideBonusEnabled && overrideBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? overrideBonusTransformed : null,
