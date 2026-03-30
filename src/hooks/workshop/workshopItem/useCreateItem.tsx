@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Form, type FormProps } from "antd";
 
+// api
+import { workshopItemApi } from "@/api";
+
 // utils
 import { DamageTypeEnum, ItemTypeEnum, WeaponToggleEnum } from "@/utils/enums";
 
@@ -13,8 +16,10 @@ import useReferenceStore from "@/stores/useReferenceStore";
 // hooks
 import { useTranslation } from "react-i18next";
 import useStaticModal from "@/hooks/global/useStaticModal";
+import useNotification from "@/hooks/global/useNotification";
 
 // interfaces
+import type { WorkshopItemReturn } from "@/models/itemInterfaces";
 interface CreateItemFormValues {
     name: string;
     type: string;
@@ -71,16 +76,22 @@ interface WeaponToggle {
 }
 
 
-export default function useCreateItem() {
+export default function useCreateItem(
+    onClose: () => void,
+    uponWorkshopCreated?: (workshopItemData: WorkshopItemReturn) => void
+) {
 
     const { t } = useTranslation();
-    const { } = useStaticModal();
+    const { serverErrorModal } = useStaticModal();
+    const { successNotification } = useNotification();
 
     const { itemOptions, effectOptions } = useReferenceStore();
 
     const [createItemForm] = Form.useForm();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const [submitLoad, setSubmitLoad] = useState<boolean>(false);
 
     const [imageUrl, setImageUrl] = useState<string>("");
     const [selectedType, setSelectedType] = useState<string>(ItemTypeEnum.GEAR);
@@ -112,6 +123,7 @@ export default function useCreateItem() {
         bonus: 0,
         damageType: damageRollValue.length > 0 ? damageRollValue[0].damageType : DamageTypeEnum.ACID,
     });
+    const [baseAcValue, setBaseAcValue] = useState<number>(0);
 
     const [damageRollErrMsg, setDamageRollErrMsg] = useState<string>('');
     const [versatileDamageRollErrMsg, setVersatileDamageRollErrMsg] = useState<string>('');
@@ -259,7 +271,35 @@ export default function useCreateItem() {
             setDamageRollValue([]);
         }
 
+        if (selectedType === ItemTypeEnum.ARMOR) {
+            setOverrideBonusEnabled(true);
+
+            if (overrideBonusValue.length === 0) {
+                setOverrideBonusValue([
+                    {
+                        stats: 'ac',
+                        value: createItemForm.getFieldValue('baseAc') || 0,
+                    }
+                ]);
+            }
+
+            if (overrideBonusValue.some((b) => b.stats === 'ac')) {
+                setOverrideBonusValue(prev => prev.map((b) => b.stats === 'ac' ? { ...b, value: createItemForm.getFieldValue('baseAc') || 0 } : b));
+            } else {
+                setOverrideBonusValue(prev => [...prev, {
+                    stats: 'ac',
+                    value: createItemForm.getFieldValue('baseAc') || 0,
+                }]);
+            }
+        }
+
     }, [selectedType]);
+
+    useEffect(() => {
+        if (selectedType !== ItemTypeEnum.ARMOR) return;
+
+        setOverrideBonusValue(prev => prev.map((b) => b.stats === 'ac' ? { ...b, value: baseAcValue } : b));
+    }, [baseAcValue]);
 
     const handleFileChange = (file: File) => {
         if (!file) return;
@@ -401,16 +441,20 @@ export default function useCreateItem() {
         setVersatileDamageRollErrMsg("");
     };
 
+    const handleSetBaseAcValue = (value: number) => {
+        setBaseAcValue(value);
+    };
+
     const submitCreateItem: FormProps<CreateItemFormValues>['onFinish'] = async (values) => {
 
         if (selectedType === ItemTypeEnum.WEAPON && damageRollValue.length === 0) {
-            setDamageRollErrMsg("Please add at least one damage roll");
+            setDamageRollErrMsg(t('items.damageRollErrMsg'));
             return;
         }
 
         if (selectedType === ItemTypeEnum.WEAPON && weaponToggle.versatile) {
             if (versatileDamageRoll.count === 0 || versatileDamageRoll.dice === 0 || versatileDamageRoll.damageType === '') {
-                setVersatileDamageRollErrMsg("Please input all field properly.");
+                setVersatileDamageRollErrMsg(t('items.versatileDamageRollErrMsg'));
                 return;
             }
             setVersatileDamageRollErrMsg("");
@@ -431,7 +475,7 @@ export default function useCreateItem() {
             thrown: weaponToggle.thrown,
             twoHanded: weaponToggle.twoHanded,
             range: weaponToggle.range ? {
-                normal: values.normalRange,
+                normal: values.normalRange ?? 0,
                 long: values.longRange && values.longRange > 0 ? values.longRange : null,
             } : null,
             versatileDamageRoll: weaponToggle.twoHanded ? {
@@ -446,17 +490,17 @@ export default function useCreateItem() {
         }
 
         const armorProperties = {
-            baseAc: values.baseAc,
+            baseAc: values.baseAc ?? 10,
             strengthReq: values.strengthReq ? values.strengthReq : 0,
             modifier: {
-                dexMod: values.dexMod,
-                conMod: values.conMod,
-                wisMod: values.wisMod,
+                dexMod: values.dexMod ?? false,
+                conMod: values.conMod ?? false,
+                wisMod: values.wisMod ?? false,
             },
             flatAcBonus: values.flatAcBonus ? values.flatAcBonus : 0,
             maxModifier: values.maxModifier ? values.maxModifier : 0,
             other: {
-                stealthDisadvantage: values.stealthDisadvantage,
+                stealthDisadvantage: values.stealthDisadvantage ?? false,
             }
         }
 
@@ -500,7 +544,26 @@ export default function useCreateItem() {
             modifierBonuses: modifierBonusEnabled && modifierBonusFiltered.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? modifierBonusFiltered : null,
         }
 
-        console.log(submitData);
+        setSubmitLoad(true);
+
+        try {
+
+            const [err, res] = await workshopItemApi.createItem(submitData);
+
+            if (err) {
+                serverErrorModal();
+                return;
+            }
+
+            successNotification(t("items.createSuccess"));
+
+            handleCloseModal();
+
+            uponWorkshopCreated?.(res);
+
+        } finally {
+            setSubmitLoad(false);
+        }
     }
 
     const restartForm = () => {
@@ -529,6 +592,12 @@ export default function useCreateItem() {
             loading: false,
             reach: false,
         });
+        setBaseAcValue(0);
+    };
+
+    const handleCloseModal = () => {
+        restartForm();
+        onClose();
     };
 
     return {
@@ -560,6 +629,7 @@ export default function useCreateItem() {
         weaponToggleList,
         versatileDamageRoll,
         versatileDamageRollErrMsg,
+        submitLoad,
         handleFlatBonusChange,
         handleOverrideBonusChange,
         handleModifierBonusChange,
@@ -585,10 +655,11 @@ export default function useCreateItem() {
         handleFileChange,
         handleRemoveImage,
         handleTypeChange,
-        restartForm,
         handleMagicItemChange,
         handleEquipSlotChange,
         handleUpdateVersatileDamageRoll,
+        handleSetBaseAcValue,
         submitCreateItem,
+        handleCloseModal,
     }
 }

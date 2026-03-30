@@ -58,12 +58,25 @@ export default function useWorkshopItem() {
         setFilteredWorkshopItems(filtered);
     }, [searchValue]);
 
+    useEffect(() => {
+        if (sortValue === SortEnum.RECENT) {
+            setFilteredWorkshopItems((prev) => [...prev].sort((a, b) => b.createdAt.toString().localeCompare(a.createdAt.toString())));
+        }
+
+        if (sortValue === SortEnum.ASC) {
+            setFilteredWorkshopItems((prev) => [...prev].sort((a, b) => a.name.localeCompare(b.name)));
+        }
+
+        if (sortValue === SortEnum.DESC) {
+            setFilteredWorkshopItems((prev) => [...prev].sort((a, b) => b.name.localeCompare(a.name)));
+        }
+    }, [sortValue, searchValue]);
+
     const getWorkshopItemData = async () => {
         setLoading(true);
 
         try {
             const [error, res] = await workshopItemApi.getItems();
-
 
             if (error) {
                 serverErrorModal();
@@ -93,6 +106,15 @@ export default function useWorkshopItem() {
         setFilterModalOpen(value);
     }
 
+    const uponCreated = (data: WorkshopItemReturn) => {
+        if (sortValue === SortEnum.RECENT) {
+            setWorkshopItems((prev) => [data, ...prev]);
+            return;
+        }
+
+        setWorkshopItems((prev) => [...prev, data]);
+    }
+
     return {
         items: filteredWorkshopItems,
         loading,
@@ -104,5 +126,6 @@ export default function useWorkshopItem() {
         handleSort,
         handleCreateModal,
         handleFilterModal,
+        uponCreated,
     }
 }

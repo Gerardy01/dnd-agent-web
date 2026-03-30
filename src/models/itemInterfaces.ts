@@ -14,7 +14,7 @@ export type WeaponProperties = {
     twoHanded: boolean;
     range: {
         normal: number;
-        long: number;
+        long: number | null;
     } | null;
     versatileDamageRoll: DamageRoll | null;
     ammunition: boolean;
@@ -62,7 +62,7 @@ export type ModifierBonus = {
     value: number;
 }
 
-export interface CreateWorkshopItemDTO {
+export interface CreateItemDTO {
     image?: string;
     name: string;
     type: string;
@@ -83,7 +83,7 @@ export interface CreateWorkshopItemDTO {
     modifierBonus?: ModifierBonus[] | null;
 }
 
-export interface UpdateWorkshopItemDTO extends CreateWorkshopItemDTO {
+export interface UpdateWorkshopItemDTO extends CreateItemDTO {
     workshopItemId: number;
 }
 

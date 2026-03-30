@@ -25,6 +25,7 @@ export default function WorkshopItem() {
         handleSort,
         handleCreateModal,
         handleFilterModal,
+        uponCreated,
     } = useWorkshopItem();
 
     return (
@@ -67,6 +68,7 @@ export default function WorkshopItem() {
             <CreateItemModal
                 open={createModalOpen}
                 onClose={() => handleCreateModal(false)}
+                uponWorkshopCreated={uponCreated}
             />
 
         </div>

@@ -6,7 +6,7 @@ import { catchFetchError } from "@/utils/utility";
 // interfaces
 import type { FetchResponse, ErrorResponse } from "@/models/globalInterfaces";
 import type {
-    CreateWorkshopItemDTO,
+    CreateItemDTO,
     UpdateWorkshopItemDTO,
     WorkshopItemReturn
 } from "@/models/itemInterfaces";
@@ -30,7 +30,7 @@ export class WorkshopItemApi {
         return [error, res.data.data];
     }
 
-    async createItem(data: CreateWorkshopItemDTO): Promise<[undefined, WorkshopItemReturn] | [ErrorResponse]> {
+    async createItem(data: CreateItemDTO): Promise<[undefined, WorkshopItemReturn] | [ErrorResponse]> {
         const [error, res] = await catchFetchError(axiosPrivate.post<FetchResponse<WorkshopItemReturn>>(
             '/workshop-item',
             data,

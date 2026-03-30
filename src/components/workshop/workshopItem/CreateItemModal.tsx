@@ -12,15 +12,17 @@ import { SparklesIcon } from "@/assets";
 import { CloseOutlined, DeleteOutlined, PictureOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 
 // interfaces
+import type { WorkshopItemReturn } from "@/models/itemInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
+    uponWorkshopCreated?: (workshopItemData: WorkshopItemReturn) => void;
 }
 
 const { Title, Text } = Typography;
 
 
-export default function CreateItemModal({ open, onClose }: Props) {
+export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: Props) {
 
     const {
         createItemForm,
@@ -51,6 +53,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
         weaponToggleList,
         versatileDamageRoll,
         versatileDamageRollErrMsg,
+        submitLoad,
         handleFlatBonusChange,
         handleOverrideBonusChange,
         handleModifierBonusChange,
@@ -79,9 +82,10 @@ export default function CreateItemModal({ open, onClose }: Props) {
         handleMagicItemChange,
         handleEquipSlotChange,
         handleUpdateVersatileDamageRoll,
+        handleSetBaseAcValue,
         submitCreateItem,
-        restartForm,
-    } = useCreateItem();
+        handleCloseModal,
+    } = useCreateItem(onClose, uponWorkshopCreated);
 
     const { t } = useTranslation();
 
@@ -108,31 +112,30 @@ export default function CreateItemModal({ open, onClose }: Props) {
         >
             <div style={styles.header}>
                 <div>
-                    <Title level={2} style={{ margin: '0px' }}>Create New Item</Title>
-                    <Text style={{ fontSize: '1rem' }}>Design and customize your item</Text>
+                    <Title level={2} style={{ margin: '0px' }}>{t('items.createItemTitle')}</Title>
+                    <Text style={{ fontSize: '1rem' }}>{t('items.createItemDescription')}</Text>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <Button
                         icon={<SparklesIcon style={{ fontSize: '1.5rem' }} />}
                         style={{ padding: '1.2rem 1rem' }}
+                        disabled={submitLoad}
                     >
-                        Generate With AI
+                        {t('global.generateWithAi')}
                     </Button>
                     <Button
                         style={{ padding: '1.2rem 1.5rem' }}
                         type="primary"
                         onClick={() => createItemForm.submit()}
+                        loading={submitLoad}
                     >
-                        Create Item
+                        {t('items.createItem')}
                     </Button>
                     <Divider vertical style={styles.titleDivier} />
                     <Button
                         icon={<CloseOutlined />}
                         style={{ padding: '1.2rem', borderRadius: '50%' }}
-                        onClick={() => {
-                            restartForm();
-                            onClose();
-                        }}
+                        onClick={handleCloseModal}
                         type="text"
                     />
                 </div>
@@ -141,7 +144,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                 <div style={{ width: '30%', position: 'sticky', top: '7.7rem', alignSelf: 'flex-start' }}>
                     <div style={styles.imageFormContainer}>
                         <Title level={4} style={{ marginTop: 0, marginBottom: '1rem' }}>
-                            Item Image
+                            {t('items.itemImage')}
                         </Title>
                         {!imageUrl ? (
                             <Upload.Dragger
@@ -159,8 +162,8 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                         <PictureOutlined style={{ fontSize: '1.8rem' }} />
                                     </div>
                                     <div>
-                                        <Text strong style={{ display: 'block', fontSize: '1rem' }}>Drop image here</Text>
-                                        <Text type="secondary" style={{ fontSize: '0.85rem' }}>or click to browse</Text>
+                                        <Text strong style={{ display: 'block', fontSize: '1rem' }}>{t('items.dropImageHere')}</Text>
+                                        <Text type="secondary" style={{ fontSize: '0.85rem' }}>{t('items.orClickToBrowse')}</Text>
                                     </div>
                                 </div>
                             </Upload.Dragger>
@@ -169,6 +172,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                 <img src={imageUrl} alt="Item" style={styles.imagePreview} />
                                 <button
                                     style={styles.removeBtn}
+                                    disabled={submitLoad}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handleRemoveImage();
@@ -192,14 +196,16 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                 icon={<UploadOutlined />}
                                 style={{ flex: 1, padding: '1.2rem', borderColor: '#d4cebe', borderRadius: '8px' }}
                                 onClick={() => fileInputRef.current?.click()}
+                                disabled={submitLoad}
                             >
-                                Upload
+                                {t('global.upload')}
                             </Button>
                             <Button
                                 icon={<SparklesIcon style={{ fontSize: '1rem' }} />}
                                 style={{ flex: 1, padding: '1.2rem', borderColor: '#d4cebe', borderRadius: '8px' }}
+                                disabled={submitLoad}
                             >
-                                Generate
+                                {t('global.generate')}
                             </Button>
                         </div>
                     </div>
@@ -215,37 +221,37 @@ export default function CreateItemModal({ open, onClose }: Props) {
                         <div style={styles.formContainer}>
                             <div style={styles.formHeader}>
                                 <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
-                                    Basic Information
+                                    {t('items.basicInformation')}
                                 </Title>
-                                <Text type="secondary">Add basic information about your item</Text>
+                                <Text type="secondary">{t('items.basicInformationDescription')}</Text>
                             </div>
                             <div style={styles.formContent}>
                                 <Form.Item
                                     name="name"
-                                    label="Item Name"
+                                    label={t('items.itemName')}
                                     labelCol={{ style: { fontWeight: 'bold' } }}
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Please enter the item name',
+                                            message: t('global.fieldRequired'),
                                         },
                                     ]}
                                 >
                                     <Input
-                                        placeholder="Enter item name..."
+                                        placeholder={t('items.itemNamePlaceholder')}
                                         size="large"
                                         maxLength={100}
                                     />
                                 </Form.Item>
                                 <Form.Item
                                     name="type"
-                                    label="Item Type"
+                                    label={t('items.itemType')}
                                     labelCol={{ style: { fontWeight: 'bold' } }}
                                     initialValue={ItemTypeEnum.GEAR}
                                     required
                                 >
                                     <Select
-                                        placeholder="Select item type..."
+                                        placeholder={t('items.itemTypePlaceholder')}
                                         size="large"
                                         options={typeSelection}
                                         onChange={handleTypeChange}
@@ -253,36 +259,36 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                 </Form.Item>
                                 <Form.Item
                                     name="description"
-                                    label="Description"
+                                    label={t('items.description')}
                                     labelCol={{ style: { fontWeight: 'bold' } }}
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Please enter the item description',
+                                            message: t('global.fieldRequired'),
                                         },
                                     ]}
                                 >
                                     <Input.TextArea
                                         rows={5}
-                                        placeholder="What does the item do?"
+                                        placeholder={t('items.descriptionPlaceholder')}
                                         maxLength={500}
                                         showCount
                                     />
                                 </Form.Item>
                                 <Form.Item
                                     name="appearance"
-                                    label="Appearance"
+                                    label={t('items.appearance')}
                                     labelCol={{ style: { fontWeight: 'bold' } }}
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Please enter the item appearance',
+                                            message: t('global.fieldRequired'),
                                         },
                                     ]}
                                 >
                                     <Input.TextArea
                                         rows={4}
-                                        placeholder="What does the item look like?"
+                                        placeholder={t('items.appearancePlaceholder')}
                                         maxLength={500}
                                         showCount
                                     />
@@ -293,24 +299,24 @@ export default function CreateItemModal({ open, onClose }: Props) {
                         <div style={styles.formContainer}>
                             <div style={styles.formHeader}>
                                 <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
-                                    Item Properties
+                                    {t('items.itemProperties')}
                                 </Title>
-                                <Text type="secondary">Add statistics and characteristics of your item</Text>
+                                <Text type="secondary">{t('items.itemPropertiesDescription')}</Text>
                             </div>
                             <div style={styles.formContent}>
                                 <Form.Item
                                     name="category"
-                                    label="Category"
+                                    label={t('items.category')}
                                     labelCol={{ style: { fontWeight: 'bold' } }}
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Please select the item category',
+                                            message: t('global.fieldRequired'),
                                         },
                                     ]}
                                 >
                                     <Select
-                                        placeholder="Select item category..."
+                                        placeholder={t('items.categoryPlaceholder')}
                                         size="large"
                                         options={selectedType === ItemTypeEnum.GEAR ? gearCategoriesSelection : selectedType === ItemTypeEnum.WEAPON ? weaponCategoriesSelection : armorCategoriesSelection}
                                     />
@@ -319,17 +325,17 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     <Col style={{ width: '48%' }}>
                                         <Form.Item
                                             name="rarity"
-                                            label="Rarity"
+                                            label={t('items.rarity')}
                                             labelCol={{ style: { fontWeight: 'bold' } }}
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: 'Please select the item rarity',
+                                                    message: t('global.fieldRequired'),
                                                 },
                                             ]}
                                         >
                                             <Select
-                                                placeholder="Select item rarity..."
+                                                placeholder={t('items.rarityPlaceholder')}
                                                 size="large"
                                                 options={raritySelection}
                                             />
@@ -338,14 +344,14 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     <Col style={{ width: '48%' }}>
                                         <Form.Item
                                             name="isMagicItem"
-                                            label="Magic Item"
+                                            label={t('items.magicItem')}
                                             labelCol={{ style: { fontWeight: 'bold' } }}
                                             style={{ width: '100%' }}
                                             required
                                             initialValue={false}
                                         >
                                             <div style={styles.magicItemContainer}>
-                                                <Text>{isMagicItem ? 'Is Magic' : 'Not Magic'}</Text>
+                                                <Text>{isMagicItem ? t('items.isMagic') : t('items.notMagic')}</Text>
                                                 <Switch onChange={handleMagicItemChange} />
                                             </div>
                                         </Form.Item>
@@ -355,18 +361,18 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     <Col style={{ width: '48%' }}>
                                         <Form.Item
                                             name="weight"
-                                            label="Weight (lbs.)"
+                                            label={t('items.weight')}
                                             labelCol={{ style: { fontWeight: 'bold' } }}
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: 'Please enter the item weight',
+                                                    message: t('global.fieldRequired'),
                                                 },
                                             ]}
                                             initialValue={0}
                                         >
                                             <InputNumber
-                                                placeholder="Weight"
+                                                placeholder={t('items.weightPlaceholder')}
                                                 size="large"
                                                 min={0}
                                                 step={0.1}
@@ -380,12 +386,12 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     <Col style={{ width: '48%' }}>
                                         <Form.Item
                                             name="cost"
-                                            label="Cost"
+                                            label={t('items.cost')}
                                             labelCol={{ style: { fontWeight: 'bold' } }}
                                             initialValue={0}
                                         >
                                             <InputNumber
-                                                placeholder="Cost"
+                                                placeholder={t('items.costPlaceholder')}
                                                 size="large"
                                                 min={0}
                                                 mode="spinner"
@@ -396,7 +402,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     <Col style={{ width: '48%' }}>
                                         <Form.Item
                                             name="currencyUnit"
-                                            label="Currency Unit"
+                                            label={t('items.currencyUnit')}
                                             labelCol={{ style: { fontWeight: 'bold' } }}
                                             dependencies={['cost']}
                                             rules={[
@@ -404,7 +410,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     validator(_, value) {
                                                         const costValue = getFieldValue('cost');
                                                         if (costValue > 0 && !value) {
-                                                            return Promise.reject(new Error('Please select currency unit'));
+                                                            return Promise.reject(new Error(t('items.currencyUnitRequired')));
                                                         }
                                                         return Promise.resolve();
                                                     },
@@ -413,7 +419,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                             initialValue=""
                                         >
                                             <Select
-                                                placeholder="Select currency unit..."
+                                                placeholder={t('items.currencyUnitPlaceholder')}
                                                 size="large"
                                                 options={currencyUnitSelection}
                                             />
@@ -423,12 +429,12 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                 {selectedType === ItemTypeEnum.GEAR && (
                                     <Form.Item
                                         name="equipSlot"
-                                        label="Equip Slot"
+                                        label={t('items.equipSlot')}
                                         labelCol={{ style: { fontWeight: 'bold' } }}
                                         initialValue=""
                                     >
                                         <Select
-                                            placeholder="Select equip slot..."
+                                            placeholder={t('items.equipSlotPlaceholder')}
                                             size="large"
                                             options={equipSlotSelection}
                                             onChange={handleEquipSlotChange}
@@ -442,13 +448,13 @@ export default function CreateItemModal({ open, onClose }: Props) {
                             <div style={styles.formContainer}>
                                 <div style={styles.formHeader}>
                                     <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
-                                        Weapon Properties
+                                        {t('items.weaponProperties')}
                                     </Title>
-                                    <Text type="secondary">Properties of your weapon</Text>
+                                    <Text type="secondary">{t('items.weaponPropertiesDescription')}</Text>
                                 </div>
                                 <div style={styles.formContent}>
                                     <Form.Item
-                                        label="Damage Roll"
+                                        label={t('items.damageRoll')}
                                         labelCol={{ style: { fontWeight: 'bold' } }}
                                         help={damageRollErrMsg}
                                         validateStatus={damageRollErrMsg ? 'error' : ''}
@@ -478,7 +484,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     />
                                                     <Select
                                                         style={{ flex: 1 }}
-                                                        placeholder="Damage type..."
+                                                        placeholder={t('items.damageTypePlaceholder')}
                                                         value={roll.damageType || undefined}
                                                         options={damageTypeSelection}
                                                         onChange={(val) => handleUpdateDamageRollType(index, val)}
@@ -496,7 +502,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                 style={styles.addBonusBtn}
                                                 icon={<PlusOutlined />}
                                             >
-                                                Add Roll
+                                                {t('items.addRoll')}
                                             </Button>
                                         </>
                                     </Form.Item>
@@ -518,27 +524,27 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                         <Col style={{ width: '48%' }}>
                                                             <Form.Item
                                                                 name="normalRange"
-                                                                label="Normal Range (ft)"
+                                                                label={t('items.normalRange')}
                                                                 labelCol={{ style: { fontWeight: 'bold' } }}
-                                                                rules={[{ required: true, message: 'Please enter normal range' }]}
+                                                                rules={[{ required: true, message: t('global.fieldRequired') }]}
                                                             >
                                                                 <InputNumber
                                                                     style={{ width: '100%' }}
                                                                     min={0}
-                                                                    placeholder="Enter normal range"
+                                                                    placeholder={t('items.normalRangePlaceholder')}
                                                                 />
                                                             </Form.Item>
                                                         </Col>
                                                         <Col style={{ width: '48%' }}>
                                                             <Form.Item
                                                                 name="longRange"
-                                                                label="Long Range"
+                                                                label={t('items.longRange')}
                                                                 labelCol={{ style: { fontWeight: 'bold' } }}
                                                             >
                                                                 <InputNumber
                                                                     style={{ width: '100%' }}
                                                                     min={0}
-                                                                    placeholder="Enter long range"
+                                                                    placeholder={t('items.longRangePlaceholder')}
                                                                 />
                                                             </Form.Item>
                                                         </Col>
@@ -594,45 +600,46 @@ export default function CreateItemModal({ open, onClose }: Props) {
                             <div style={styles.formContainer}>
                                 <div style={styles.formHeader}>
                                     <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
-                                        Armor Properties
+                                        {t('items.armorProperties')}
                                     </Title>
-                                    <Text type="secondary">Properties of your Armor</Text>
+                                    <Text type="secondary">{t('items.armorPropertiesDescription')}</Text>
                                 </div>
                                 <div style={styles.formContent}>
                                     <Row style={styles.formRow}>
                                         <Col style={{ width: '48%' }}>
                                             <Form.Item
                                                 name="baseAc"
-                                                label="Base Armor Class"
+                                                label={t('items.baseAc')}
                                                 labelCol={{ style: { fontWeight: 'bold' } }}
-                                                rules={[{ required: true, message: 'Please enter armor class' }]}
+                                                rules={[{ required: true, message: t('global.fieldRequired') }]}
                                                 initialValue={10}
                                             >
                                                 <InputNumber
                                                     style={{ width: '100%' }}
                                                     min={0}
-                                                    placeholder="e.g. 12"
+                                                    placeholder={t('items.baseAcPlaceholder')}
                                                     size="large"
+                                                    onChange={(value) => handleSetBaseAcValue(Number(value) || 0)}
                                                 />
                                             </Form.Item>
                                         </Col>
                                         <Col style={{ width: '48%' }}>
                                             <Form.Item
                                                 name="strengthReq"
-                                                label="Strength Requirement"
+                                                label={t('items.strengthReq')}
                                                 labelCol={{ style: { fontWeight: 'bold' } }}
                                                 initialValue={0}
                                             >
                                                 <InputNumber
                                                     style={{ width: '100%' }}
                                                     min={0}
-                                                    placeholder="Minimum strength reqirement"
+                                                    placeholder={t('items.strengthReqPlaceholder')}
                                                     size="large"
                                                 />
                                             </Form.Item>
                                         </Col>
                                     </Row>
-                                    <Title style={{ fontWeight: 'bold', fontSize: '1rem' }}>Modifier</Title>
+                                    <Title style={{ fontWeight: 'bold', fontSize: '1rem' }}>{t('items.modifier')}</Title>
                                     <div style={styles.armorModBox}>
                                         <Row style={styles.formRow}>
                                             <Col style={{ width: '32%' }}>
@@ -641,7 +648,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     initialValue={false}
                                                     style={{ margin: '0px' }}
                                                 >
-                                                    <Checkbox>Add Dex Modifier</Checkbox>
+                                                    <Checkbox>{t('items.addDexModifier')}</Checkbox>
                                                 </Form.Item>
                                             </Col>
                                             <Col style={{ width: '32%' }}>
@@ -650,7 +657,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     initialValue={false}
                                                     style={{ margin: '0px' }}
                                                 >
-                                                    <Checkbox>Add Con Modifier</Checkbox>
+                                                    <Checkbox>{t('items.addConModifier')}</Checkbox>
                                                 </Form.Item>
                                             </Col>
                                             <Col style={{ width: '32%' }}>
@@ -659,7 +666,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     initialValue={false}
                                                     style={{ margin: '0px' }}
                                                 >
-                                                    <Checkbox>Add Wis Modifier</Checkbox>
+                                                    <Checkbox>{t('items.addWisModifier')}</Checkbox>
                                                 </Form.Item>
                                             </Col>
                                         </Row>
@@ -668,14 +675,14 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                         <Col style={{ width: '48%' }}>
                                             <Form.Item
                                                 name="flatAcBonus"
-                                                label="Flat AC Bonus"
+                                                label={t('items.flatAcBonus')}
                                                 labelCol={{ style: { fontWeight: 'bold' } }}
                                                 initialValue={0}
                                             >
                                                 <InputNumber
                                                     style={{ width: '100%' }}
                                                     min={0}
-                                                    placeholder="e.g. 12"
+                                                    placeholder={t('items.flatAcBonusPlaceholder')}
                                                     size="large"
                                                 />
                                             </Form.Item>
@@ -683,14 +690,14 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                         <Col style={{ width: '48%' }}>
                                             <Form.Item
                                                 name="maxModifier"
-                                                label="Max Modifier"
+                                                label={t('items.maxModifier')}
                                                 labelCol={{ style: { fontWeight: 'bold' } }}
                                                 initialValue={0}
                                             >
                                                 <InputNumber
                                                     style={{ width: '100%' }}
                                                     min={0}
-                                                    placeholder="Maximum modifier"
+                                                    placeholder={t('items.maxModifierPlaceholder')}
                                                     size="large"
                                                 />
                                             </Form.Item>
@@ -704,10 +711,10 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                             style={{ display: 'flex', flexDirection: 'column', padding: '0.9rem 1.1rem', marginBottom: '0px' }}
                                         >
                                             <Checkbox>
-                                                <Text strong>Stealth Disadvantage</Text>
+                                                <Text strong>{t('items.stealthDisadvantage')}</Text>
                                             </Checkbox>
                                             <div style={{ marginLeft: '1.5rem' }}>
-                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>Add a fixed value to the character's stats</Text>
+                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>{t('items.stealthDisadvantageDescription')}</Text>
                                             </div>
                                         </Form.Item>
                                     </div>
@@ -718,59 +725,59 @@ export default function CreateItemModal({ open, onClose }: Props) {
                         <div style={styles.formContainer}>
                             <div style={styles.formHeader}>
                                 <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
-                                    Additional Properties
+                                    {t('items.additionalProperties')}
                                 </Title>
-                                <Text type="secondary">Extra properties of your item</Text>
+                                <Text type="secondary">{t('items.additionalPropertiesDescription')}</Text>
                             </div>
                             <div style={styles.formContent}>
                                 <Form.Item
                                     name="immunities"
-                                    label="Immunities"
+                                    label={t('items.immunities')}
                                     labelCol={{ style: { fontWeight: 'bold' } }}
                                     initialValue={[]}
                                 >
                                     <Select
                                         mode="multiple"
-                                        placeholder="Select damage immunities..."
+                                        placeholder={t('items.immunitiesPlaceholder')}
                                         size="large"
                                         options={damageTypeSelection}
                                     />
                                 </Form.Item>
                                 <Form.Item
                                     name="resistances"
-                                    label="Resistances"
+                                    label={t('items.resistances')}
                                     labelCol={{ style: { fontWeight: 'bold' } }}
                                     initialValue={[]}
                                 >
                                     <Select
                                         mode="multiple"
-                                        placeholder="Select damage resistances..."
+                                        placeholder={t('items.resistancesPlaceholder')}
                                         size="large"
                                         options={damageTypeSelection}
                                     />
                                 </Form.Item>
                                 <Form.Item
                                     name="vulnerabilities"
-                                    label="Vulnerabilities"
+                                    label={t('items.vulnerabilities')}
                                     labelCol={{ style: { fontWeight: 'bold' } }}
                                     initialValue={[]}
                                 >
                                     <Select
                                         mode="multiple"
-                                        placeholder="Select damage vulnerabilities..."
+                                        placeholder={t('items.vulnerabilitiesPlaceholder')}
                                         size="large"
                                         options={damageTypeSelection}
                                     />
                                 </Form.Item>
                                 <Form.Item
                                     name="conditionImmunities"
-                                    label="Condition Immunities"
+                                    label={t('items.conditionImmunities')}
                                     labelCol={{ style: { fontWeight: 'bold' } }}
                                     initialValue={[]}
                                 >
                                     <Select
                                         mode="multiple"
-                                        placeholder="Select conditions..."
+                                        placeholder={t('items.conditionImmunitiesPlaceholder')}
                                         size="large"
                                         options={conditionSelection}
                                     />
@@ -791,8 +798,8 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     <div style={styles.bonusCard}>
                                         <div style={styles.bonusCardHeader}>
                                             <div>
-                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>Flat Bonus</Text>
-                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>Add a fixed value to the character's stats</Text>
+                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t('items.flatBonus')}</Text>
+                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>{t('items.flatBonusDescription')}</Text>
                                             </div>
                                             <Switch
                                                 checked={flatBonusEnabled}
@@ -804,8 +811,8 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                 {/* Table header */}
                                                 {flatBonusValue.length > 0 && (
                                                     <div style={styles.bonusTableHeader}>
-                                                        <Text strong style={{ flex: 1 }}>STAT</Text>
-                                                        <Text strong style={{ width: '7rem' }}>VALUE</Text>
+                                                        <Text strong style={{ flex: 1 }}>{t('items.statColumnHeader')}</Text>
+                                                        <Text strong style={{ width: '7rem' }}>{t('items.valueColumnHeader')}</Text>
                                                         <Text style={{ width: '2.2rem' }} />
                                                     </div>
                                                 )}
@@ -824,7 +831,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                             <Select
                                                                 style={{ flex: 1 }}
                                                                 size="middle"
-                                                                placeholder="Select stat..."
+                                                                placeholder={t('items.selectStatPlaceholder')}
                                                                 value={bonus.stats || undefined}
                                                                 options={availableOptions}
                                                                 onChange={(val) => handleUpdateFlatBonusStat(index, val)}
@@ -848,7 +855,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     icon={<PlusOutlined />}
                                                     disabled={flatBonusValue.length >= 9}
                                                 >
-                                                    Add Bonus
+                                                    {t('items.addBonus')}
                                                 </Button>
                                             </div>
                                         )}
@@ -858,12 +865,13 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     <div style={styles.bonusCard}>
                                         <div style={styles.bonusCardHeader}>
                                             <div>
-                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>Override Bonus</Text>
-                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>Replace the character's stat with a specific value</Text>
+                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t('items.overrideBonus')}</Text>
+                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>{t('items.overrideBonusDescription')}</Text>
                                             </div>
                                             <Switch
                                                 checked={overrideBonusEnabled}
                                                 onChange={handleOverrideBonusChange}
+                                                disabled={selectedType === ItemTypeEnum.ARMOR}
                                             />
                                         </div>
                                         {overrideBonusEnabled && (
@@ -871,8 +879,8 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                 {/* Table header */}
                                                 {overrideBonusValue.length > 0 && (
                                                     <div style={styles.bonusTableHeader}>
-                                                        <Text strong style={{ flex: 1 }}>STAT</Text>
-                                                        <Text strong style={{ width: '7rem' }}>VALUE</Text>
+                                                        <Text strong style={{ flex: 1 }}>{t('items.statColumnHeader')}</Text>
+                                                        <Text strong style={{ width: '7rem' }}>{t('items.valueColumnHeader')}</Text>
                                                         <Text style={{ width: '2.2rem' }} />
                                                     </div>
                                                 )}
@@ -886,25 +894,29 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     const availableOptions = itemBonusStatSelection.filter(
                                                         (opt) => !usedStats.includes(opt.value)
                                                     );
+                                                    const isFromArmor = selectedType === ItemTypeEnum.ARMOR && overrideBonusValue[index].stats === 'ac';
                                                     return (
                                                         <div key={index} style={styles.bonusTableRow}>
                                                             <Select
                                                                 style={{ flex: 1 }}
                                                                 size="middle"
-                                                                placeholder="Select stat..."
+                                                                placeholder={t('items.selectStatPlaceholder')}
                                                                 value={bonus.stats || undefined}
                                                                 options={availableOptions}
                                                                 onChange={(val) => handleUpdateOverrideBonusStat(index, val)}
+                                                                disabled={isFromArmor}
                                                             />
                                                             <InputNumber
                                                                 style={{ width: '7rem' }}
                                                                 size="middle"
                                                                 value={bonus.value}
                                                                 onChange={(val) => handleUpdateOverrideBonusValue(index, val ?? 0)}
+                                                                disabled={isFromArmor}
                                                             />
                                                             <Button
                                                                 onClick={() => handleDeleteOverrideBonus(index)}
                                                                 icon={<DeleteOutlined />}
+                                                                disabled={isFromArmor}
                                                             />
                                                         </div>
                                                     );
@@ -915,7 +927,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     icon={<PlusOutlined />}
                                                     disabled={flatBonusValue.length >= 9}
                                                 >
-                                                    Add Bonus
+                                                    {t('items.addBonus')}
                                                 </Button>
                                             </div>
                                         )}
@@ -925,8 +937,8 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                     <div style={styles.bonusCard}>
                                         <div style={styles.bonusCardHeader}>
                                             <div>
-                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>Modifier Bonus</Text>
-                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>Apply a modifier based on another stat</Text>
+                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t('items.modifierBonus')}</Text>
+                                                <Text type="secondary" style={{ fontSize: '0.82rem' }}>{t('items.modifierBonusDescription')}</Text>
                                             </div>
                                             <Switch
                                                 checked={modifierBonusEnabled}
@@ -938,23 +950,23 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                 {/* Rows */}
                                                 {modifierBonusValue.map((mod, index) => (
                                                     <div key={index} style={styles.modifierBonusRow}>
-                                                        <Text>Add</Text>
+                                                        <Text>{t('items.modBonusAdd')}</Text>
                                                         <Select
                                                             style={{ flex: 1, minWidth: '5rem' }}
-                                                            placeholder="from stat"
+                                                            placeholder={t('items.fromStatPlaceholder')}
                                                             value={mod.from || undefined}
                                                             options={itemBonusStatSelection}
                                                             onChange={(val) => handleUpdateModifierBonusFrom(index, val)}
                                                         />
-                                                        <Text>modifier to</Text>
+                                                        <Text>{t('items.modBonusModifierTo')}</Text>
                                                         <Select
                                                             style={{ flex: 1, minWidth: '5rem' }}
-                                                            placeholder="to stat"
+                                                            placeholder={t('items.toStatPlaceholder')}
                                                             value={mod.to || undefined}
                                                             options={itemBonusStatSelection}
                                                             onChange={(val) => handleUpdateModifierBonusTo(index, val)}
                                                         />
-                                                        <Text>up to</Text>
+                                                        <Text>{t('items.modBonusUpTo')}</Text>
                                                         <InputNumber
                                                             style={{ width: '5rem' }}
                                                             value={mod.value}
@@ -974,7 +986,7 @@ export default function CreateItemModal({ open, onClose }: Props) {
                                                     style={styles.addBonusBtn}
                                                     icon={<PlusOutlined />}
                                                 >
-                                                    Add Bonus
+                                                    {t('items.addBonus')}
                                                 </Button>
                                             </div>
                                         )}
