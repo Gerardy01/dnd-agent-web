@@ -1,4 +1,4 @@
-import { Button, Input, Select } from "antd";
+import { Button, Input, Popover, Select } from "antd";
 import { FilterOutlined, PlusOutlined } from "@ant-design/icons";
 
 // utils
@@ -11,11 +11,11 @@ interface Props {
     sort: string;
     onSort: (value: string) => void;
     onCreate: () => void;
-    onFilterClick: () => void;
+    filterModalContent?: React.ReactNode;
 }
 
 
-export default function WorkshopControl({ search, onSearch, sort, onSort, onCreate, onFilterClick }: Props) {
+export default function WorkshopControl({ search, onSearch, sort, onSort, onCreate, filterModalContent }: Props) {
     return (
         <div style={styles.container}>
             <Input
@@ -24,12 +24,17 @@ export default function WorkshopControl({ search, onSearch, sort, onSort, onCrea
                 value={search}
                 onChange={(e) => onSearch(e.target.value)}
             />
-            <Button
-                icon={<FilterOutlined />}
-                size="large"
-                style={styles.filterButton}
-                onClick={onFilterClick}
-            />
+            <Popover
+                content={filterModalContent}
+                trigger="click"
+                placement="bottom"
+            >
+                <Button
+                    icon={<FilterOutlined />}
+                    size="large"
+                    style={styles.filterButton}
+                />
+            </Popover>
             <Select
                 size="large"
                 options={[

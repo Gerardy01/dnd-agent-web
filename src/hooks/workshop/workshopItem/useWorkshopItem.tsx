@@ -8,13 +8,20 @@ import { SortEnum } from "@/utils/enums";
 
 // hooks
 import useStaticModal from "@/hooks/global/useStaticModal";
+import { useTranslation } from "react-i18next";
+
+// stores
+import useReferenceStore from "@/stores/useReferenceStore";
 
 // interfaces
 import type { WorkshopItemReturn } from "@/models/itemInterfaces";
 
 export default function useWorkshopItem() {
 
+    const { t } = useTranslation();
     const { serverErrorModal } = useStaticModal();
+
+    const { itemOptions } = useReferenceStore();
 
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -24,9 +31,37 @@ export default function useWorkshopItem() {
     const [search, setSearch] = useState<string>("");
     const [searchValue, setSearchValue] = useState<string>("");
     const [sortValue, setSortValue] = useState<string>(SortEnum.RECENT);
+    const [typeFilterValue, setTypeFilterValue] = useState<string[]>([]);
+    const [categoryFilterValue, setCategoryFilterValue] = useState<string[]>([]);
+    const [rarityFilterValue, setRarityFilterValue] = useState<string[]>([]);
+    const [magicItemOnly, setMagicItemOnly] = useState<boolean>(false);
 
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
-    const [filterModalOpen, setFilterModalOpen] = useState<boolean>(false);
+
+    const typeSelection = itemOptions.itemType.map((itemType) => ({
+        label: t(`items.${itemType}`),
+        value: itemType,
+    }));
+
+    const categorySelection = [
+        ...itemOptions.weaponCategories.map((weaponCategory) => ({
+            label: t(`items.${weaponCategory}`),
+            value: weaponCategory,
+        })),
+        ...itemOptions.armorCategories.map((armorCategory) => ({
+            label: t(`items.${armorCategory}`),
+            value: armorCategory,
+        })),
+        ...itemOptions.gearCategories.map((gearCategory) => ({
+            label: t(`items.${gearCategory}`),
+            value: gearCategory,
+        })),
+    ];
+
+    const raritySelection = itemOptions.itemRarity.map((rarity) => ({
+        label: t(`items.${rarity}`),
+        value: rarity,
+    }));
 
     useEffect(() => {
         getWorkshopItemData();
@@ -45,7 +80,13 @@ export default function useWorkshopItem() {
     }, [search]);
 
     useEffect(() => {
-        if (!searchValue) return setFilteredWorkshopItems(workshopItems);
+        if (
+            !searchValue &&
+            typeFilterValue.length === 0 &&
+            categoryFilterValue.length === 0 &&
+            rarityFilterValue.length === 0 &&
+            !magicItemOnly
+        ) return setFilteredWorkshopItems(workshopItems);
 
         let filtered = [...workshopItems];
 
@@ -55,8 +96,30 @@ export default function useWorkshopItem() {
             );
         }
 
+        if (typeFilterValue.length > 0) {
+            filtered = filtered.filter((item) =>
+                typeFilterValue.includes(item.type)
+            );
+        }
+
+        if (categoryFilterValue.length > 0) {
+            filtered = filtered.filter((item) =>
+                categoryFilterValue.includes(item.category)
+            );
+        }
+
+        if (rarityFilterValue.length > 0) {
+            filtered = filtered.filter((item) =>
+                rarityFilterValue.includes(item.rarity)
+            );
+        }
+
+        if (magicItemOnly) {
+            filtered = filtered.filter((item) => item.isMagicItem);
+        }
+
         setFilteredWorkshopItems(filtered);
-    }, [searchValue]);
+    }, [searchValue, typeFilterValue, categoryFilterValue, rarityFilterValue, magicItemOnly]);
 
     useEffect(() => {
         if (sortValue === SortEnum.RECENT) {
@@ -102,8 +165,20 @@ export default function useWorkshopItem() {
         setCreateModalOpen(value);
     }
 
-    const handleFilterModal = (value: boolean) => {
-        setFilterModalOpen(value);
+    const handleTypeFilter = (value: string[]) => {
+        setTypeFilterValue(value);
+    }
+
+    const handleCategoryFilter = (value: string[]) => {
+        setCategoryFilterValue(value);
+    }
+
+    const handleRarityFilter = (value: string[]) => {
+        setRarityFilterValue(value);
+    }
+
+    const handleMagicItemOnly = (value: boolean) => {
+        setMagicItemOnly(value);
     }
 
     const uponCreated = (data: WorkshopItemReturn) => {
@@ -115,17 +190,34 @@ export default function useWorkshopItem() {
         setWorkshopItems((prev) => [...prev, data]);
     }
 
+    const resetFilters = () => {
+        setTypeFilterValue([]);
+        setCategoryFilterValue([]);
+        setRarityFilterValue([]);
+        setMagicItemOnly(false);
+    }
+
     return {
         items: filteredWorkshopItems,
         loading,
         search,
         sortValue,
         createModalOpen,
-        filterModalOpen,
+        typeSelection,
+        categorySelection,
+        raritySelection,
+        typeFilterValue,
+        categoryFilterValue,
+        rarityFilterValue,
+        magicItemOnly,
         handleSearch,
         handleSort,
         handleCreateModal,
-        handleFilterModal,
+        handleTypeFilter,
+        handleCategoryFilter,
+        handleRarityFilter,
+        handleMagicItemOnly,
+        resetFilters,
         uponCreated,
     }
 }

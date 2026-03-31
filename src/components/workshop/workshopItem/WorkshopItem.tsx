@@ -1,4 +1,5 @@
-import { Empty, Typography } from "antd";
+import { Button, Empty, Select, Switch, Typography } from "antd";
+import { ReloadOutlined } from "@ant-design/icons";
 
 // components
 import WorkshopControl from "@/components/workshop/WorkshopControl";
@@ -9,7 +10,7 @@ import CreateItemModal from "./CreateItemModal";
 // hooks
 import useWorkshopItem from "@/hooks/workshop/workshopItem/useWorkshopItem";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 
 export default function WorkshopItem() {
@@ -20,12 +21,22 @@ export default function WorkshopItem() {
         search,
         sortValue,
         createModalOpen,
-        filterModalOpen,
+        typeSelection,
+        categorySelection,
+        raritySelection,
+        typeFilterValue,
+        categoryFilterValue,
+        rarityFilterValue,
+        magicItemOnly,
         handleSearch,
         handleSort,
         handleCreateModal,
-        handleFilterModal,
+        handleTypeFilter,
+        handleCategoryFilter,
+        handleRarityFilter,
+        handleMagicItemOnly,
         uponCreated,
+        resetFilters,
     } = useWorkshopItem();
 
     return (
@@ -36,7 +47,55 @@ export default function WorkshopItem() {
                 sort={sortValue}
                 onSort={handleSort}
                 onCreate={() => handleCreateModal(true)}
-                onFilterClick={() => handleFilterModal(true)}
+                filterModalContent={
+                    <div style={styles.filterContainer}>
+                        <div style={styles.filterHeader}>
+                            <Title level={5} style={{ margin: '0px' }}>Filter Items</Title>
+                            <Button
+                                icon={<ReloadOutlined />}
+                                onClick={resetFilters}
+                            >
+                                Reset
+                            </Button>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <Select
+                                style={{ width: '100%' }}
+                                size="large"
+                                placeholder="Select item type"
+                                mode="multiple"
+                                options={typeSelection}
+                                value={typeFilterValue}
+                                onChange={value => handleTypeFilter(value)}
+                            />
+                            <Select
+                                style={{ width: '100%' }}
+                                size="large"
+                                placeholder="Select item category"
+                                mode="multiple"
+                                options={categorySelection}
+                                value={categoryFilterValue}
+                                onChange={value => handleCategoryFilter(value)}
+                            />
+                            <Select
+                                style={{ width: '100%' }}
+                                size="large"
+                                placeholder="Select item rarity"
+                                mode="multiple"
+                                options={raritySelection}
+                                value={rarityFilterValue}
+                                onChange={value => handleRarityFilter(value)}
+                            />
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Switch
+                                    checked={magicItemOnly}
+                                    onChange={value => handleMagicItemOnly(value)}
+                                />
+                                <Text style={{ marginLeft: '0.7rem' }}>Magic Item Only</Text>
+                            </div>
+                        </div>
+                    </div>
+                }
             />
 
             <div style={styles.listContainer}>
@@ -97,5 +156,16 @@ const styles: { [key: string]: React.CSSProperties } = {
         justifyContent: 'center',
         paddingTop: '3rem',
         paddingBottom: '1rem',
+    },
+    filterContainer: {
+        width: '25rem',
+        padding: '0.7rem',
+    },
+    filterHeader: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '2rem'
     }
 }
