@@ -1,4 +1,4 @@
-import { AutoComplete, Button, Checkbox, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Typography, Upload } from "antd";
+import { AutoComplete, Button, Checkbox, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Typography } from "antd";
 
 // utils
 import { ItemTypeEnum, WeaponToggleEnum } from "@/utils/enums";
@@ -9,7 +9,10 @@ import { useTranslation } from "react-i18next";
 
 // assets
 import { SparklesIcon } from "@/assets";
-import { CloseOutlined, DeleteOutlined, PictureOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { CloseOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+
+// components
+import ImageForm from "@/components/global/form/ImageForm";
 
 // interfaces
 import type { WorkshopItemReturn } from "@/models/itemInterfaces";
@@ -26,7 +29,6 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
 
     const {
         createItemForm,
-        fileInputRef,
         imageUrl,
         typeSelection,
         selectedType,
@@ -142,73 +144,13 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
             </div>
             <div style={styles.content}>
                 <div style={{ width: '30%', position: 'sticky', top: '7.7rem', alignSelf: 'flex-start' }}>
-                    <div style={styles.imageFormContainer}>
-                        <Title level={4} style={{ marginTop: 0, marginBottom: '1rem' }}>
-                            {t('items.itemImage')}
-                        </Title>
-                        {!imageUrl ? (
-                            <Upload.Dragger
-                                name="file"
-                                multiple={false}
-                                showUploadList={false}
-                                style={styles.uploadDragger}
-                                beforeUpload={(file) => {
-                                    handleFileChange(file);
-                                    return false;
-                                }}
-                            >
-                                <div style={styles.uploadDraggerContent}>
-                                    <div style={styles.uploadIconContainer}>
-                                        <PictureOutlined style={{ fontSize: '1.8rem' }} />
-                                    </div>
-                                    <div>
-                                        <Text strong style={{ display: 'block', fontSize: '1rem' }}>{t('items.dropImageHere')}</Text>
-                                        <Text type="secondary" style={{ fontSize: '0.85rem' }}>{t('items.orClickToBrowse')}</Text>
-                                    </div>
-                                </div>
-                            </Upload.Dragger>
-                        ) : (
-                            <div style={styles.imagePreviewContainer}>
-                                <img src={imageUrl} alt="Item" style={styles.imagePreview} />
-                                <button
-                                    style={styles.removeBtn}
-                                    disabled={submitLoad}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleRemoveImage();
-                                    }}
-                                >
-                                    <DeleteOutlined style={{ fontSize: '1rem' }} />
-                                </button>
-                            </div>
-                        )}
-
-                        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
-                            {/* Hidden native file input */}
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/*"
-                                style={{ display: 'none' }}
-                                onChange={(e) => handleFileChange(e.target.files?.[0]!)}
-                            />
-                            <Button
-                                icon={<UploadOutlined />}
-                                style={{ flex: 1, padding: '1.2rem', borderColor: '#d4cebe', borderRadius: '8px' }}
-                                onClick={() => fileInputRef.current?.click()}
-                                disabled={submitLoad}
-                            >
-                                {t('global.upload')}
-                            </Button>
-                            <Button
-                                icon={<SparklesIcon style={{ fontSize: '1rem' }} />}
-                                style={{ flex: 1, padding: '1.2rem', borderColor: '#d4cebe', borderRadius: '8px' }}
-                                disabled={submitLoad}
-                            >
-                                {t('global.generate')}
-                            </Button>
-                        </div>
-                    </div>
+                    <ImageForm
+                        title={t('items.itemImage')}
+                        imageUrl={imageUrl}
+                        submitLoad={submitLoad}
+                        onFileChange={handleFileChange}
+                        onRemoveImage={handleRemoveImage}
+                    />
                 </div>
                 <div style={{ flex: '1' }}>
                     <Form
@@ -1024,12 +966,6 @@ const styles: { [key: string]: React.CSSProperties } = {
         backgroundColor: '#e0dcd3',
         margin: '0px'
     },
-    imageFormContainer: {
-        padding: '1.5rem',
-        backgroundColor: '#fbf9f6',
-        borderRadius: '1rem',
-        border: '1px solid #e0dcd3'
-    },
     formContainer: {
         backgroundColor: '#fbf9f6',
         borderRadius: '1rem',
@@ -1041,62 +977,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     },
     formContent: {
         padding: '1.5rem',
-    },
-    uploadDragger: {
-        backgroundColor: 'transparent',
-        borderColor: '#d4cebe',
-        borderStyle: 'dashed',
-        borderWidth: '2px',
-        borderRadius: '8px',
-        padding: '3.5rem 1rem'
-    },
-    uploadDraggerContent: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '1rem'
-    },
-    uploadIconContainer: {
-        width: '4rem',
-        height: '4rem',
-        borderRadius: '50%',
-        backgroundColor: 'white',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-    },
-    imagePreviewContainer: {
-        position: 'relative',
-        width: '100%',
-        aspectRatio: '1 / 1',
-        borderColor: '#d4cebe',
-        borderStyle: 'dashed',
-        borderWidth: '2px',
-        borderRadius: '8px',
-        padding: '0',
-        overflow: 'hidden',
-    },
-    imagePreview: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        display: 'block',
-    },
-    removeBtn: {
-        position: 'absolute',
-        top: '8px',
-        right: '8px',
-        width: '2rem',
-        height: '2rem',
-        borderRadius: '50%',
-        backgroundColor: 'rgba(0,0,0,0.55)',
-        border: 'none',
-        color: 'white',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
     },
     magicItemContainer: {
         display: 'flex',

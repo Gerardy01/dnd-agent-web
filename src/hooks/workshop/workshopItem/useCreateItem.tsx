@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, type FormProps } from "antd";
 
 // api
@@ -88,8 +88,6 @@ export default function useCreateItem(
     const { itemOptions, effectOptions } = useReferenceStore();
 
     const [createItemForm] = Form.useForm();
-
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [submitLoad, setSubmitLoad] = useState<boolean>(false);
 
@@ -301,16 +299,12 @@ export default function useCreateItem(
         setOverrideBonusValue(prev => prev.map((b) => b.stats === 'ac' ? { ...b, value: baseAcValue } : b));
     }, [baseAcValue]);
 
-    const handleFileChange = (file: File) => {
-        if (!file) return;
-        // Temporarily preview with a local object URL
-        // Replace setImageUrl call with the S3 URL returned from the API when wiring the real upload
-        setImageUrl(URL.createObjectURL(file));
+    const handleFileChange = (imageUrl: string) => {
+        setImageUrl(imageUrl);
     };
 
     const handleRemoveImage = () => {
         setImageUrl("");
-        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const handleTypeChange = (value: string) => {
@@ -602,7 +596,6 @@ export default function useCreateItem(
 
     return {
         createItemForm,
-        fileInputRef,
         imageUrl,
         typeSelection,
         selectedType,

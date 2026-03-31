@@ -27,7 +27,9 @@
         "none": "None",
         "upload": "Upload",
         "generate": "Generate",
-        "generateWithAi": "Generate With AI"
+        "generateWithAi": "Generate With AI",
+        "dropImageHere": "Drop image here",
+        "orClickToBrowse": "or click to browse"
     },
     "register": {
         "title": "Join the Quests",
@@ -218,8 +220,6 @@
         "createItemDescription": "Design and customize your item",
         "createItem": "Create Item",
         "itemImage": "Item Image",
-        "dropImageHere": "Drop image here",
-        "orClickToBrowse": "or click to browse",
         "basicInformation": "Basic Information",
         "basicInformationDescription": "Add basic information about your item",
         "itemName": "Item Name",

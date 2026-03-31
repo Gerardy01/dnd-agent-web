@@ -45,6 +45,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         width: '100%',
         height: `calc(100vh - ${HEADER_SIZE}px)`,
         display: 'flex',
+        backgroundColor: '#EAE3D2'
     },
     sidebar: {
         width: '230px',
