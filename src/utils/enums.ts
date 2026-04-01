@@ -82,3 +82,7 @@ export const WeaponToggleEnum = {
     LOADING: "loading",
     REACH: "reach",
 } as const;
+
+export const FileContentTypeEnum = {
+    IMAGE: "image",
+} as const;

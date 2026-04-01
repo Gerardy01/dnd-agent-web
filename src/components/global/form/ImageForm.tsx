@@ -25,6 +25,7 @@ export default function ImageForm({ title, imageUrl, submitLoad, onFileChange, o
 
     const {
         fileInputRef,
+        loading,
         handleFileChange,
         handleRemoveImage,
     } = useImageForm(onFileChange, onRemoveImage);
@@ -86,6 +87,7 @@ export default function ImageForm({ title, imageUrl, submitLoad, onFileChange, o
                     icon={<UploadOutlined />}
                     style={{ flex: 1, padding: '1.2rem', borderColor: '#d4cebe', borderRadius: '8px' }}
                     onClick={() => fileInputRef.current?.click()}
+                    loading={loading}
                     disabled={submitLoad}
                 >
                     {t('global.upload')}
@@ -94,6 +96,7 @@ export default function ImageForm({ title, imageUrl, submitLoad, onFileChange, o
                     icon={<SparklesIcon style={{ fontSize: '1rem' }} />}
                     style={{ flex: 1, padding: '1.2rem', borderColor: '#d4cebe', borderRadius: '8px' }}
                     disabled={submitLoad}
+                    loading={loading}
                 >
                     {t('global.generate')}
                 </Button>
