@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Form, type FormProps } from "antd";
 
 // api
@@ -19,7 +19,7 @@ import useStaticModal from "@/hooks/global/useStaticModal";
 import useNotification from "@/hooks/global/useNotification";
 
 // interfaces
-import type { WorkshopItemReturn } from "@/models/itemInterfaces";
+import type { ImageFormRef } from "@/models/fileInterface";
 interface CreateItemFormValues {
     name: string;
     type: string;
@@ -78,16 +78,18 @@ interface WeaponToggle {
 
 export default function useCreateItem(
     onClose: () => void,
-    uponWorkshopCreated?: (workshopItemData: WorkshopItemReturn) => void
+    uponWorkshopCreated?: (workshopItemId: number) => void
 ) {
 
     const { t } = useTranslation();
-    const { serverErrorModal } = useStaticModal();
+    const { serverErrorModal, errorModal } = useStaticModal();
     const { successNotification } = useNotification();
 
     const { itemOptions, effectOptions } = useReferenceStore();
 
     const [createItemForm] = Form.useForm();
+
+    const imageFormRef = useRef<ImageFormRef>(null);
 
     const [submitLoad, setSubmitLoad] = useState<boolean>(false);
 
@@ -301,10 +303,6 @@ export default function useCreateItem(
 
     const handleFileChange = (imageUrl: string) => {
         setImageUrl(imageUrl);
-    };
-
-    const handleRemoveImage = () => {
-        setImageUrl("");
     };
 
     const handleTypeChange = (value: string) => {
@@ -545,6 +543,13 @@ export default function useCreateItem(
             const [err, res] = await workshopItemApi.createItem(submitData);
 
             if (err) {
+                if (err.status === 400) {
+                    const error = err.response.data.schemaErrors ? err.response.data.schemaErrors[0] : undefined;
+                    if (!error) return;
+                    errorModal(undefined, `${error.field} is ${error.message}`);
+                    return;
+                }
+
                 serverErrorModal();
                 return;
             }
@@ -553,7 +558,7 @@ export default function useCreateItem(
 
             handleCloseModal();
 
-            uponWorkshopCreated?.(res);
+            uponWorkshopCreated?.(res.workshopItemId);
 
         } finally {
             setSubmitLoad(false);
@@ -591,12 +596,13 @@ export default function useCreateItem(
 
     const handleCloseModal = () => {
         restartForm();
+        imageFormRef.current?.reset();
         onClose();
     };
 
     return {
         createItemForm,
-        imageUrl,
+        imageFormRef,
         typeSelection,
         selectedType,
         gearCategoriesSelection,
@@ -646,7 +652,6 @@ export default function useCreateItem(
         handleUpdateDamageRollType,
         handleDeleteDamageRoll,
         handleFileChange,
-        handleRemoveImage,
         handleTypeChange,
         handleMagicItemChange,
         handleEquipSlotChange,

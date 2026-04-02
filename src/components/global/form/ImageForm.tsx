@@ -1,4 +1,4 @@
-import { Button, Typography, Upload } from "antd";
+import { Button, Spin, Typography, Upload } from "antd";
 import { DeleteOutlined, PictureOutlined, UploadOutlined } from "@ant-design/icons";
 
 // assets
@@ -9,26 +9,27 @@ import useImageForm from "@/hooks/global/form/useImageForm";
 import { useTranslation } from "react-i18next";
 
 // interfaces
+import type { ImageFormRef } from "@/models/fileInterface";
 interface Props {
     title: string;
-    imageUrl: string;
     submitLoad: boolean;
     onFileChange: (fileUrl: string) => void;
-    onRemoveImage: () => void;
+    resetRef?: React.RefObject<ImageFormRef | null>;
 }
 
 
 const { Title, Text } = Typography;
 
 
-export default function ImageForm({ title, imageUrl, submitLoad, onFileChange, onRemoveImage }: Props) {
+export default function ImageForm({ title, submitLoad, onFileChange, resetRef }: Props) {
 
     const {
         fileInputRef,
         loading,
+        imageUrl,
         handleFileChange,
         handleRemoveImage,
-    } = useImageForm(onFileChange, onRemoveImage);
+    } = useImageForm(onFileChange, resetRef);
 
     const { t } = useTranslation();
 
@@ -49,9 +50,13 @@ export default function ImageForm({ title, imageUrl, submitLoad, onFileChange, o
                     }}
                 >
                     <div style={styles.uploadDraggerContent}>
-                        <div style={styles.uploadIconContainer}>
-                            <PictureOutlined style={{ fontSize: '1.8rem' }} />
-                        </div>
+                        {!loading ? (
+                            <div style={styles.uploadIconContainer}>
+                                <PictureOutlined style={{ fontSize: '1.8rem' }} />
+                            </div>
+                        ) : (
+                            <Spin size="large" style={{ marginBottom: '2rem' }} />
+                        )}
                         <div>
                             <Text strong style={{ display: 'block', fontSize: '1rem' }}>{t('global.dropImageHere')}</Text>
                             <Text type="secondary" style={{ fontSize: '0.85rem' }}>{t('global.orClickToBrowse')}</Text>

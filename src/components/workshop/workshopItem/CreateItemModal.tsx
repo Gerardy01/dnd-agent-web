@@ -15,11 +15,10 @@ import { CloseOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import ImageForm from "@/components/global/form/ImageForm";
 
 // interfaces
-import type { WorkshopItemReturn } from "@/models/itemInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
-    uponWorkshopCreated?: (workshopItemData: WorkshopItemReturn) => void;
+    uponWorkshopCreated?: (workshopItemId: number) => void;
 }
 
 const { Title, Text } = Typography;
@@ -29,7 +28,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
 
     const {
         createItemForm,
-        imageUrl,
+        imageFormRef,
         typeSelection,
         selectedType,
         gearCategoriesSelection,
@@ -79,7 +78,6 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
         handleUpdateDamageRollType,
         handleDeleteDamageRoll,
         handleFileChange,
-        handleRemoveImage,
         handleTypeChange,
         handleMagicItemChange,
         handleEquipSlotChange,
@@ -146,10 +144,9 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                 <div style={{ width: '30%', position: 'sticky', top: '7.7rem', alignSelf: 'flex-start' }}>
                     <ImageForm
                         title={t('items.itemImage')}
-                        imageUrl={imageUrl}
                         submitLoad={submitLoad}
                         onFileChange={handleFileChange}
-                        onRemoveImage={handleRemoveImage}
+                        resetRef={imageFormRef}
                     />
                 </div>
                 <div style={{ flex: '1' }}>

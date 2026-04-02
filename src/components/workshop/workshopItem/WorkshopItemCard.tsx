@@ -1,5 +1,5 @@
 import { Divider, Tag, Typography } from "antd";
-import { SafetyOutlined } from "@ant-design/icons";
+import { SafetyOutlined, EllipsisOutlined } from "@ant-design/icons";
 
 // assets
 import { ScaleIcon, CoinsIcon, noItemImage } from "@/assets";
@@ -21,7 +21,9 @@ export default function WorkshopItemCard({ item }: Props) {
 
     const {
         isHovered,
+        isMenuHovered,
         handleHover,
+        handleMenuHover,
         getRarityColor,
         getCurrencyColor,
     } = useWorkshopItemCard();
@@ -48,8 +50,19 @@ export default function WorkshopItemCard({ item }: Props) {
                     }}
                 />
                 <div style={{ ...styles.rarityBadge, backgroundColor: getRarityColor(item.rarity) }}>
-                    {item.rarity.toUpperCase()}
+                    {`${t(`items.${item.rarity}`)}`.toUpperCase()}
                 </div>
+                <button
+                    style={{
+                        ...styles.menuButton,
+                        opacity: isHovered ? (isMenuHovered ? 0.8 : 1) : 0,
+                        transition: 'opacity 0.2s ease',
+                    }}
+                    onMouseEnter={() => handleMenuHover(true)}
+                    onMouseLeave={() => handleMenuHover(false)}
+                >
+                    <EllipsisOutlined style={{ fontSize: '0.8rem', color: 'white' }} />
+                </button>
             </div>
 
             <div style={styles.content}>
@@ -157,6 +170,21 @@ const styles: { [key: string]: React.CSSProperties } = {
         fontWeight: 'bold',
         fontSize: '10px',
         textTransform: 'capitalize'
+    },
+    menuButton: {
+        position: 'absolute',
+        top: '12px',
+        right: '12px',
+        width: '1.5rem',
+        aspectRatio: '1/1',
+        borderRadius: '50%',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        padding: 0,
     },
     content: {
         padding: '16px',

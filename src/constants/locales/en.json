@@ -339,6 +339,9 @@
         },
         "auth": {
             "AUTH002": "Invalid OTP. Please try again."
+        },
+        "file": {
+            "FILE001": "File size must be less than 10MB"
         }
     }
 }

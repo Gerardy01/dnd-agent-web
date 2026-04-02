@@ -181,13 +181,21 @@ export default function useWorkshopItem() {
         setMagicItemOnly(value);
     }
 
-    const uponCreated = (data: WorkshopItemReturn) => {
-        if (sortValue === SortEnum.RECENT) {
-            setWorkshopItems((prev) => [data, ...prev]);
+    const uponCreated = async (workshopItemId: number) => {
+
+        const [err, res] = await workshopItemApi.getOneItem(workshopItemId);
+
+        if (err) {
+            serverErrorModal();
             return;
         }
 
-        setWorkshopItems((prev) => [...prev, data]);
+        if (sortValue === SortEnum.RECENT) {
+            setWorkshopItems((prev) => [res, ...prev]);
+            return;
+        }
+
+        setWorkshopItems((prev) => [...prev, res]);
     }
 
     const resetFilters = () => {

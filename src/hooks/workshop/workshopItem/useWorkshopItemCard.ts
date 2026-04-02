@@ -7,9 +7,14 @@ import { RarityEnum } from "@/utils/enums";
 export default function useWorkshopItemCard() {
 
     const [isHovered, setIsHovered] = useState<boolean>(false);
+    const [isMenuHovered, setIsMenuHovered] = useState(false);
 
     const handleHover = (value: boolean) => {
         setIsHovered(value);
+    }
+
+    const handleMenuHover = (value: boolean) => {
+        setIsMenuHovered(value);
     }
 
     const getRarityColor = (rarity: string) => {
@@ -37,7 +42,9 @@ export default function useWorkshopItemCard() {
 
     return {
         isHovered,
+        isMenuHovered,
         handleHover,
+        handleMenuHover,
         getRarityColor,
         getCurrencyColor,
     }
