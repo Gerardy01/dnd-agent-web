@@ -141,7 +141,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                 </div>
             </div>
             <div style={styles.content}>
-                <div style={{ width: '30%', position: 'sticky', top: '7.7rem', alignSelf: 'flex-start' }}>
+                <div style={{ width: '30%', minWidth: '20rem', position: 'sticky', top: '7.7rem', alignSelf: 'flex-start' }}>
                     <ImageForm
                         title={t('items.itemImage')}
                         submitLoad={submitLoad}
@@ -194,6 +194,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                         size="large"
                                         options={typeSelection}
                                         onChange={handleTypeChange}
+                                        showSearch
                                     />
                                 </Form.Item>
                                 <Form.Item
@@ -258,6 +259,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                         placeholder={t('items.categoryPlaceholder')}
                                         size="large"
                                         options={selectedType === ItemTypeEnum.GEAR ? gearCategoriesSelection : selectedType === ItemTypeEnum.WEAPON ? weaponCategoriesSelection : armorCategoriesSelection}
+                                        showSearch
                                     />
                                 </Form.Item>
                                 <Row style={styles.formRow}>
@@ -277,6 +279,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                 placeholder={t('items.rarityPlaceholder')}
                                                 size="large"
                                                 options={raritySelection}
+                                                showSearch
                                             />
                                         </Form.Item>
                                     </Col>
@@ -361,6 +364,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                 placeholder={t('items.currencyUnitPlaceholder')}
                                                 size="large"
                                                 options={currencyUnitSelection}
+                                                showSearch
                                             />
                                         </Form.Item>
                                     </Col>
@@ -377,6 +381,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                             size="large"
                                             options={equipSlotSelection}
                                             onChange={handleEquipSlotChange}
+                                            showSearch
                                         />
                                     </Form.Item>
                                 )}
@@ -427,6 +432,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                         value={roll.damageType || undefined}
                                                         options={damageTypeSelection}
                                                         onChange={(val) => handleUpdateDamageRollType(index, val)}
+                                                        showSearch
                                                     />
                                                     <Button
                                                         onClick={() => handleDeleteDamageRoll(index)}
@@ -524,6 +530,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                                 options={damageTypeSelection}
                                                                 value={versatileDamageRoll.damageType}
                                                                 onChange={(value) => handleUpdateVersatileDamageRoll({ ...versatileDamageRoll, damageType: value })}
+                                                                showSearch
                                                             />
                                                         </div>
                                                     </Form.Item>
@@ -585,6 +592,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                 <Form.Item
                                                     name="dexMod"
                                                     initialValue={false}
+                                                    valuePropName="checked"
                                                     style={{ margin: '0px' }}
                                                 >
                                                     <Checkbox>{t('items.addDexModifier')}</Checkbox>
@@ -594,6 +602,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                 <Form.Item
                                                     name="conMod"
                                                     initialValue={false}
+                                                    valuePropName="checked"
                                                     style={{ margin: '0px' }}
                                                 >
                                                     <Checkbox>{t('items.addConModifier')}</Checkbox>
@@ -603,6 +612,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                 <Form.Item
                                                     name="wisMod"
                                                     initialValue={false}
+                                                    valuePropName="checked"
                                                     style={{ margin: '0px' }}
                                                 >
                                                     <Checkbox>{t('items.addWisModifier')}</Checkbox>
@@ -644,18 +654,21 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                     </Row>
                                     <Divider style={{ margin: '1rem 0' }} />
                                     <div style={styles.bonusCard}>
-                                        <Form.Item
-                                            name="stealthDisadvantage"
-                                            initialValue={false}
-                                            style={{ display: 'flex', flexDirection: 'column', padding: '0.9rem 1.1rem', marginBottom: '0px' }}
-                                        >
-                                            <Checkbox>
-                                                <Text strong>{t('items.stealthDisadvantage')}</Text>
-                                            </Checkbox>
-                                            <div style={{ marginLeft: '1.5rem' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', padding: '0.8rem 1.1rem', marginBottom: '0px' }}>
+                                            <Form.Item
+                                                name="stealthDisadvantage"
+                                                initialValue={false}
+                                                valuePropName="checked"
+                                                style={{ marginBottom: '0px' }}
+                                            >
+                                                <Checkbox>
+                                                    <Text strong>{t('items.stealthDisadvantage')}</Text>
+                                                </Checkbox>
+                                            </Form.Item>
+                                            <div style={{ marginLeft: '1.5rem', marginTop: '-0.5rem' }}>
                                                 <Text type="secondary" style={{ fontSize: '0.82rem' }}>{t('items.stealthDisadvantageDescription')}</Text>
                                             </div>
-                                        </Form.Item>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -774,6 +787,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                                 value={bonus.stats || undefined}
                                                                 options={availableOptions}
                                                                 onChange={(val) => handleUpdateFlatBonusStat(index, val)}
+                                                                showSearch
                                                             />
                                                             <InputNumber
                                                                 style={{ width: '7rem' }}
@@ -844,6 +858,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                                 options={availableOptions}
                                                                 onChange={(val) => handleUpdateOverrideBonusStat(index, val)}
                                                                 disabled={isFromArmor}
+                                                                showSearch
                                                             />
                                                             <InputNumber
                                                                 style={{ width: '7rem' }}
@@ -896,6 +911,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                             value={mod.from || undefined}
                                                             options={itemBonusStatSelection}
                                                             onChange={(val) => handleUpdateModifierBonusFrom(index, val)}
+                                                            showSearch
                                                         />
                                                         <Text>{t('items.modBonusModifierTo')}</Text>
                                                         <Select
@@ -904,6 +920,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                                             value={mod.to || undefined}
                                                             options={itemBonusStatSelection}
                                                             onChange={(val) => handleUpdateModifierBonusTo(index, val)}
+                                                            showSearch
                                                         />
                                                         <Text>{t('items.modBonusUpTo')}</Text>
                                                         <InputNumber

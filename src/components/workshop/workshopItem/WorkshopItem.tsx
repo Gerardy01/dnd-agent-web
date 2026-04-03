@@ -37,6 +37,7 @@ export default function WorkshopItem() {
         handleMagicItemOnly,
         uponCreated,
         resetFilters,
+        uponDelete,
     } = useWorkshopItem();
 
     return (
@@ -112,7 +113,7 @@ export default function WorkshopItem() {
                 ) : (
                     items.map((item) => (
                         <div key={item.workshopItemId} style={{ width: '24%' }}>
-                            <WorkshopItemCard item={item} />
+                            <WorkshopItemCard item={item} uponDelete={uponDelete} />
                         </div>
                     ))
                 )}

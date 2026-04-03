@@ -198,6 +198,10 @@ export default function useWorkshopItem() {
         setWorkshopItems((prev) => [...prev, res]);
     }
 
+    const uponDelete = async (workshopItemId: number) => {
+        setWorkshopItems((prev) => prev.filter((item) => item.workshopItemId !== workshopItemId));
+    }
+
     const resetFilters = () => {
         setTypeFilterValue([]);
         setCategoryFilterValue([]);
@@ -227,5 +231,6 @@ export default function useWorkshopItem() {
         handleMagicItemOnly,
         resetFilters,
         uponCreated,
+        uponDelete,
     }
 }

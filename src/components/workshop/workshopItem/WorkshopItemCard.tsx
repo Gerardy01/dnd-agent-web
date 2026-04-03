@@ -1,4 +1,4 @@
-import { Divider, Tag, Typography } from "antd";
+import { Divider, Dropdown, Tag, Typography } from "antd";
 import { SafetyOutlined, EllipsisOutlined } from "@ant-design/icons";
 
 // assets
@@ -12,21 +12,23 @@ import { useTranslation } from "react-i18next";
 import type { WorkshopItemReturn } from "@/models/itemInterfaces";
 interface Props {
     item: WorkshopItemReturn;
+    uponDelete: (workshopItemId: number) => void;
 }
 
 const { Title, Paragraph, Text } = Typography;
 
 
-export default function WorkshopItemCard({ item }: Props) {
+export default function WorkshopItemCard({ item, uponDelete }: Props) {
 
     const {
+        items,
         isHovered,
         isMenuHovered,
         handleHover,
         handleMenuHover,
         getRarityColor,
         getCurrencyColor,
-    } = useWorkshopItemCard();
+    } = useWorkshopItemCard(item.workshopItemId, uponDelete);
 
     const { t } = useTranslation();
 
@@ -52,17 +54,19 @@ export default function WorkshopItemCard({ item }: Props) {
                 <div style={{ ...styles.rarityBadge, backgroundColor: getRarityColor(item.rarity) }}>
                     {`${t(`items.${item.rarity}`)}`.toUpperCase()}
                 </div>
-                <button
-                    style={{
-                        ...styles.menuButton,
-                        opacity: isHovered ? (isMenuHovered ? 0.8 : 1) : 0,
-                        transition: 'opacity 0.2s ease',
-                    }}
-                    onMouseEnter={() => handleMenuHover(true)}
-                    onMouseLeave={() => handleMenuHover(false)}
-                >
-                    <EllipsisOutlined style={{ fontSize: '0.8rem', color: 'white' }} />
-                </button>
+                <Dropdown menu={{ items }} placement="bottom" trigger={['click']}>
+                    <button
+                        style={{
+                            ...styles.menuButton,
+                            opacity: isHovered ? (isMenuHovered ? 0.8 : 1) : 0,
+                            transition: 'opacity 0.2s ease',
+                        }}
+                        onMouseEnter={() => handleMenuHover(true)}
+                        onMouseLeave={() => handleMenuHover(false)}
+                    >
+                        <EllipsisOutlined style={{ fontSize: '0.8rem', color: 'white' }} />
+                    </button>
+                </Dropdown>
             </div>
 
             <div style={styles.content}>

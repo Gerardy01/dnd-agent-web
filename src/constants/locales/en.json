@@ -29,7 +29,8 @@
         "generate": "Generate",
         "generateWithAi": "Generate With AI",
         "dropImageHere": "Drop image here",
-        "orClickToBrowse": "or click to browse"
+        "orClickToBrowse": "or click to browse",
+        "delete": "Delete"
     },
     "register": {
         "title": "Join the Quests",
@@ -299,7 +300,8 @@
         "modBonusModifierTo": "modifier to",
         "modBonusUpTo": "up to",
         "fromStatPlaceholder": "from stat",
-        "toStatPlaceholder": "to stat"
+        "toStatPlaceholder": "to stat",
+        "deleteConfirmDesc": "Are you sure you want to delete this item?"
     },
     "effects": {
         "acid": "Acid",

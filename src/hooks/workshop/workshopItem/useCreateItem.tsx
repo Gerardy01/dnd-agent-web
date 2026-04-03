@@ -281,9 +281,7 @@ export default function useCreateItem(
                         value: createItemForm.getFieldValue('baseAc') || 0,
                     }
                 ]);
-            }
-
-            if (overrideBonusValue.some((b) => b.stats === 'ac')) {
+            } else if (overrideBonusValue.some((b) => b.stats === 'ac')) {
                 setOverrideBonusValue(prev => prev.map((b) => b.stats === 'ac' ? { ...b, value: createItemForm.getFieldValue('baseAc') || 0 } : b));
             } else {
                 setOverrideBonusValue(prev => [...prev, {
@@ -470,7 +468,7 @@ export default function useCreateItem(
                 normal: values.normalRange ?? 0,
                 long: values.longRange && values.longRange > 0 ? values.longRange : null,
             } : null,
-            versatileDamageRoll: weaponToggle.twoHanded ? {
+            versatileDamageRoll: weaponToggle.versatile ? {
                 count: versatileDamageRoll.count,
                 dice: versatileDamageRoll.dice,
                 bonus: versatileDamageRoll.bonus,
@@ -492,7 +490,7 @@ export default function useCreateItem(
             flatAcBonus: values.flatAcBonus ? values.flatAcBonus : 0,
             maxModifier: values.maxModifier ? values.maxModifier : 0,
             other: {
-                stealthDisadvantage: values.stealthDisadvantage ?? false,
+                stealthDisadvantage: values.stealthDisadvantage || false,
             }
         }
 
@@ -531,9 +529,9 @@ export default function useCreateItem(
             weaponProperties: selectedType === ItemTypeEnum.WEAPON ? weaponProperties : null,
             armorProperties: selectedType === ItemTypeEnum.ARMOR ? armorProperties : null,
             additionalProperties: additionalProperties,
-            flatBonuses: flatBonusEnabled && flatBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? flatBonusTransformed : null,
-            overrideBonuses: overrideBonusEnabled && overrideBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? overrideBonusTransformed : null,
-            modifierBonuses: modifierBonusEnabled && modifierBonusFiltered.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? modifierBonusFiltered : null,
+            flatBonus: flatBonusEnabled && flatBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? flatBonusTransformed : null,
+            overrideBonus: overrideBonusEnabled && overrideBonusValue.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? overrideBonusTransformed : null,
+            modifierBonus: modifierBonusEnabled && modifierBonusFiltered.length > 0 && (selectedType !== ItemTypeEnum.GEAR || equipSlotValue) ? modifierBonusFiltered : null,
         }
 
         setSubmitLoad(true);
@@ -592,6 +590,13 @@ export default function useCreateItem(
             reach: false,
         });
         setBaseAcValue(0);
+        setVersatileDamageRoll({
+            count: 1,
+            dice: 6,
+            bonus: 0,
+            damageType: DamageTypeEnum.ACID,
+        });
+        setVersatileDamageRollErrMsg("");
     };
 
     const handleCloseModal = () => {

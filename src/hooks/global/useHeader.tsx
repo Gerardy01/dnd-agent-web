@@ -57,7 +57,6 @@ export default function useHeader() {
                 content: t("global.logoutConfirm"),
                 centered: true,
                 onOkWithPromise: submitLogout,
-
             })
         },
     ]
