@@ -9,9 +9,6 @@ import { workshopItemApi } from "@/api";
 import { useTranslation } from "react-i18next";
 import useStaticModal from "@/hooks/global/useStaticModal";
 
-// utils
-import { RarityEnum } from "@/utils/enums";
-
 
 export default function useWorkshopItemCard(
     itemId: number,
@@ -58,29 +55,6 @@ export default function useWorkshopItemCard(
         setIsMenuHovered(value);
     }
 
-    const getRarityColor = (rarity: string) => {
-        switch (rarity.toLowerCase()) {
-            case RarityEnum.COMMON: return '#7f8c8d';
-            case RarityEnum.UNCOMMON: return '#27ae60';
-            case RarityEnum.RARE: return '#562973';
-            case RarityEnum.VERY_RARE: return '#d35400';
-            case RarityEnum.LEGENDARY: return '#f39c12';
-            case RarityEnum.ARTIFACT: return '#e74c3c';
-            default: return '#562973';
-        }
-    }
-
-    const getCurrencyColor = (currency: string) => {
-        switch (currency.toLowerCase()) {
-            case 'copper': return '#B77729';
-            case 'silver': return '#A5A9B4';
-            case 'electrum': return '#59A5A9';
-            case 'gold': return '#D4AF37';
-            case 'platinum': return '#BCC6CC';
-            default: return '#D4AF37';
-        }
-    }
-
     const onDelete = async () => {
         const [err] = await workshopItemApi.deleteItem(itemId);
 
@@ -98,7 +72,5 @@ export default function useWorkshopItemCard(
         isMenuHovered,
         handleHover,
         handleMenuHover,
-        getRarityColor,
-        getCurrencyColor,
     }
 }

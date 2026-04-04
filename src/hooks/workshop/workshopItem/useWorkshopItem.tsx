@@ -14,7 +14,9 @@ import { useTranslation } from "react-i18next";
 import useReferenceStore from "@/stores/useReferenceStore";
 
 // interfaces
-import type { WorkshopItemReturn } from "@/models/itemInterfaces";
+import type { Item, WorkshopItemReturn } from "@/models/itemInterfaces";
+
+
 
 export default function useWorkshopItem() {
 
@@ -35,8 +37,11 @@ export default function useWorkshopItem() {
     const [categoryFilterValue, setCategoryFilterValue] = useState<string[]>([]);
     const [rarityFilterValue, setRarityFilterValue] = useState<string[]>([]);
     const [magicItemOnly, setMagicItemOnly] = useState<boolean>(false);
+    const [equipableOnly, setEquipableOnly] = useState<boolean>(false);
 
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
+
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
     const [itemWidth, setItemWidth] = useState<string>(
         window.innerWidth <= 1170 ? '48%' : window.innerWidth <= 1475 ? '32%' : '24%'
@@ -97,7 +102,8 @@ export default function useWorkshopItem() {
             typeFilterValue.length === 0 &&
             categoryFilterValue.length === 0 &&
             rarityFilterValue.length === 0 &&
-            !magicItemOnly
+            !magicItemOnly &&
+            !equipableOnly
         ) return setFilteredWorkshopItems(workshopItems);
 
         let filtered = [...workshopItems];
@@ -130,8 +136,12 @@ export default function useWorkshopItem() {
             filtered = filtered.filter((item) => item.isMagicItem);
         }
 
+        if (equipableOnly) {
+            filtered = filtered.filter((item) => item.equipSlot);
+        }
+
         setFilteredWorkshopItems(filtered);
-    }, [searchValue, typeFilterValue, categoryFilterValue, rarityFilterValue, magicItemOnly]);
+    }, [searchValue, typeFilterValue, categoryFilterValue, rarityFilterValue, magicItemOnly, equipableOnly]);
 
     useEffect(() => {
         if (sortValue === SortEnum.RECENT) {
@@ -145,7 +155,7 @@ export default function useWorkshopItem() {
         if (sortValue === SortEnum.DESC) {
             setFilteredWorkshopItems((prev) => [...prev].sort((a, b) => b.name.localeCompare(a.name)));
         }
-    }, [sortValue, searchValue]);
+    }, [sortValue, searchValue, typeFilterValue, categoryFilterValue, rarityFilterValue, magicItemOnly, equipableOnly]);
 
     const getWorkshopItemData = async () => {
         setLoading(true);
@@ -193,6 +203,19 @@ export default function useWorkshopItem() {
         setMagicItemOnly(value);
     }
 
+    const handleEquipableOnly = (value: boolean) => {
+        setEquipableOnly(value);
+    }
+
+    const handleSelectItem = (itemId: number | null) => {
+        if (itemId === null) {
+            setSelectedItem(null);
+            return;
+        }
+
+        setSelectedItem(workshopItems.find((item) => item.workshopItemId === itemId) || null);
+    }
+
     const uponCreated = async (workshopItemId: number) => {
 
         const [err, res] = await workshopItemApi.getOneItem(workshopItemId);
@@ -234,7 +257,9 @@ export default function useWorkshopItem() {
         categoryFilterValue,
         rarityFilterValue,
         magicItemOnly,
+        equipableOnly,
         itemWidth,
+        selectedItem,
         handleSearch,
         handleSort,
         handleCreateModal,
@@ -242,8 +267,10 @@ export default function useWorkshopItem() {
         handleCategoryFilter,
         handleRarityFilter,
         handleMagicItemOnly,
+        handleEquipableOnly,
         resetFilters,
         uponCreated,
         uponDelete,
+        handleSelectItem,
     }
 }

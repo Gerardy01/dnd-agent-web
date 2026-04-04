@@ -31,7 +31,8 @@
         "dropImageHere": "Drop image here",
         "orClickToBrowse": "or click to browse",
         "delete": "Delete",
-        "edit": "Edit"
+        "edit": "Edit",
+        "reset": "Reset"
     },
     "register": {
         "title": "Join the Quests",
@@ -196,6 +197,15 @@
         "ac": "Armor Class",
         "speed": "Speed",
         "hp": "Max HP",
+        "strShort": "STR",
+        "dexShort": "DEX",
+        "conShort": "CON",
+        "intShort": "INT",
+        "wisShort": "WIS",
+        "chaShort": "CHA",
+        "acShort": "AC",
+        "speedShort": "SPD",
+        "hpShort": "HP",
         "light": "Light",
         "lightDescription": "A light weapon is small and easy to handle, making it ideal for use when fighting with two weapons.",
         "heavy": "Heavy",
@@ -241,7 +251,8 @@
         "magicItem": "Magic Item",
         "isMagic": "Is Magic",
         "notMagic": "Not Magic",
-        "weight": "Weight (lbs.)",
+        "weight": "Weight",
+        "lbs": "lbs.",
         "weightPlaceholder": "Weight",
         "cost": "Cost",
         "costPlaceholder": "Cost",
@@ -300,9 +311,14 @@
         "modBonusAdd": "Add",
         "modBonusModifierTo": "modifier to",
         "modBonusUpTo": "up to",
-        "fromStatPlaceholder": "from stat",
-        "toStatPlaceholder": "to stat",
-        "deleteConfirmDesc": "Are you sure you want to delete this item?"
+        "fromStatPlaceholder": "select ability",
+        "toStatPlaceholder": "select ability",
+        "deleteConfirmDesc": "Are you sure you want to delete this item?",
+        "magicItemOnly": "Magic Item Only",
+        "equipableOnly": "Equipable Only",
+        "filterItems": "Filter Items",
+        "type": "Type",
+        "magicalItem": "Magical Item"
     },
     "effects": {
         "acid": "Acid",

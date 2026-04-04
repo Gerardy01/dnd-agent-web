@@ -87,9 +87,8 @@ export interface UpdateWorkshopItemDTO extends CreateItemDTO {
     workshopItemId: number;
 }
 
-export interface WorkshopItemReturn {
+export type Item = {
     workshopItemId: number;
-    accountId: string;
     image: string | null;
     name: string;
     type: string;
@@ -109,4 +108,8 @@ export interface WorkshopItemReturn {
     overrideBonus: ItemBonus | null;
     modifierBonus: ModifierBonus[] | null;
     createdAt: Date;
+}
+
+export type WorkshopItemReturn = Item & {
+    accountId: string;
 }

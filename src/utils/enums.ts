@@ -86,3 +86,15 @@ export const WeaponToggleEnum = {
 export const FileContentTypeEnum = {
     IMAGE: "image",
 } as const;
+
+export const ItemBonusStatEnum = {
+    STR: "str",
+    DEX: "dex",
+    CON: "con",
+    INT: "int",
+    WIS: "wis",
+    CHA: "cha",
+    AC: "ac",
+    SPEED: "speed",
+    HP: "hp",
+} as const;

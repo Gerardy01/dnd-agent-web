@@ -11,6 +11,8 @@ import {
     ScaleIcon,
     CoinsIcon,
     SparklesIcon,
+    MagicalIcon,
+    SwordIcon,
 } from "@/assets/icons";
 import noItemImage from "@/assets/images/no-item.png";
 
@@ -27,5 +29,7 @@ export {
     ScaleIcon,
     CoinsIcon,
     SparklesIcon,
+    MagicalIcon,
+    SwordIcon,
     noItemImage,
 }

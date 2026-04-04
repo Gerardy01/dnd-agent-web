@@ -4,6 +4,9 @@ import { SafetyOutlined, EllipsisOutlined } from "@ant-design/icons";
 // assets
 import { ScaleIcon, CoinsIcon, noItemImage } from "@/assets";
 
+// utils
+import { getRarityColor, getCurrencyColor } from "@/utils/utility";
+
 // hooks
 import useWorkshopItemCard from "@/hooks/workshop/workshopItem/useWorkshopItemCard";
 import { useTranslation } from "react-i18next";
@@ -28,8 +31,6 @@ export default function WorkshopItemCard({ item, uponDelete, onClick, onEditClic
         isMenuHovered,
         handleHover,
         handleMenuHover,
-        getRarityColor,
-        getCurrencyColor,
     } = useWorkshopItemCard(item.workshopItemId, uponDelete, onEditClick);
 
     const { t } = useTranslation();
@@ -66,6 +67,7 @@ export default function WorkshopItemCard({ item, uponDelete, onClick, onEditClic
                         }}
                         onMouseEnter={() => handleMenuHover(true)}
                         onMouseLeave={() => handleMenuHover(false)}
+                        onClick={(e) => e.stopPropagation()}
                     >
                         <EllipsisOutlined style={{ fontSize: '0.8rem', color: 'white' }} />
                     </button>

@@ -5,10 +5,12 @@ import { ReloadOutlined } from "@ant-design/icons";
 import WorkshopControl from "@/components/workshop/WorkshopControl";
 import WorkshopItemCard from "./WorkshopItemCard";
 import CardSkeleton from "../CardSkeleton";
-import CreateItemModal from "./CreateItemModal";
+import CreateItemModal from "@/components/item/CreateItemModal";
+import ItemDisplayModal from "@/components/item/ItemDisplayModal";
 
 // hooks
 import useWorkshopItem from "@/hooks/workshop/workshopItem/useWorkshopItem";
+import { useTranslation } from "react-i18next";
 
 const { Text, Title } = Typography;
 
@@ -28,7 +30,9 @@ export default function WorkshopItem() {
         categoryFilterValue,
         rarityFilterValue,
         magicItemOnly,
+        equipableOnly,
         itemWidth,
+        selectedItem,
         handleSearch,
         handleSort,
         handleCreateModal,
@@ -36,10 +40,14 @@ export default function WorkshopItem() {
         handleCategoryFilter,
         handleRarityFilter,
         handleMagicItemOnly,
+        handleEquipableOnly,
         uponCreated,
         resetFilters,
         uponDelete,
+        handleSelectItem,
     } = useWorkshopItem();
+
+    const { t } = useTranslation();
 
     return (
         <div style={styles.container}>
@@ -52,19 +60,19 @@ export default function WorkshopItem() {
                 filterModalContent={
                     <div style={styles.filterContainer}>
                         <div style={styles.filterHeader}>
-                            <Title level={5} style={{ margin: '0px' }}>Filter Items</Title>
+                            <Title level={5} style={{ margin: '0px' }}>{t('items.filterItems')}</Title>
                             <Button
                                 icon={<ReloadOutlined />}
                                 onClick={resetFilters}
                             >
-                                Reset
+                                {t('global.reset')}
                             </Button>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <Select
                                 style={{ width: '100%' }}
                                 size="large"
-                                placeholder="Select item type"
+                                placeholder={t('items.itemTypePlaceholder')}
                                 mode="multiple"
                                 options={typeSelection}
                                 value={typeFilterValue}
@@ -73,7 +81,7 @@ export default function WorkshopItem() {
                             <Select
                                 style={{ width: '100%' }}
                                 size="large"
-                                placeholder="Select item category"
+                                placeholder={t('items.categoryPlaceholder')}
                                 mode="multiple"
                                 options={categorySelection}
                                 value={categoryFilterValue}
@@ -82,7 +90,7 @@ export default function WorkshopItem() {
                             <Select
                                 style={{ width: '100%' }}
                                 size="large"
-                                placeholder="Select item rarity"
+                                placeholder={t('items.rarityPlaceholder')}
                                 mode="multiple"
                                 options={raritySelection}
                                 value={rarityFilterValue}
@@ -93,7 +101,14 @@ export default function WorkshopItem() {
                                     checked={magicItemOnly}
                                     onChange={value => handleMagicItemOnly(value)}
                                 />
-                                <Text style={{ marginLeft: '0.7rem' }}>Magic Item Only</Text>
+                                <Text style={{ marginLeft: '0.7rem' }}>{t('items.magicItemOnly')}</Text>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Switch
+                                    checked={equipableOnly}
+                                    onChange={value => handleEquipableOnly(value)}
+                                />
+                                <Text style={{ marginLeft: '0.7rem' }}>{t('items.equipableOnly')}</Text>
                             </div>
                         </div>
                     </div>
@@ -117,6 +132,7 @@ export default function WorkshopItem() {
                             <WorkshopItemCard
                                 item={item}
                                 uponDelete={uponDelete}
+                                onClick={() => handleSelectItem(item.workshopItemId)}
                             />
                         </div>
                     ))
@@ -134,6 +150,14 @@ export default function WorkshopItem() {
                 onClose={() => handleCreateModal(false)}
                 uponWorkshopCreated={uponCreated}
             />
+
+            {selectedItem && (
+                <ItemDisplayModal
+                    open={!!selectedItem}
+                    onClose={() => handleSelectItem(null)}
+                    item={selectedItem}
+                />
+            )}
 
         </div>
     );

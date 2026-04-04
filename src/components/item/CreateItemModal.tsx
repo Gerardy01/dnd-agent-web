@@ -141,7 +141,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                 </div>
             </div>
             <div style={styles.content}>
-                <div style={{ width: '30%', minWidth: '20rem', position: 'sticky', top: '7.7rem', alignSelf: 'flex-start' }}>
+                <div style={styles.imageFormContainer}>
                     <ImageForm
                         title={t('items.itemImage')}
                         submitLoad={submitLoad}
@@ -304,7 +304,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                                     <Col style={{ width: '48%' }}>
                                         <Form.Item
                                             name="weight"
-                                            label={t('items.weight')}
+                                            label={`${t('items.weight')} (${t('items.lbs')})`}
                                             labelCol={{ style: { fontWeight: 'bold' } }}
                                             rules={[
                                                 {
@@ -976,6 +976,14 @@ const styles: { [key: string]: React.CSSProperties } = {
         gap: '1.6rem',
         alignItems: 'flex-start',
     },
+    imageFormContainer: {
+        width: '30%',
+        minWidth: '20rem',
+        position: 'sticky',
+        top: '7.7rem',
+        alignSelf: 'flex-start',
+        overflowY: 'auto',
+    },
     titleDivier: {
         height: '2rem',
         backgroundColor: '#e0dcd3',
@@ -1068,5 +1076,5 @@ const styles: { [key: string]: React.CSSProperties } = {
         borderRadius: '0.6rem',
         border: '1px solid #c9c6beff',
         marginBottom: '1.5rem'
-    }
+    },
 }

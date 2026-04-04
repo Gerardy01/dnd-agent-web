@@ -102,3 +102,25 @@ export const SparklesIcon = (props: React.SVGProps<SVGSVGElement>) => (
         <circle cx="20" cy="14" r="1.3" />
     </svg>
 );
+
+export const MagicalIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" {...props}>
+        {/* Top arm */}
+        <path d="M12 2 C12.5 5.5 13.5 7 12 12 C10.5 7 11.5 5.5 12 2Z" />
+        {/* Right arm */}
+        <path d="M22 12 C18.5 11.5 17 10.5 12 12 C17 13.5 18.5 12.5 22 12Z" />
+        {/* Bottom arm */}
+        <path d="M12 22 C11.5 18.5 10.5 17 12 12 C13.5 17 12.5 18.5 12 22Z" />
+        {/* Left arm */}
+        <path d="M2 12 C5.5 12.5 7 13.5 12 12 C7 10.5 5.5 11.5 2 12Z" />
+    </svg>
+);
+
+export const SwordIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="1em" height="1em" {...props}>
+        <path d="M14.5 4h5v5l-10.5 10.5a2.828 2.828 0 0 1-4-4L15.5 4z" />
+        <path d="M18.5 5.5l-3 3" />
+        <path d="M8 12l4 4" />
+        <path d="M5 19l2-2" />
+    </svg>
+);
