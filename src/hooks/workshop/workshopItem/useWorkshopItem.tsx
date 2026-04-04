@@ -38,6 +38,10 @@ export default function useWorkshopItem() {
 
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
 
+    const [itemWidth, setItemWidth] = useState<string>(
+        window.innerWidth <= 1170 ? '48%' : window.innerWidth <= 1475 ? '32%' : '24%'
+    );
+
     const typeSelection = itemOptions.itemType.map((itemType) => ({
         label: t(`items.${itemType}`),
         value: itemType,
@@ -65,6 +69,14 @@ export default function useWorkshopItem() {
 
     useEffect(() => {
         getWorkshopItemData();
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setItemWidth(window.innerWidth <= 1170 ? '48%' : window.innerWidth <= 1475 ? '32%' : '24%');
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     useEffect(() => {
@@ -222,6 +234,7 @@ export default function useWorkshopItem() {
         categoryFilterValue,
         rarityFilterValue,
         magicItemOnly,
+        itemWidth,
         handleSearch,
         handleSort,
         handleCreateModal,

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { MenuProps } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 // api
 import { workshopItemApi } from "@/api";
@@ -16,6 +16,7 @@ import { RarityEnum } from "@/utils/enums";
 export default function useWorkshopItemCard(
     itemId: number,
     uponDelete: (workshopItemId: number) => void,
+    onEditClick?: () => void,
 ) {
 
     const { t } = useTranslation();
@@ -28,6 +29,14 @@ export default function useWorkshopItemCard(
     const items: MenuProps['items'] = [
         {
             key: '1',
+            label: t('global.edit'),
+            icon: <EditOutlined />,
+            onClick: () => {
+                onEditClick?.();
+            }
+        },
+        {
+            key: '2',
             label: t('global.delete'),
             icon: <DeleteOutlined />,
             onClick: () => {

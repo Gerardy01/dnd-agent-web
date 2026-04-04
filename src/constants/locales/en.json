@@ -30,7 +30,8 @@
         "generateWithAi": "Generate With AI",
         "dropImageHere": "Drop image here",
         "orClickToBrowse": "or click to browse",
-        "delete": "Delete"
+        "delete": "Delete",
+        "edit": "Edit"
     },
     "register": {
         "title": "Join the Quests",

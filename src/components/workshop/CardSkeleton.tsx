@@ -21,7 +21,6 @@ export default function CardSkeleton() {
 const styles: { [key: string]: React.CSSProperties } = {
     container: {
         width: '100%',
-        maxWidth: '320px',
         backgroundColor: '#E8E2D1',
         borderRadius: '8px',
         overflow: 'hidden',

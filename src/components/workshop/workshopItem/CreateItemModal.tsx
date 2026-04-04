@@ -156,6 +156,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                         form={createItemForm}
                         style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
                         onFinish={submitCreateItem}
+                        scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
                     >
                         <div style={styles.formContainer}>
                             <div style={styles.formHeader}>

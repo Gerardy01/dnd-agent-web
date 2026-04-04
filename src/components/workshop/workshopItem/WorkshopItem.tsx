@@ -28,6 +28,7 @@ export default function WorkshopItem() {
         categoryFilterValue,
         rarityFilterValue,
         magicItemOnly,
+        itemWidth,
         handleSearch,
         handleSort,
         handleCreateModal,
@@ -102,7 +103,7 @@ export default function WorkshopItem() {
             <div style={styles.listContainer}>
                 {loading ? (
                     Array.from({ length: 8 }).map((_, index) => (
-                        <div key={`skeleton-${index}`} style={{ width: '24%' }}>
+                        <div key={`skeleton-${index}`} style={{ width: itemWidth }}>
                             <CardSkeleton />
                         </div>
                     ))
@@ -112,8 +113,11 @@ export default function WorkshopItem() {
                     </div>
                 ) : (
                     items.map((item) => (
-                        <div key={item.workshopItemId} style={{ width: '24%' }}>
-                            <WorkshopItemCard item={item} uponDelete={uponDelete} />
+                        <div key={item.workshopItemId} style={{ width: itemWidth }}>
+                            <WorkshopItemCard
+                                item={item}
+                                uponDelete={uponDelete}
+                            />
                         </div>
                     ))
                 )}

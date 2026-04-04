@@ -13,12 +13,14 @@ import type { WorkshopItemReturn } from "@/models/itemInterfaces";
 interface Props {
     item: WorkshopItemReturn;
     uponDelete: (workshopItemId: number) => void;
+    onClick?: () => void;
+    onEditClick?: () => void;
 }
 
 const { Title, Paragraph, Text } = Typography;
 
 
-export default function WorkshopItemCard({ item, uponDelete }: Props) {
+export default function WorkshopItemCard({ item, uponDelete, onClick, onEditClick }: Props) {
 
     const {
         items,
@@ -28,7 +30,7 @@ export default function WorkshopItemCard({ item, uponDelete }: Props) {
         handleMenuHover,
         getRarityColor,
         getCurrencyColor,
-    } = useWorkshopItemCard(item.workshopItemId, uponDelete);
+    } = useWorkshopItemCard(item.workshopItemId, uponDelete, onEditClick);
 
     const { t } = useTranslation();
 
@@ -40,6 +42,7 @@ export default function WorkshopItemCard({ item, uponDelete }: Props) {
             }}
             onMouseEnter={() => handleHover(true)}
             onMouseLeave={() => handleHover(false)}
+            onClick={onClick}
         >
             <div style={styles.imageContainer}>
                 <img
@@ -143,7 +146,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     container: {
         width: '100%',
         height: '100%',
-        maxWidth: '320px',
         backgroundColor: '#F5F1E7',
         borderRadius: '8px',
         overflow: 'hidden',
