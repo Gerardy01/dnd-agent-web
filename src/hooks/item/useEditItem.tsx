@@ -72,14 +72,16 @@ interface WeaponToggle {
 
 export default function useEditItem(
     onClose: () => void,
-    onEditSubmit: (item: Item) => Promise<void>,
-    item: Item | null
+    onEditSubmit: (item: Item, prevData: Item) => Promise<void>,
+    getData: () => Promise<Item | null>
 ) {
     const { t } = useTranslation();
 
     const { itemOptions, effectOptions } = useReferenceStore();
 
     const [editItemForm] = Form.useForm();
+
+    const [item, setItem] = useState<Item | null>(null);
 
     const [submitLoad, setSubmitLoad] = useState<boolean>(false);
 
@@ -133,6 +135,10 @@ export default function useEditItem(
     ];
 
     useEffect(() => {
+        getItemData();
+    }, []);
+
+    useEffect(() => {
         if (!item) return;
 
         editItemForm.setFieldsValue({
@@ -174,7 +180,7 @@ export default function useEditItem(
             const fb: Bonus[] = [];
             fbKeys.forEach(k => {
                 if (item.flatBonus && item.flatBonus[k] !== undefined && item.flatBonus[k] !== 0) {
-                     fb.push({ stats: k, value: item.flatBonus[k] as number });
+                    fb.push({ stats: k, value: item.flatBonus[k] as number });
                 }
             });
             if (fb.length > 0) {
@@ -195,7 +201,7 @@ export default function useEditItem(
             const ob: Bonus[] = [];
             obKeys.forEach(k => {
                 if (item.overrideBonus && item.overrideBonus[k] !== undefined && item.overrideBonus[k] !== 0) {
-                     ob.push({ stats: k, value: item.overrideBonus[k] as number });
+                    ob.push({ stats: k, value: item.overrideBonus[k] as number });
                 }
             });
             if (ob.length > 0) {
@@ -236,9 +242,9 @@ export default function useEditItem(
             setDamageRollValue(item.weaponProperties.damageRoll);
         } else {
             if (item.type === ItemTypeEnum.WEAPON) {
-                 setDamageRollValue([{ count: 1, dice: 6, bonus: 0, damageType: DamageTypeEnum.ACID }]);
+                setDamageRollValue([{ count: 1, dice: 6, bonus: 0, damageType: DamageTypeEnum.ACID }]);
             } else {
-                 setDamageRollValue([]);
+                setDamageRollValue([]);
             }
         }
 
@@ -258,7 +264,7 @@ export default function useEditItem(
             });
 
             if (item.weaponProperties.versatileDamageRoll) {
-                 setVersatileDamageRoll(item.weaponProperties.versatileDamageRoll);
+                setVersatileDamageRoll(item.weaponProperties.versatileDamageRoll);
             } else {
                 setVersatileDamageRoll({ count: 1, dice: 6, bonus: 0, damageType: DamageTypeEnum.ACID });
             }
@@ -275,7 +281,7 @@ export default function useEditItem(
         } else {
             setBaseAcValue(0);
         }
-        
+
     }, [item, editItemForm]);
 
     useEffect(() => {
@@ -283,11 +289,16 @@ export default function useEditItem(
         setOverrideBonusValue(prev => {
             const hasAc = prev.some((b) => b.stats === 'ac');
             if (!hasAc) {
-                 return [...prev, { stats: 'ac', value: baseAcValue }];
+                return [...prev, { stats: 'ac', value: baseAcValue }];
             }
             return prev.map((b) => b.stats === 'ac' ? { ...b, value: baseAcValue } : b);
         });
     }, [baseAcValue, selectedType]);
+
+    const getItemData = async () => {
+        const data = await getData();
+        setItem(data);
+    };
 
     const handleFileChange = (imageUrl: string) => setImageUrl(imageUrl);
 
@@ -450,7 +461,7 @@ export default function useEditItem(
 
         setSubmitLoad(true);
         try {
-            await onEditSubmit(submitData);
+            await onEditSubmit(submitData, item);
             handleCloseModal();
         } finally {
             setSubmitLoad(false);
@@ -462,7 +473,7 @@ export default function useEditItem(
     };
 
     return {
-        editItemForm, typeSelection, selectedType, gearCategoriesSelection, weaponCategoriesSelection,
+        item, editItemForm, typeSelection, selectedType, gearCategoriesSelection, weaponCategoriesSelection,
         armorCategoriesSelection, raritySelection, isMagicItem, currencyUnitSelection, equipSlotSelection,
         damageTypeSelection, conditionSelection, itemBonusStatSelection, equipSlotValue, flatBonusEnabled,
         overrideBonusEnabled, modifierBonusEnabled, flatBonusValue, overrideBonusValue, modifierBonusValue,

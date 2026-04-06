@@ -43,8 +43,8 @@ export default function useWorkshopItem() {
 
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
 
-    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-    const [editedItem, setEditedItem] = useState<Item | null>(null);
+    const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+    const [editedItemId, setEditedItemId] = useState<number | null>(null);
 
     const [itemWidth, setItemWidth] = useState<string>(
         window.innerWidth <= 1170 ? '48%' : window.innerWidth <= 1475 ? '32%' : '24%'
@@ -212,21 +212,17 @@ export default function useWorkshopItem() {
     }
 
     const handleSelectItem = (itemId: number | null) => {
-        if (!itemId) {
-            setSelectedItem(null);
-            return;
-        }
+        setSelectedItemId(itemId);
+    }
 
-        setSelectedItem(workshopItems.find((item) => item.workshopItemId === itemId) || null);
+    const handleGetItemDetails = async (): Promise<Item | null> => {
+        return workshopItems.find(
+            (item) => item.workshopItemId === selectedItemId || item.workshopItemId === editedItemId
+        ) || null;
     }
 
     const handleEditItemClick = (itemId: number | null) => {
-        if (!itemId) {
-            setEditedItem(null);
-            return;
-        }
-
-        setEditedItem(workshopItems.find((item) => item.workshopItemId === itemId) || null);
+        setEditedItemId(itemId);
     }
 
     const handleCreateItem = async (data: CreateItemDTO): Promise<void> => {
@@ -249,13 +245,13 @@ export default function useWorkshopItem() {
         uponCreated(res.workshopItemId);
     }
 
-    const handleEditItem = async (data: Item): Promise<void> => {
+    const handleEditItem = async (data: Item, prevData: Item): Promise<void> => {
 
-        const isImageUpdated = data.image !== editedItem?.image;
+        const isImageUpdated = data.image !== prevData.image;
 
         const updateData: UpdateWorkshopItemDTO = {
             ...data,
-            workshopItemId: editedItem?.workshopItemId || 0,
+            workshopItemId: prevData.workshopItemId || 0,
             isImageUpdated: isImageUpdated,
         }
 
@@ -338,8 +334,8 @@ export default function useWorkshopItem() {
         magicItemOnly,
         equipableOnly,
         itemWidth,
-        selectedItem,
-        editedItem,
+        selectedItemId,
+        editedItemId,
         handleSearch,
         handleSort,
         handleCreateModal,
@@ -354,5 +350,6 @@ export default function useWorkshopItem() {
         handleCreateItem,
         handleEditItemClick,
         handleEditItem,
+        handleGetItemDetails,
     }
 }

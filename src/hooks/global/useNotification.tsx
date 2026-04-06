@@ -22,7 +22,7 @@ export default function useNotification() {
     const successNotification = (title?: string, content?: string): void => {
         notification.success({
             ...commonNotificationConfig,
-            message: (
+            title: (
                 <Text style={styles.titleText}>
                     {title ? title : t("global.success")}
                 </Text>
@@ -35,7 +35,7 @@ export default function useNotification() {
     const infoNotification = (title?: string, content?: string): void => {
         notification.info({
             ...commonNotificationConfig,
-            message: (
+            title: (
                 <Text style={styles.titleText}>
                     {title ? title : t("global.information")}
                 </Text>
@@ -48,7 +48,7 @@ export default function useNotification() {
     const warningNotification = (title?: string, content?: string): void => {
         notification.warning({
             ...commonNotificationConfig,
-            message: (
+            title: (
                 <Text style={styles.titleText}>
                     {title ? title : t("global.warning")}
                 </Text>
@@ -61,7 +61,7 @@ export default function useNotification() {
     const errorNotification = (title?: string, content?: string): void => {
         notification.error({
             ...commonNotificationConfig,
-            message: (
+            title: (
                 <Text style={styles.titleText}>
                     {title ? title : t("global.error")}
                 </Text>

@@ -33,8 +33,8 @@ export default function WorkshopItem() {
         magicItemOnly,
         equipableOnly,
         itemWidth,
-        selectedItem,
-        editedItem,
+        selectedItemId,
+        editedItemId,
         handleSearch,
         handleSort,
         handleCreateModal,
@@ -49,6 +49,7 @@ export default function WorkshopItem() {
         handleCreateItem,
         handleEditItemClick,
         handleEditItem,
+        handleGetItemDetails,
     } = useWorkshopItem();
 
     const { t } = useTranslation();
@@ -156,22 +157,26 @@ export default function WorkshopItem() {
                 onSubmit={handleCreateItem}
             />
 
-            <EditItemModal
-                open={!!editedItem}
-                onClose={() => handleEditItemClick(null)}
-                onSubmit={handleEditItem}
-                item={editedItem!}
-            />
+            {editedItemId && (
+                <EditItemModal
+                    open={!!editedItemId}
+                    onClose={() => handleEditItemClick(null)}
+                    onSubmit={handleEditItem}
+                    getData={handleGetItemDetails}
+                />
+            )}
 
-            <ItemDisplayModal
-                open={!!selectedItem}
-                onClose={() => handleSelectItem(null)}
-                item={selectedItem!}
-                onEdit={() => {
-                    handleEditItemClick(selectedItem!.workshopItemId);
-                    handleSelectItem(null);
-                }}
-            />
+            {selectedItemId && (
+                <ItemDisplayModal
+                    open={!!selectedItemId}
+                    onClose={() => handleSelectItem(null)}
+                    getItem={handleGetItemDetails}
+                    onEdit={() => {
+                        handleEditItemClick(selectedItemId!);
+                        handleSelectItem(null);
+                    }}
+                />
+            )}
 
         </div>
     );
