@@ -8,20 +8,22 @@ import { SortEnum } from "@/utils/enums";
 
 // hooks
 import useStaticModal from "@/hooks/global/useStaticModal";
+import useNotification from "@/hooks/global/useNotification";
 import { useTranslation } from "react-i18next";
 
 // stores
 import useReferenceStore from "@/stores/useReferenceStore";
 
 // interfaces
-import type { Item, WorkshopItemReturn } from "@/models/itemInterfaces";
+import type { CreateItemDTO, Item, WorkshopItemReturn } from "@/models/itemInterfaces";
 
 
 
 export default function useWorkshopItem() {
 
     const { t } = useTranslation();
-    const { serverErrorModal } = useStaticModal();
+    const { serverErrorModal, errorModal } = useStaticModal();
+    const { successNotification } = useNotification();
 
     const { itemOptions } = useReferenceStore();
 
@@ -42,6 +44,7 @@ export default function useWorkshopItem() {
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
 
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+    const [editedItem, setEditedItem] = useState<Item | null>(null);
 
     const [itemWidth, setItemWidth] = useState<string>(
         window.innerWidth <= 1170 ? '48%' : window.innerWidth <= 1475 ? '32%' : '24%'
@@ -169,6 +172,7 @@ export default function useWorkshopItem() {
             }
 
             setWorkshopItems(res);
+            setFilteredWorkshopItems(res);
 
         } finally {
             setLoading(false);
@@ -208,12 +212,41 @@ export default function useWorkshopItem() {
     }
 
     const handleSelectItem = (itemId: number | null) => {
-        if (itemId === null) {
+        if (!itemId) {
             setSelectedItem(null);
             return;
         }
 
         setSelectedItem(workshopItems.find((item) => item.workshopItemId === itemId) || null);
+    }
+
+    const handleEditItemClick = (itemId: number) => {
+        if (!itemId) {
+            setEditedItem(null);
+            return;
+        }
+
+        setEditedItem(workshopItems.find((item) => item.workshopItemId === itemId) || null);
+    }
+
+    const handleCreateItem = async (data: CreateItemDTO): Promise<void> => {
+        const [err, res] = await workshopItemApi.createItem(data);
+
+        if (err) {
+            if (err.status === 400) {
+                const error = err.response.data.schemaErrors ? err.response.data.schemaErrors[0] : undefined;
+                if (!error) return;
+                errorModal(undefined, `${error.field} is ${error.message}`);
+                return;
+            }
+
+            serverErrorModal();
+            return;
+        }
+
+        successNotification(t("items.createSuccess"));
+
+        uponCreated(res.workshopItemId);
     }
 
     const uponCreated = async (workshopItemId: number) => {
@@ -260,6 +293,7 @@ export default function useWorkshopItem() {
         equipableOnly,
         itemWidth,
         selectedItem,
+        editedItem,
         handleSearch,
         handleSort,
         handleCreateModal,
@@ -269,8 +303,9 @@ export default function useWorkshopItem() {
         handleMagicItemOnly,
         handleEquipableOnly,
         resetFilters,
-        uponCreated,
         uponDelete,
         handleSelectItem,
+        handleCreateItem,
+        handleEditItemClick,
     }
 }

@@ -28,7 +28,8 @@ export default function useWorkshopItemCard(
             key: '1',
             label: t('global.edit'),
             icon: <EditOutlined />,
-            onClick: () => {
+            onClick: (info) => {
+                info.domEvent.stopPropagation();
                 onEditClick?.();
             }
         },
@@ -36,7 +37,8 @@ export default function useWorkshopItemCard(
             key: '2',
             label: t('global.delete'),
             icon: <DeleteOutlined />,
-            onClick: () => {
+            onClick: (info) => {
+                info.domEvent.stopPropagation();
                 confirmationModal({
                     title: t('global.delete'),
                     content: t('items.deleteConfirmDesc'),

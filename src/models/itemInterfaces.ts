@@ -63,7 +63,7 @@ export type ModifierBonus = {
 }
 
 export interface CreateItemDTO {
-    image?: string;
+    image: string | null;
     name: string;
     type: string;
     description: string;

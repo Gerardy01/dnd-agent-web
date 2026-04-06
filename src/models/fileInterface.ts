@@ -6,10 +6,6 @@ export interface GetUploadUrlApiDTO {
     fileSize: number;
 }
 
-export interface ImageFormRef {
-    reset: () => void;
-}
-
 export interface GetUploadUrlApiReturn {
     url: string;
     key: string;

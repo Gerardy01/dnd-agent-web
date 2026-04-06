@@ -39,6 +39,10 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
 
     const { t } = useTranslation();
 
+    if (!item) {
+        return <></>
+    }
+
     return (
         <Modal
             open={open}
@@ -114,7 +118,7 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
                             <div style={{ marginTop: '1.5rem' }}>
                                 <div style={styles.bonusSectionHeader}>
                                     <span style={{ fontSize: '1rem', display: 'flex', color: '#8c8069' }}>⊕</span>
-                                    <Text strong style={styles.bonusSectionTitle}>STAT BONUSES</Text>
+                                    <Text strong style={styles.bonusSectionTitle}>{`${t('items.statBonuses')}`.toUpperCase()}</Text>
                                 </div>
                                 {hasFlatBonus && (
                                     <>
@@ -151,7 +155,7 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
                                             {item.modifierBonus!.map((mb, idx) => (
                                                 <div key={idx} style={styles.modifierBonusRow}>
                                                     <Text style={{ fontSize: '0.85rem', color: '#4a463d' }}>
-                                                        Add <Text strong style={{ color: '#d35400' }}>{String(t(`items.${mb.from}`))}</Text> modifier to <Text strong style={{ color: '#d35400' }}>{String(t(`items.${mb.to}`))}</Text> up to <Text strong style={{ color: '#d35400' }}>{mb.value}</Text>
+                                                        {t('items.modBonusAdd')} <Text strong style={{ color: '#d35400' }}>{String(t(`items.${mb.from}`))}</Text> {t('items.modBonusModifierTo')} <Text strong style={{ color: '#d35400' }}>{String(t(`items.${mb.to}`))}</Text> {t('items.modBonusUpTo')} <Text strong style={{ color: '#d35400' }}>{mb.value}</Text>
                                                     </Text>
                                                 </div>
                                             ))}
@@ -167,14 +171,14 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
                         <Title level={1} style={styles.rightSideTitle}>{item.name}</Title>
                     </div>
 
-                    <SectionHeader icon={<InfoCircleOutlined />} title="DESCRIPTION" />
+                    <SectionHeader icon={<InfoCircleOutlined />} title={`${t('items.description')}`.toUpperCase()} />
                     <div style={styles.descriptionText}>
                         {item.description.split('\n').map((line, idx) => (
                             <p key={idx} style={{ margin: line.trim() ? '0 0 1rem 0' : '0' }}>{line}</p>
                         ))}
                     </div>
 
-                    <SectionHeader icon={<CodeSandboxOutlined />} title="APPEARANCE" />
+                    <SectionHeader icon={<CodeSandboxOutlined />} title={`${t('items.appearance')}`.toUpperCase()} />
                     <div style={styles.descriptionText}>
                         {item.appearance.split('\n').map((line, idx) => (
                             <p key={idx} style={{ margin: line.trim() ? '0 0 1rem 0' : '0' }}>{line}</p>
@@ -183,27 +187,27 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
 
                     {item.type === ItemTypeEnum.ARMOR && item.armorProperties && (
                         <>
-                            <SectionHeader icon={<SafetyOutlined />} title="ARMOR PROPERTIES" />
+                            <SectionHeader icon={<SafetyOutlined />} title={`${t('items.armorProperties')}`.toUpperCase()} />
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
                                 <div style={styles.propertyBox}>
-                                    <Text style={styles.propertyLabel}>BASE ARMOR CLASS</Text><br />
+                                    <Text style={styles.propertyLabel}>{`${t('items.baseAc')}`.toUpperCase()}</Text><br />
                                     <Text style={styles.propertyValue}>{item.armorProperties.baseAc}</Text>
                                 </div>
                                 {item.armorProperties.strengthReq > 0 && (
                                     <div style={styles.propertyBox}>
-                                        <Text style={styles.propertyLabel}>STRENGTH REQUIREMENT</Text><br />
+                                        <Text style={styles.propertyLabel}>{`${t('items.strengthReq')}`.toUpperCase()}</Text><br />
                                         <Text style={styles.propertyValue}>{item.armorProperties.strengthReq > 0 ? item.armorProperties.strengthReq : '-'}</Text>
                                     </div>
                                 )}
                                 {item.armorProperties.flatAcBonus > 0 && (
                                     <div style={styles.propertyBox}>
-                                        <Text style={styles.propertyLabel}>FLAT AC BONUS</Text><br />
+                                        <Text style={styles.propertyLabel}>{`${t('items.flatAcBonus')}`.toUpperCase()}</Text><br />
                                         <Text style={styles.propertyValue}>+{item.armorProperties.flatAcBonus}</Text>
                                     </div>
                                 )}
                                 {item.armorProperties.maxModifier > 0 && (
                                     <div style={styles.propertyBox}>
-                                        <Text style={styles.propertyLabel}>MAX MODIFIER</Text><br />
+                                        <Text style={styles.propertyLabel}>{`${t('items.maxModifier')}`.toUpperCase()}</Text><br />
                                         <Text style={styles.propertyValue}>{item.armorProperties.maxModifier}</Text>
                                     </div>
                                 )}
@@ -211,16 +215,16 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
                             {(item.armorProperties.modifier.dexMod || item.armorProperties.modifier.conMod || item.armorProperties.modifier.wisMod || item.armorProperties.other?.stealthDisadvantage) && (
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
                                     {item.armorProperties.modifier.dexMod && (
-                                        <Tag color="#e8e4d9" style={styles.stealthTag}>+ Dex Modifier</Tag>
+                                        <Tag color="#e8e4d9" style={styles.stealthTag}>+ {t('items.addDexModifier')}</Tag>
                                     )}
                                     {item.armorProperties.modifier.conMod && (
-                                        <Tag color="#e8e4d9" style={styles.stealthTag}>+ Con Modifier</Tag>
+                                        <Tag color="#e8e4d9" style={styles.stealthTag}>+ {t('items.addConModifier')}</Tag>
                                     )}
                                     {item.armorProperties.modifier.wisMod && (
-                                        <Tag color="#e8e4d9" style={styles.stealthTag}>+ Wis Modifier</Tag>
+                                        <Tag color="#e8e4d9" style={styles.stealthTag}>+ {t('items.addWisModifier')}</Tag>
                                     )}
                                     {item.armorProperties.other?.stealthDisadvantage && (
-                                        <Tag color="#f5e6e0" style={{ ...styles.stealthTag, color: '#c0392b', borderColor: '#e8b4a8' }}>Stealth Disadvantage</Tag>
+                                        <Tag color="#f5e6e0" style={{ ...styles.stealthTag, color: '#c0392b', borderColor: '#e8b4a8' }}>{t('items.stealthDisadvantage')}</Tag>
                                     )}
                                 </div>
                             )}
@@ -229,9 +233,9 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
 
                     {item.type === ItemTypeEnum.WEAPON && item.weaponProperties && (
                         <>
-                            <SectionHeader icon={<SwordIcon />} title="WEAPON PROPERTIES" />
+                            <SectionHeader icon={<SwordIcon />} title={`${t('items.weaponProperties')}`.toUpperCase()} />
                             <div style={styles.weaponPropertiesBox}>
-                                <Text style={styles.propertyLabel}>DAMAGE PROFILE</Text>
+                                <Text style={styles.propertyLabel}>{`${t('items.damageProfile')}`.toUpperCase()}</Text>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
                                     {item.weaponProperties.damageRoll.map((dr, index) => (
                                         <div key={index} style={styles.damageRollItem}>
@@ -299,11 +303,11 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
 
                     {item.additionalProperties && (item.additionalProperties.immunities.length > 0 || item.additionalProperties.resistances.length > 0 || item.additionalProperties.vulnerabilities.length > 0 || item.additionalProperties.conditionImmunities.length > 0) && (
                         <>
-                            <SectionHeader icon={<ThunderboltOutlined />} title="ATTRIBUTES & IMMUNITIES" />
+                            <SectionHeader icon={<ThunderboltOutlined />} title={`${t('items.attributesAndImmunities')}`.toUpperCase()} />
                             <div style={styles.attributesContainer}>
                                 {item.additionalProperties.immunities.length > 0 && (
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Text style={styles.attributeLabel}>IMMUNITY:</Text>
+                                        <Text style={styles.attributeLabel}>{`${t('items.immunity')}`.toUpperCase()}:</Text>
                                         <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
                                             {item.additionalProperties.immunities.map(imm => (
                                                 <Tag key={imm} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${imm}`)}</Tag>
@@ -313,7 +317,7 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
                                 )}
                                 {item.additionalProperties.resistances.length > 0 && (
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Text style={styles.attributeLabel}>RESISTANCE:</Text>
+                                        <Text style={styles.attributeLabel}>{`${t('items.resistance')}`.toUpperCase()}:</Text>
                                         <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
                                             {item.additionalProperties.resistances.map(res => (
                                                 <Tag key={res} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${res}`)}</Tag>
@@ -323,7 +327,7 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
                                 )}
                                 {item.additionalProperties.vulnerabilities.length > 0 && (
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Text style={styles.attributeLabel}>VULNERABILITY:</Text>
+                                        <Text style={styles.attributeLabel}>{`${t('items.vulnerability')}`.toUpperCase()}:</Text>
                                         <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
                                             {item.additionalProperties.vulnerabilities.map(vul => (
                                                 <Tag key={vul} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${vul}`)}</Tag>
@@ -333,7 +337,7 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
                                 )}
                                 {item.additionalProperties.conditionImmunities.length > 0 && (
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Text style={styles.attributeLabel}>CONDITION IMMUNITY:</Text>
+                                        <Text style={styles.attributeLabel}>{`${t('items.conditionImmunity')}`.toUpperCase()}:</Text>
                                         <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
                                             {item.additionalProperties.conditionImmunities.map(cond => (
                                                 <Tag key={cond} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${cond}`)}</Tag>

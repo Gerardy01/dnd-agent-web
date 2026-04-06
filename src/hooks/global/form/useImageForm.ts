@@ -1,4 +1,4 @@
-import { useRef, useState, useImperativeHandle } from "react";
+import { useRef, useState } from "react";
 
 // hooks
 import useStaticModal from "@/hooks/global/useStaticModal";
@@ -8,13 +8,9 @@ import { useTranslation } from "react-i18next";
 // api
 import { fileApi } from "@/api";
 
-// interfaces
-import type { ImageFormRef } from "@/models/fileInterface";
-
 
 export default function useImageForm(
     onFileChange: (fileUrl: string) => void,
-    resetRef?: React.RefObject<ImageFormRef | null>
 ) {
 
     const { serverErrorModal, errorModal } = useStaticModal();
@@ -27,10 +23,6 @@ export default function useImageForm(
     const [loading, setLoading] = useState<boolean>(false);
 
     const [imageUrl, setImageUrl] = useState<string>("");
-
-    useImperativeHandle(resetRef, () => ({
-        reset: handleReset,
-    }));
 
     const handleFileChange = async (file: File) => {
         if (!file) return;
@@ -83,11 +75,6 @@ export default function useImageForm(
         onFileChange("");
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
-
-    const handleReset = () => {
-        setImageUrl("");
-        if (fileInputRef.current) fileInputRef.current.value = '';
-    }
 
     return {
         fileInputRef,

@@ -162,10 +162,11 @@ const styles: { [key: string]: React.CSSProperties } = {
         aspectRatio: '1/1',
         position: 'relative',
         backgroundColor: 'white',
+        overflow: 'hidden',
     },
     image: {
         width: '100%',
-        height: '100%',
+        aspectRatio: '1/1',
         objectFit: 'cover'
     },
     rarityBadge: {

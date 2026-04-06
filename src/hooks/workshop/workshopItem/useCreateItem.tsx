@@ -1,8 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, type FormProps } from "antd";
-
-// api
-import { workshopItemApi } from "@/api";
 
 // utils
 import { DamageTypeEnum, ItemTypeEnum, WeaponToggleEnum } from "@/utils/enums";
@@ -15,11 +12,9 @@ import useReferenceStore from "@/stores/useReferenceStore";
 
 // hooks
 import { useTranslation } from "react-i18next";
-import useStaticModal from "@/hooks/global/useStaticModal";
-import useNotification from "@/hooks/global/useNotification";
 
 // interfaces
-import type { ImageFormRef } from "@/models/fileInterface";
+import type { CreateItemDTO } from "@/models/itemInterfaces";
 interface CreateItemFormValues {
     name: string;
     type: string;
@@ -78,18 +73,14 @@ interface WeaponToggle {
 
 export default function useCreateItem(
     onClose: () => void,
-    uponWorkshopCreated?: (workshopItemId: number) => void
+    onCreateSubmit: (data: CreateItemDTO) => Promise<void>
 ) {
 
     const { t } = useTranslation();
-    const { serverErrorModal, errorModal } = useStaticModal();
-    const { successNotification } = useNotification();
 
     const { itemOptions, effectOptions } = useReferenceStore();
 
     const [createItemForm] = Form.useForm();
-
-    const imageFormRef = useRef<ImageFormRef>(null);
 
     const [submitLoad, setSubmitLoad] = useState<boolean>(false);
 
@@ -537,27 +528,8 @@ export default function useCreateItem(
         setSubmitLoad(true);
 
         try {
-
-            const [err, res] = await workshopItemApi.createItem(submitData);
-
-            if (err) {
-                if (err.status === 400) {
-                    const error = err.response.data.schemaErrors ? err.response.data.schemaErrors[0] : undefined;
-                    if (!error) return;
-                    errorModal(undefined, `${error.field} is ${error.message}`);
-                    return;
-                }
-
-                serverErrorModal();
-                return;
-            }
-
-            successNotification(t("items.createSuccess"));
-
+            await onCreateSubmit(submitData);
             handleCloseModal();
-
-            uponWorkshopCreated?.(res.workshopItemId);
-
         } finally {
             setSubmitLoad(false);
         }
@@ -601,13 +573,11 @@ export default function useCreateItem(
 
     const handleCloseModal = () => {
         restartForm();
-        imageFormRef.current?.reset();
         onClose();
     };
 
     return {
         createItemForm,
-        imageFormRef,
         typeSelection,
         selectedType,
         gearCategoriesSelection,

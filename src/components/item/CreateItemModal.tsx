@@ -15,20 +15,20 @@ import { CloseOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import ImageForm from "@/components/global/form/ImageForm";
 
 // interfaces
+import type { CreateItemDTO } from "@/models/itemInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
-    uponWorkshopCreated?: (workshopItemId: number) => void;
+    onCreateSubmit: (data: CreateItemDTO) => Promise<void>;
 }
 
 const { Title, Text } = Typography;
 
 
-export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: Props) {
+export default function CreateItemModal({ open, onClose, onCreateSubmit }: Props) {
 
     const {
         createItemForm,
-        imageFormRef,
         typeSelection,
         selectedType,
         gearCategoriesSelection,
@@ -85,7 +85,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
         handleSetBaseAcValue,
         submitCreateItem,
         handleCloseModal,
-    } = useCreateItem(onClose, uponWorkshopCreated);
+    } = useCreateItem(onClose, onCreateSubmit);
 
     const { t } = useTranslation();
 
@@ -94,6 +94,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
             open={open}
             footer={null}
             closable={false}
+            destroyOnHidden={true}
             width={'70rem'}
             centered
             style={{ margin: '2rem 0px' }}
@@ -136,6 +137,7 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                         icon={<CloseOutlined />}
                         style={{ padding: '1.2rem', borderRadius: '50%' }}
                         onClick={handleCloseModal}
+                        disabled={submitLoad}
                         type="text"
                     />
                 </div>
@@ -146,7 +148,6 @@ export default function CreateItemModal({ open, onClose, uponWorkshopCreated }: 
                         title={t('items.itemImage')}
                         submitLoad={submitLoad}
                         onFileChange={handleFileChange}
-                        resetRef={imageFormRef}
                     />
                 </div>
                 <div style={{ flex: '1' }}>

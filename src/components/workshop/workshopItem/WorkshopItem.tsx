@@ -33,6 +33,7 @@ export default function WorkshopItem() {
         equipableOnly,
         itemWidth,
         selectedItem,
+        editedItem,
         handleSearch,
         handleSort,
         handleCreateModal,
@@ -41,10 +42,11 @@ export default function WorkshopItem() {
         handleRarityFilter,
         handleMagicItemOnly,
         handleEquipableOnly,
-        uponCreated,
         resetFilters,
         uponDelete,
         handleSelectItem,
+        handleCreateItem,
+        handleEditItemClick,
     } = useWorkshopItem();
 
     const { t } = useTranslation();
@@ -133,6 +135,7 @@ export default function WorkshopItem() {
                                 item={item}
                                 uponDelete={uponDelete}
                                 onClick={() => handleSelectItem(item.workshopItemId)}
+                                onEditClick={() => handleEditItemClick(item.workshopItemId)}
                             />
                         </div>
                     ))
@@ -148,16 +151,15 @@ export default function WorkshopItem() {
             <CreateItemModal
                 open={createModalOpen}
                 onClose={() => handleCreateModal(false)}
-                uponWorkshopCreated={uponCreated}
+                onCreateSubmit={handleCreateItem}
             />
 
-            {selectedItem && (
-                <ItemDisplayModal
-                    open={!!selectedItem}
-                    onClose={() => handleSelectItem(null)}
-                    item={selectedItem}
-                />
-            )}
+
+            <ItemDisplayModal
+                open={!!selectedItem}
+                onClose={() => handleSelectItem(null)}
+                item={selectedItem!}
+            />
 
         </div>
     );

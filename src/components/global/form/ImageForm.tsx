@@ -9,19 +9,17 @@ import useImageForm from "@/hooks/global/form/useImageForm";
 import { useTranslation } from "react-i18next";
 
 // interfaces
-import type { ImageFormRef } from "@/models/fileInterface";
 interface Props {
     title: string;
     submitLoad: boolean;
     onFileChange: (fileUrl: string) => void;
-    resetRef?: React.RefObject<ImageFormRef | null>;
 }
 
 
 const { Title, Text } = Typography;
 
 
-export default function ImageForm({ title, submitLoad, onFileChange, resetRef }: Props) {
+export default function ImageForm({ title, submitLoad, onFileChange }: Props) {
 
     const {
         fileInputRef,
@@ -29,7 +27,7 @@ export default function ImageForm({ title, submitLoad, onFileChange, resetRef }:
         imageUrl,
         handleFileChange,
         handleRemoveImage,
-    } = useImageForm(onFileChange, resetRef);
+    } = useImageForm(onFileChange);
 
     const { t } = useTranslation();
 

@@ -318,7 +318,14 @@
         "equipableOnly": "Equipable Only",
         "filterItems": "Filter Items",
         "type": "Type",
-        "magicalItem": "Magical Item"
+        "magicalItem": "Magical Item",
+        "statBonuses": "Stat Bonuses",
+        "damageProfile": "Damage Profile",
+        "attributesAndImmunities": "Attributes & Immunities",
+        "immunity": "Immunity",
+        "resistance": "Resistance",
+        "vulnerability": "Vulnerability",
+        "conditionImmunity": "Condition Immunity"
     },
     "effects": {
         "acid": "Acid",
