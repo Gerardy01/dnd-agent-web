@@ -4,7 +4,7 @@ import { AutoComplete, Button, Checkbox, Col, Divider, Form, Input, InputNumber,
 import { ItemTypeEnum, WeaponToggleEnum } from "@/utils/enums";
 
 // hooks
-import useCreateItem from "@/hooks/item/useCreateItem";
+import useEditItem from "@/hooks/item/useEditItem";
 import { useTranslation } from "react-i18next";
 
 // assets
@@ -15,20 +15,21 @@ import { CloseOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import ImageForm from "@/components/global/form/ImageForm";
 
 // interfaces
-import type { CreateItemDTO } from "@/models/itemInterfaces";
+import type { Item } from "@/models/itemInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
-    onSubmit: (data: CreateItemDTO) => Promise<void>;
+    item: Item | null;
+    onSubmit: (data: Item) => Promise<void>;
 }
 
 const { Title, Text } = Typography;
 
 
-export default function CreateItemModal({ open, onClose, onSubmit }: Props) {
+export default function EditItemModal({ open, onClose, item, onSubmit }: Props) {
 
     const {
-        createItemForm,
+        editItemForm,
         typeSelection,
         selectedType,
         gearCategoriesSelection,
@@ -83,9 +84,9 @@ export default function CreateItemModal({ open, onClose, onSubmit }: Props) {
         handleEquipSlotChange,
         handleUpdateVersatileDamageRoll,
         handleSetBaseAcValue,
-        submitCreateItem,
+        submitEditItem,
         handleCloseModal,
-    } = useCreateItem(onClose, onSubmit);
+    } = useEditItem(onClose, onSubmit, item);
 
     const { t } = useTranslation();
 
@@ -113,8 +114,8 @@ export default function CreateItemModal({ open, onClose, onSubmit }: Props) {
         >
             <div style={styles.header}>
                 <div>
-                    <Title level={2} style={{ margin: '0px' }}>{t('items.createItemTitle')}</Title>
-                    <Text style={{ fontSize: '1rem' }}>{t('items.createItemDescription')}</Text>
+                    <Title level={2} style={{ margin: '0px' }}>{t('items.editItemTitle')}</Title>
+                    <Text style={{ fontSize: '1rem' }}>{t('items.editItemDescription')}</Text>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <Button
@@ -127,10 +128,10 @@ export default function CreateItemModal({ open, onClose, onSubmit }: Props) {
                     <Button
                         style={{ padding: '1.2rem 1.5rem' }}
                         type="primary"
-                        onClick={() => createItemForm.submit()}
+                        onClick={() => editItemForm.submit()}
                         loading={submitLoad}
                     >
-                        {t('items.createItem')}
+                        {t('items.editItem')}
                     </Button>
                     <Divider vertical style={styles.titleDivier} />
                     <Button
@@ -148,15 +149,16 @@ export default function CreateItemModal({ open, onClose, onSubmit }: Props) {
                         title={t('items.itemImage')}
                         submitLoad={submitLoad}
                         onFileChange={handleFileChange}
+                        initialImage={item?.image || ""}
                     />
                 </div>
                 <div style={{ flex: '1' }}>
                     <Form
-                        name="createItem"
+                        name="editItem"
                         layout="vertical"
-                        form={createItemForm}
+                        form={editItemForm}
                         style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
-                        onFinish={submitCreateItem}
+                        onFinish={submitEditItem}
                         scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
                     >
                         <div style={styles.formContainer}>

@@ -39,9 +39,7 @@ export default function ItemDisplayModal({ open, onClose, onEdit, item }: Props)
 
     const { t } = useTranslation();
 
-    if (!item) {
-        return <></>
-    }
+    if (!item) return <></>;
 
     return (
         <Modal

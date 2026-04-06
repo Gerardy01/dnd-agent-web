@@ -13,13 +13,14 @@ interface Props {
     title: string;
     submitLoad: boolean;
     onFileChange: (fileUrl: string) => void;
+    initialImage?: string | null;
 }
 
 
 const { Title, Text } = Typography;
 
 
-export default function ImageForm({ title, submitLoad, onFileChange }: Props) {
+export default function ImageForm({ title, submitLoad, onFileChange, initialImage }: Props) {
 
     const {
         fileInputRef,
@@ -27,7 +28,7 @@ export default function ImageForm({ title, submitLoad, onFileChange }: Props) {
         imageUrl,
         handleFileChange,
         handleRemoveImage,
-    } = useImageForm(onFileChange);
+    } = useImageForm(onFileChange, initialImage);
 
     const { t } = useTranslation();
 

@@ -231,6 +231,9 @@
         "createItemTitle": "Create New Item",
         "createItemDescription": "Design and customize your item",
         "createItem": "Create Item",
+        "editItemTitle": "Edit Item",
+        "editItemDescription": "Modify your item's properties",
+        "editItem": "Save Changes",
         "itemImage": "Item Image",
         "basicInformation": "Basic Information",
         "basicInformationDescription": "Add basic information about your item",
@@ -325,7 +328,8 @@
         "immunity": "Immunity",
         "resistance": "Resistance",
         "vulnerability": "Vulnerability",
-        "conditionImmunity": "Condition Immunity"
+        "conditionImmunity": "Condition Immunity",
+        "editSuccess": "Item updated successfully"
     },
     "effects": {
         "acid": "Acid",

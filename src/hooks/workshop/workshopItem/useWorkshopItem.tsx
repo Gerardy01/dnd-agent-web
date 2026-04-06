@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import useReferenceStore from "@/stores/useReferenceStore";
 
 // interfaces
-import type { CreateItemDTO, Item, WorkshopItemReturn } from "@/models/itemInterfaces";
+import type { CreateItemDTO, Item, UpdateWorkshopItemDTO, WorkshopItemReturn } from "@/models/itemInterfaces";
 
 
 
@@ -220,7 +220,7 @@ export default function useWorkshopItem() {
         setSelectedItem(workshopItems.find((item) => item.workshopItemId === itemId) || null);
     }
 
-    const handleEditItemClick = (itemId: number) => {
+    const handleEditItemClick = (itemId: number | null) => {
         if (!itemId) {
             setEditedItem(null);
             return;
@@ -249,6 +249,35 @@ export default function useWorkshopItem() {
         uponCreated(res.workshopItemId);
     }
 
+    const handleEditItem = async (data: Item): Promise<void> => {
+
+        const isImageUpdated = data.image !== editedItem?.image;
+
+        const updateData: UpdateWorkshopItemDTO = {
+            ...data,
+            workshopItemId: editedItem?.workshopItemId || 0,
+            isImageUpdated: isImageUpdated,
+        }
+
+        const [err, res] = await workshopItemApi.editItem(updateData);
+
+        if (err) {
+            if (err.status === 400) {
+                const error = err.response.data.schemaErrors ? err.response.data.schemaErrors[0] : undefined;
+                if (!error) return;
+                errorModal(undefined, `${error.field} is ${error.message}`);
+                return;
+            }
+
+            serverErrorModal();
+            return;
+        }
+
+        successNotification(t("items.editSuccess"));
+
+        uponEdited(res.workshopItemId);
+    }
+
     const uponCreated = async (workshopItemId: number) => {
 
         const [err, res] = await workshopItemApi.getOneItem(workshopItemId);
@@ -264,6 +293,23 @@ export default function useWorkshopItem() {
         }
 
         setWorkshopItems((prev) => [...prev, res]);
+    }
+
+    const uponEdited = async (workshopItemId: number) => {
+
+        const [err, res] = await workshopItemApi.getOneItem(workshopItemId);
+
+        if (err) {
+            serverErrorModal();
+            return;
+        }
+
+        if (sortValue === SortEnum.RECENT) {
+            setWorkshopItems((prev) => prev.map((item) => item.workshopItemId === res.workshopItemId ? res : item));
+            return;
+        }
+
+        setWorkshopItems((prev) => prev.map((item) => item.workshopItemId === res.workshopItemId ? res : item));
     }
 
     const uponDelete = async (workshopItemId: number) => {
@@ -307,5 +353,6 @@ export default function useWorkshopItem() {
         handleSelectItem,
         handleCreateItem,
         handleEditItemClick,
+        handleEditItem,
     }
 }

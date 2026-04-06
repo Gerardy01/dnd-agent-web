@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // hooks
 import useStaticModal from "@/hooks/global/useStaticModal";
@@ -11,6 +11,7 @@ import { fileApi } from "@/api";
 
 export default function useImageForm(
     onFileChange: (fileUrl: string) => void,
+    initialImage?: string | null,
 ) {
 
     const { serverErrorModal, errorModal } = useStaticModal();
@@ -22,7 +23,11 @@ export default function useImageForm(
 
     const [loading, setLoading] = useState<boolean>(false);
 
-    const [imageUrl, setImageUrl] = useState<string>("");
+    const [imageUrl, setImageUrl] = useState<string>(initialImage || "");
+
+    useEffect(() => {
+        setImageUrl(initialImage || "");
+    }, [initialImage]);
 
     const handleFileChange = async (file: File) => {
         if (!file) return;

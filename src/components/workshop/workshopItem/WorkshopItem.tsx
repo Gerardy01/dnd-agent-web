@@ -6,6 +6,7 @@ import WorkshopControl from "@/components/workshop/WorkshopControl";
 import WorkshopItemCard from "./WorkshopItemCard";
 import CardSkeleton from "../CardSkeleton";
 import CreateItemModal from "@/components/item/CreateItemModal";
+import EditItemModal from "@/components/item/EditItemModal";
 import ItemDisplayModal from "@/components/item/ItemDisplayModal";
 
 // hooks
@@ -47,6 +48,7 @@ export default function WorkshopItem() {
         handleSelectItem,
         handleCreateItem,
         handleEditItemClick,
+        handleEditItem,
     } = useWorkshopItem();
 
     const { t } = useTranslation();
@@ -151,14 +153,24 @@ export default function WorkshopItem() {
             <CreateItemModal
                 open={createModalOpen}
                 onClose={() => handleCreateModal(false)}
-                onCreateSubmit={handleCreateItem}
+                onSubmit={handleCreateItem}
             />
 
+            <EditItemModal
+                open={!!editedItem}
+                onClose={() => handleEditItemClick(null)}
+                onSubmit={handleEditItem}
+                item={editedItem!}
+            />
 
             <ItemDisplayModal
                 open={!!selectedItem}
                 onClose={() => handleSelectItem(null)}
                 item={selectedItem!}
+                onEdit={() => {
+                    handleEditItemClick(selectedItem!.workshopItemId);
+                    handleSelectItem(null);
+                }}
             />
 
         </div>

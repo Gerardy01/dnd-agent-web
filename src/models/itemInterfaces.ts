@@ -85,6 +85,7 @@ export interface CreateItemDTO {
 
 export interface UpdateWorkshopItemDTO extends CreateItemDTO {
     workshopItemId: number;
+    isImageUpdated: boolean;
 }
 
 export type Item = {
