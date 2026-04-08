@@ -1,7 +1,7 @@
 
 
 // interface
-import type { FetchResponse, ErrorResponse } from "@/models/globalInterfaces";
+import type { ErrorResponse } from "@/models/globalInterfaces";
 import type {
     Area,
     AreaShape,

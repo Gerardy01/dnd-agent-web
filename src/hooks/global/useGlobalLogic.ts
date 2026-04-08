@@ -17,21 +17,23 @@ export default function useGlobalLogic() {
     const { serverErrorModal } = useStaticModal();
 
     const { setAccount } = useAccountStore();
-    const { setItemOptions, setEffectOptions } = useReferenceStore();
+    const { setItemOptions, setEffectOptions, setFeatOptions } = useReferenceStore();
 
     const [pageLoad, setPageLoad] = useState<boolean>(true);
     const [getAccountLoad, setGetAccountLoad] = useState<boolean>(true);
     const [getReferenceLoad, setGetReferenceLoad] = useState<boolean>(true);
     const [getEffectOptionsLoad, setGetEffectOptionsLoad] = useState<boolean>(true);
+    const [getFeatOptionsLoad, setGetFeatOptionsLoad] = useState<boolean>(true);
 
     useEffect(() => {
         getAccountData();
         getReferenceData();
         getEffectOptionsData();
+        getFeatOptionsData();
     }, []);
 
     useEffect(() => {
-        if (getAccountLoad || getReferenceLoad || getEffectOptionsLoad) return;
+        if (getAccountLoad || getReferenceLoad || getEffectOptionsLoad || getFeatOptionsLoad) return;
         setPageLoad(false);
     }, [getAccountLoad, getReferenceLoad, getEffectOptionsLoad]);
 
@@ -105,6 +107,27 @@ export default function useGlobalLogic() {
 
         } finally {
             setGetEffectOptionsLoad(false);
+        }
+    }
+
+    const getFeatOptionsData = async () => {
+        setGetFeatOptionsLoad(true);
+
+        try {
+
+            const [err, data] = await referenceApi.getFeatOptions();
+
+            if (err) {
+                serverErrorModal();
+                return;
+            }
+
+            setFeatOptions({
+                featCategories: data.featCategories,
+            });
+
+        } finally {
+            setGetFeatOptionsLoad(false);
         }
     }
 

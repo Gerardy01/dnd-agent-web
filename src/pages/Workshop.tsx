@@ -1,5 +1,8 @@
 import { Typography, Menu } from "antd";
 
+// utils
+import { WorkshopMenuEnum } from "@/utils/enums";
+
 // hooks
 import useWorkshop from "@/hooks/workshop/useWorkshop";
 import { useTranslation } from "react-i18next";
@@ -7,6 +10,7 @@ import { useTranslation } from "react-i18next";
 // components
 import Wrapper from "@/components/global/Wrapper";
 import WorkshopItem from "@/components/workshop/workshopItem/WorkshopItem";
+import WorkshopFeat from "@/components/workshop/workshopFeat/WorkshopFeat";
 
 const { Title, Text } = Typography;
 
@@ -43,8 +47,14 @@ export default function Workshop() {
                 />
 
                 {
-                    selectedMenu === 'items' && (
+                    selectedMenu === WorkshopMenuEnum.ITEMS && (
                         <WorkshopItem />
+                    )
+                }
+
+                {
+                    selectedMenu === WorkshopMenuEnum.FEATS && (
+                        <WorkshopFeat />
                     )
                 }
 

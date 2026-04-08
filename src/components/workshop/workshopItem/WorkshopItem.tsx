@@ -3,8 +3,8 @@ import { ReloadOutlined } from "@ant-design/icons";
 
 // components
 import WorkshopControl from "@/components/workshop/WorkshopControl";
-import WorkshopItemCard from "./WorkshopItemCard";
-import CardSkeleton from "../CardSkeleton";
+import WorkshopItemCard from "@/components/workshop/workshopItem/WorkshopItemCard";
+import CardSkeleton from "@/components/workshop/CardSkeleton";
 import CreateItemModal from "@/components/item/CreateItemModal";
 import EditItemModal from "@/components/item/EditItemModal";
 import ItemDisplayModal from "@/components/item/ItemDisplayModal";

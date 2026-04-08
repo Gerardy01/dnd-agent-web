@@ -13,3 +13,7 @@ export interface EffectOptionsReturn {
     damageTypes: string[];
     immunities: string[];
 }
+
+export interface FeatOptionsReturn {
+    featCategories: string[];
+}

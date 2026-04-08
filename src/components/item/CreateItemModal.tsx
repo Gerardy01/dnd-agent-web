@@ -132,7 +132,7 @@ export default function CreateItemModal({ open, onClose, onSubmit }: Props) {
                     >
                         {t('items.createItem')}
                     </Button>
-                    <Divider vertical style={styles.titleDivier} />
+                    <Divider vertical style={styles.titleDivider} />
                     <Button
                         icon={<CloseOutlined />}
                         style={{ padding: '1.2rem', borderRadius: '50%' }}
@@ -743,9 +743,9 @@ export default function CreateItemModal({ open, onClose, onSubmit }: Props) {
                             <div style={styles.formContainer}>
                                 <div style={styles.formHeader}>
                                     <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
-                                        Item Bonuses
+                                        {t('items.itemBonuses')}
                                     </Title>
-                                    <Text type="secondary">Add bonuses to your item</Text>
+                                    <Text type="secondary">{t('items.itemBonusesDescription')}</Text>
                                 </div>
                                 <div style={styles.formContent}>
                                     {/* Flat Bonus */}
@@ -985,7 +985,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         alignSelf: 'flex-start',
         overflowY: 'auto',
     },
-    titleDivier: {
+    titleDivider: {
         height: '2rem',
         backgroundColor: '#e0dcd3',
         margin: '0px'

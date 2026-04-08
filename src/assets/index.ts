@@ -13,6 +13,7 @@ import {
     SparklesIcon,
     MagicalIcon,
     SwordIcon,
+    AwardIcon,
 } from "@/assets/icons";
 import noItemImage from "@/assets/images/no-item.png";
 
@@ -31,5 +32,6 @@ export {
     SparklesIcon,
     MagicalIcon,
     SwordIcon,
+    AwardIcon,
     noItemImage,
 }
