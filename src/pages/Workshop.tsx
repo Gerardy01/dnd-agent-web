@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import Wrapper from "@/components/global/Wrapper";
 import WorkshopItem from "@/components/workshop/workshopItem/WorkshopItem";
 import WorkshopFeat from "@/components/workshop/workshopFeat/WorkshopFeat";
+import WorkshopSpell from "@/components/workshop/workshopSpell/WorkshopSpell";
 
 const { Title, Text } = Typography;
 
@@ -55,6 +56,12 @@ export default function Workshop() {
                 {
                     selectedMenu === WorkshopMenuEnum.FEATS && (
                         <WorkshopFeat />
+                    )
+                }
+
+                {
+                    selectedMenu === WorkshopMenuEnum.SPELLS && (
+                        <WorkshopSpell />
                     )
                 }
 

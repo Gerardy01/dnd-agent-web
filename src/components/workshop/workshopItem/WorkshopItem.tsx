@@ -122,7 +122,7 @@ export default function WorkshopItem() {
 
             <div style={styles.listContainer}>
                 {loading ? (
-                    Array.from({ length: 8 }).map((_, index) => (
+                    Array.from({ length: 12 }).map((_, index) => (
                         <div key={`skeleton-${index}`} style={{ width: itemWidth }}>
                             <CardSkeleton />
                         </div>

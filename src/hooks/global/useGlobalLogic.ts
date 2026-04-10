@@ -17,25 +17,27 @@ export default function useGlobalLogic() {
     const { serverErrorModal } = useStaticModal();
 
     const { setAccount } = useAccountStore();
-    const { setItemOptions, setEffectOptions, setFeatOptions } = useReferenceStore();
+    const { setItemOptions, setEffectOptions, setFeatOptions, setSpellOptions } = useReferenceStore();
 
     const [pageLoad, setPageLoad] = useState<boolean>(true);
     const [getAccountLoad, setGetAccountLoad] = useState<boolean>(true);
     const [getReferenceLoad, setGetReferenceLoad] = useState<boolean>(true);
     const [getEffectOptionsLoad, setGetEffectOptionsLoad] = useState<boolean>(true);
     const [getFeatOptionsLoad, setGetFeatOptionsLoad] = useState<boolean>(true);
+    const [getSpellOptionsLoad, setGetSpellOptionsLoad] = useState<boolean>(true);
 
     useEffect(() => {
         getAccountData();
         getReferenceData();
         getEffectOptionsData();
         getFeatOptionsData();
+        getSpellOptionsData();
     }, []);
 
     useEffect(() => {
-        if (getAccountLoad || getReferenceLoad || getEffectOptionsLoad || getFeatOptionsLoad) return;
+        if (getAccountLoad || getReferenceLoad || getEffectOptionsLoad || getFeatOptionsLoad || getSpellOptionsLoad) return;
         setPageLoad(false);
-    }, [getAccountLoad, getReferenceLoad, getEffectOptionsLoad]);
+    }, [getAccountLoad, getReferenceLoad, getEffectOptionsLoad, getFeatOptionsLoad, getSpellOptionsLoad]);
 
     const getAccountData = async () => {
         setGetAccountLoad(true);
@@ -128,6 +130,28 @@ export default function useGlobalLogic() {
 
         } finally {
             setGetFeatOptionsLoad(false);
+        }
+    }
+
+    const getSpellOptionsData = async () => {
+        setGetSpellOptionsLoad(true);
+
+        try {
+
+            const [err, data] = await referenceApi.getSpellOptions();
+
+            if (err) {
+                serverErrorModal();
+                return;
+            }
+
+            setSpellOptions({
+                spellSchools: data.spellSchools,
+                savingThrowStats: data.savingThrowStats,
+            });
+
+        } finally {
+            setGetSpellOptionsLoad(false);
         }
     }
 

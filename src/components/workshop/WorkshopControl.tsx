@@ -24,17 +24,19 @@ export default function WorkshopControl({ search, onSearch, sort, onSort, onCrea
                 value={search}
                 onChange={(e) => onSearch(e.target.value)}
             />
-            <Popover
-                content={filterModalContent}
-                trigger="click"
-                placement="bottom"
-            >
-                <Button
-                    icon={<FilterOutlined />}
-                    size="large"
-                    style={styles.filterButton}
-                />
-            </Popover>
+            {filterModalContent && (
+                <Popover
+                    content={filterModalContent}
+                    trigger="click"
+                    placement="bottom"
+                >
+                    <Button
+                        icon={<FilterOutlined />}
+                        size="large"
+                        style={styles.filterButton}
+                    />
+                </Popover>
+            )}
             <Select
                 size="large"
                 options={[

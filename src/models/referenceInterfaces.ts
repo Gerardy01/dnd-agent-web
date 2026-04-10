@@ -17,3 +17,8 @@ export interface EffectOptionsReturn {
 export interface FeatOptionsReturn {
     featCategories: string[];
 }
+
+export interface SpellOptionsReturn {
+    spellSchools: string[];
+    savingThrowStats: string[];
+}
