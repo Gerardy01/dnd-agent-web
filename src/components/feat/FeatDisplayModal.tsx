@@ -1,4 +1,4 @@
-import { Button, Divider, Modal, Typography } from "antd";
+import { Button, Modal, Typography } from "antd";
 import { EditOutlined, InfoCircleOutlined, SnippetsOutlined } from "@ant-design/icons";
 
 // hooks
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 
 // components
 import DisplayModalSkeleton from "@/components/global/common/DisplayModalSkeleton";
+import DisplaySectionHeader from "../global/common/DisplaySectionHeader";
 
 // assets
 import { AwardIcon, noItemImage } from "@/assets";
@@ -22,16 +23,6 @@ interface Props {
 
 const { Text, Title } = Typography;
 
-
-const SectionHeader = ({ icon, title }: { icon: React.ReactNode, title: string }) => (
-    <div style={{ marginTop: '2rem' }}>
-        <div style={styles.headerContent}>
-            <span style={{ fontSize: '1.2rem', display: 'flex' }}>{icon}</span>
-            <Text strong style={styles.headerTitle}>{title}</Text>
-        </div>
-        <Divider style={{ margin: 0, borderColor: '#d3c9b3' }} />
-    </div>
-);
 
 export default function FeatDisplayModal({ open, onClose, onEdit, getFeat }: Props) {
 
@@ -87,7 +78,7 @@ export default function FeatDisplayModal({ open, onClose, onEdit, getFeat }: Pro
                             <Title level={1} style={styles.rightSideTitle}>{feat.name}</Title>
                         </div>
 
-                        <SectionHeader icon={<InfoCircleOutlined />} title={`${t('feats.description')}`.toUpperCase()} />
+                        <DisplaySectionHeader icon={<InfoCircleOutlined />} title={`${t('feats.description')}`.toUpperCase()} />
                         <div style={styles.descriptionText}>
                             {feat.description.split('\n').map((line, idx) => (
                                 <p key={idx} style={{ margin: line.trim() ? '0 0 1rem 0' : '0' }}>{line}</p>
@@ -96,7 +87,7 @@ export default function FeatDisplayModal({ open, onClose, onEdit, getFeat }: Pro
 
                         {feat.minLevel && (
                             <>
-                                <SectionHeader icon={<SnippetsOutlined />} title={`${t('feats.prerequisites')}`.toUpperCase()} />
+                                <DisplaySectionHeader icon={<SnippetsOutlined />} title={`${t('feats.prerequisites')}`.toUpperCase()} />
                                 <div style={styles.prerequisitesContainer}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <Text style={styles.prerequisiteLabel}>{`${t('feats.level')}`.toUpperCase()} :</Text>

@@ -430,6 +430,7 @@
         "isAttack": "Is Attack",
         "isAttackDescription": "Toggle if this spell requires an attack roll",
         "requiresRangedAttack": "Requires Ranged Attack Roll",
+        "requiresRangedAttackDesc": "This spell need a ranged attack roll to hit the target",
         "requiresSpellSave": "Requires Spell Save",
         "requiresSpellSaveDescription": "Toggle if targets must make a saving throw",
         "savingThrowStat": "Saving Throw Stat",

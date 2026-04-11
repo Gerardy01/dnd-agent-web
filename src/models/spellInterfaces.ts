@@ -40,8 +40,7 @@ export interface UpdateWorkshopSpellDTO {
     spellSaveProperties?: SpellSaveProperties | null;
 }
 
-export type WorkshopSpellReturn = {
-    workshopSpellId: number;
+export type Spell = {
     accountId: string;
     image: string | null;
     name: string;
@@ -52,4 +51,8 @@ export type WorkshopSpellReturn = {
     attackProperties: AttackProperties | null;
     spellSaveProperties: SpellSaveProperties | null;
     createdAt: Date;
+}
+
+export type WorkshopSpellReturn = Spell & {
+    workshopSpellId: number;
 }

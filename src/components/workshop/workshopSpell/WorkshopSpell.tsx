@@ -7,6 +7,7 @@ import WorkshopSpellCard from "@/components/workshop/workshopSpell/WorkshopSpell
 import CardSkeleton from "@/components/workshop/CardSkeleton";
 import CreateSpellModal from "@/components/spell/CreateSpellModal";
 import EditSpellModal from "@/components/spell/EditSpellModal";
+import SpellDisplayModal from "@/components/spell/SpellDisplayModal";
 
 // hooks
 import useWorkshopSpell from "@/hooks/workshop/workshopSpell/useWorkshopSpell";
@@ -35,6 +36,7 @@ export default function WorkshopSpell() {
         resetFilters,
         uponDelete,
         handleCreateSpell,
+        selectedSpellId,
         editedSpellId,
         handleSelectSpell,
         handleGetSpellDetails,
@@ -158,6 +160,17 @@ export default function WorkshopSpell() {
                     onClose={() => handleEditSpellClick(null)}
                     onSubmit={handleEditSpell}
                     getData={handleGetSpellDetails}
+                />
+            )}
+            {selectedSpellId && (
+                <SpellDisplayModal
+                    open={!!selectedSpellId}
+                    onClose={() => handleSelectSpell(null)}
+                    getSpell={handleGetSpellDetails}
+                    onEdit={() => {
+                        handleSelectSpell(null);
+                        handleEditSpellClick(selectedSpellId);
+                    }}
                 />
             )}
         </div>

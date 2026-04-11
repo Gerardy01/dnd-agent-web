@@ -1,4 +1,4 @@
-import { Modal, Typography, Divider, Tag, Button } from "antd";
+import { Modal, Typography, Tag, Button } from "antd";
 import { InfoCircleOutlined, CodeSandboxOutlined, SafetyOutlined, ThunderboltOutlined, EditOutlined } from "@ant-design/icons";
 
 // utils
@@ -7,6 +7,7 @@ import { ItemTypeEnum, WeaponToggleEnum, ItemBonusStatEnum } from "@/utils/enums
 
 // components
 import DisplayModalSkeleton from "@/components/global/common/DisplayModalSkeleton";
+import DisplaySectionHeader from "@/components/global/common/DisplaySectionHeader";
 
 // assets
 import { MagicalIcon, noItemImage, SwordIcon } from "@/assets";
@@ -25,18 +26,6 @@ interface Props {
 }
 
 const { Text, Title } = Typography;
-
-
-
-const SectionHeader = ({ icon, title }: { icon: React.ReactNode, title: string }) => (
-    <div style={{ marginTop: '2rem' }}>
-        <div style={styles.headerContent}>
-            <span style={{ fontSize: '1.2rem', display: 'flex' }}>{icon}</span>
-            <Text strong style={styles.headerTitle}>{title}</Text>
-        </div>
-        <Divider style={{ margin: 0, borderColor: '#d3c9b3' }} />
-    </div>
-);
 
 
 export default function ItemDisplayModal({ open, onClose, onEdit, getItem }: Props) {
@@ -177,14 +166,14 @@ export default function ItemDisplayModal({ open, onClose, onEdit, getItem }: Pro
                             <Title level={1} style={styles.rightSideTitle}>{item.name}</Title>
                         </div>
 
-                        <SectionHeader icon={<InfoCircleOutlined />} title={`${t('items.description')}`.toUpperCase()} />
+                        <DisplaySectionHeader icon={<InfoCircleOutlined />} title={`${t('items.description')}`.toUpperCase()} />
                         <div style={styles.descriptionText}>
                             {item.description.split('\n').map((line, idx) => (
                                 <p key={idx} style={{ margin: line.trim() ? '0 0 1rem 0' : '0' }}>{line}</p>
                             ))}
                         </div>
 
-                        <SectionHeader icon={<CodeSandboxOutlined />} title={`${t('items.appearance')}`.toUpperCase()} />
+                        <DisplaySectionHeader icon={<CodeSandboxOutlined />} title={`${t('items.appearance')}`.toUpperCase()} />
                         <div style={styles.descriptionText}>
                             {item.appearance.split('\n').map((line, idx) => (
                                 <p key={idx} style={{ margin: line.trim() ? '0 0 1rem 0' : '0' }}>{line}</p>
@@ -193,7 +182,7 @@ export default function ItemDisplayModal({ open, onClose, onEdit, getItem }: Pro
 
                         {item.type === ItemTypeEnum.ARMOR && item.armorProperties && (
                             <>
-                                <SectionHeader icon={<SafetyOutlined />} title={`${t('items.armorProperties')}`.toUpperCase()} />
+                                <DisplaySectionHeader icon={<SafetyOutlined />} title={`${t('items.armorProperties')}`.toUpperCase()} />
                                 <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
                                     <div style={styles.propertyBox}>
                                         <Text style={styles.propertyLabel}>{`${t('items.baseAc')}`.toUpperCase()}</Text><br />
@@ -239,7 +228,7 @@ export default function ItemDisplayModal({ open, onClose, onEdit, getItem }: Pro
 
                         {item.type === ItemTypeEnum.WEAPON && item.weaponProperties && (
                             <>
-                                <SectionHeader icon={<SwordIcon />} title={`${t('items.weaponProperties')}`.toUpperCase()} />
+                                <DisplaySectionHeader icon={<SwordIcon />} title={`${t('items.weaponProperties')}`.toUpperCase()} />
                                 <div style={styles.weaponPropertiesBox}>
                                     <Text style={styles.propertyLabel}>{`${t('items.damageProfile')}`.toUpperCase()}</Text>
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
@@ -309,7 +298,7 @@ export default function ItemDisplayModal({ open, onClose, onEdit, getItem }: Pro
 
                         {item.additionalProperties && (item.additionalProperties.immunities.length > 0 || item.additionalProperties.resistances.length > 0 || item.additionalProperties.vulnerabilities.length > 0 || item.additionalProperties.conditionImmunities.length > 0) && (
                             <>
-                                <SectionHeader icon={<ThunderboltOutlined />} title={`${t('items.attributesAndImmunities')}`.toUpperCase()} />
+                                <DisplaySectionHeader icon={<ThunderboltOutlined />} title={`${t('items.attributesAndImmunities')}`.toUpperCase()} />
                                 <div style={styles.attributesContainer}>
                                     {item.additionalProperties.immunities.length > 0 && (
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
