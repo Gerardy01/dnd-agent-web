@@ -42,6 +42,7 @@ export default function ImageForm({ title, submitLoad, onFileChange, initialImag
                     name="file"
                     multiple={false}
                     showUploadList={false}
+                    accept="image/*"
                     style={styles.uploadDragger}
                     beforeUpload={(file) => {
                         handleFileChange(file);

@@ -76,6 +76,15 @@ export default function WorkshopSpellCard({ spell, uponDelete, onClick, onEditCl
                     >
                         {spell.level === 0 ? t('spells.cantrip') : `${t('global.Lvl')} : ${spell.level}`}
                     </Tag>
+                    {spell.school && (
+                        <Tag
+                            color="orange"
+                            variant="outlined"
+                            style={styles.pill}
+                        >
+                            {t(`spells.${spell.school}`)}
+                        </Tag>
+                    )}
                 </div>
 
                 <Title level={4} style={styles.title}>{spell.name}</Title>

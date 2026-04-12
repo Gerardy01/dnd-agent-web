@@ -32,6 +32,12 @@ export default function useImageForm(
     const handleFileChange = async (file: File) => {
         if (!file) return;
 
+        if (!file.type.startsWith("image/")) {
+            warningNotification("", t("error.file.IMAGE_ONLY"));
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
+        }
+
         setLoading(true);
 
         try {

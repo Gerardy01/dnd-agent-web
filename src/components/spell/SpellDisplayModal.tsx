@@ -126,22 +126,23 @@ export default function SpellDisplayModal({ open, onClose, onEdit, getSpell }: P
                         {spell.spellSaveProperties && (
                             <>
                                 <DisplaySectionHeader icon={<SafetyOutlined />} title={`${t('spells.requiresSpellSave')}`.toUpperCase()} />
-                                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
-                                    <div style={styles.propertyBox}>
-                                        <Text style={styles.propertyLabel}>{`${t('spells.savingThrowStat')}`.toUpperCase()}</Text><br />
-                                        <Text style={styles.propertyValue}>{t(`items.${spell.spellSaveProperties.stat}Short`)}</Text>
+                                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                                    <div style={{ ...styles.spellSaveBox, border: '1px solid #b6d4fe', backgroundColor: '#f0f8ff' }}>
+                                        <Text strong style={styles.spellSaveLabel}>{`${t('spells.saveStat')}`.toUpperCase()}</Text>
+                                        <Text strong style={{ fontSize: '1.1rem', color: '#0d6efd' }}> {t(`items.${spell.spellSaveProperties.stat}Short`)}</Text>
                                     </div>
-                                    <div style={styles.propertyBox}>
-                                        <Text style={styles.propertyLabel}>{`${t('spells.successDamageAdj')}`.toUpperCase()}</Text><br />
-                                        <Text style={styles.propertyValue}>{spell.spellSaveProperties.onSuccessDamagePercentage}%</Text>
+                                    <div style={{ ...styles.spellSaveBox, border: '1px solid #d3c9b3', backgroundColor: '#f5f2ea' }}>
+                                        <Text strong style={styles.spellSaveLabel}>{`${t('spells.onFail')}`.toUpperCase()}</Text>
+                                        <Text strong style={{ fontSize: '1.1rem', color: '#4a463d' }}>{spell.spellSaveProperties.onFailDamagePercentage}%</Text>
                                     </div>
-                                    <div style={styles.propertyBox}>
-                                        <Text style={styles.propertyLabel}>{`${t('spells.failDamageAdj')}`.toUpperCase()}</Text><br />
-                                        <Text style={styles.propertyValue}>{spell.spellSaveProperties.onFailDamagePercentage}%</Text>
+                                    <div style={{ ...styles.spellSaveBox, border: '1px solid #d3c9b3', backgroundColor: '#f5f2ea' }}>
+                                        <Text strong style={styles.spellSaveLabel}>{`${t('spells.onSuccess')}`.toUpperCase()}</Text>
+                                        <Text strong style={{ fontSize: '1.1rem', color: '#4a463d' }}>{spell.spellSaveProperties.onSuccessDamagePercentage}%</Text>
                                     </div>
                                 </div>
                             </>
-                        )}
+                        )
+                        }
 
 
                         <div style={styles.editButtonContainer}>
@@ -156,12 +157,12 @@ export default function SpellDisplayModal({ open, onClose, onEdit, getSpell }: P
                                 {t('global.edit')}
                             </Button>
                         </div>
-                    </div>
-                </div>
+                    </div >
+                </div >
             ) : (
                 <DisplayModalSkeleton />
             )}
-        </Modal>
+        </Modal >
     );
 }
 
@@ -332,4 +333,20 @@ const styles: { [key: string]: React.CSSProperties } = {
         color: '#8c8069',
         lineHeight: '1.5'
     },
+    spellSaveBox: {
+        borderRadius: '6px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0.5rem 0.75rem',
+    },
+    spellSaveLabel: {
+        width: '100px',
+        fontSize: '0.7rem',
+        color: '#8c8069',
+        letterSpacing: '1px',
+        marginBottom: '0.5rem',
+        textAlign: 'center'
+    }
 }

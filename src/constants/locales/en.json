@@ -440,7 +440,18 @@
         "createSuccess": "Spell created successfully",
         "damageRollErrMsg": "Please add at least one damage roll",
         "editSuccess": "Spell updated successfully",
-        "deleteConfirmDesc": "Are you sure you want to delete this spell?"
+        "deleteConfirmDesc": "Are you sure you want to delete this spell?",
+        "abjuration": "Abjuration",
+        "conjuration": "Conjuration",
+        "divination": "Divination",
+        "enchantment": "Enchantment",
+        "evocation": "Evocation",
+        "illusion": "Illusion",
+        "necromancy": "Necromancy",
+        "transmutation": "Transmutation",
+        "saveStat": "Save Stat",
+        "onFail": "On Fail",
+        "onSuccess": "On Success"
     },
     "error": {
         "account": {
@@ -452,7 +463,8 @@
             "AUTH002": "Invalid OTP. Please try again."
         },
         "file": {
-            "FILE001": "File size must be less than 10MB"
+            "FILE001": "File size must be less than 10MB",
+            "IMAGE_ONLY": "Only images are allowed"
         }
     }
 }
