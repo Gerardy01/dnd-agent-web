@@ -22,6 +22,7 @@ export default function Login() {
         handleClickSignUp,
         submitLoginData,
         handleClickForgotPassword,
+        handleGoogleLogin,
     } = useLogin();
 
     const { t } = useTranslation();
@@ -132,6 +133,7 @@ export default function Login() {
                         icon={<GoogleOutlined />}
                         style={styles.googleButton}
                         disabled={loading}
+                        onClick={handleGoogleLogin}
                     >
                         {t("login.withGoogle")}
                     </Button>

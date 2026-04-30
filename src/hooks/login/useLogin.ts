@@ -82,6 +82,10 @@ export default function useLogin() {
         }
     };
 
+    const handleGoogleLogin = () => {
+        window.location.href = `${import.meta.env.VITE_API_BASE_URL}/google/login`;
+    };
+
     return {
         loginForm,
         loading,
@@ -90,5 +94,6 @@ export default function useLogin() {
         handleClickSignUp,
         submitLoginData,
         handleClickForgotPassword,
+        handleGoogleLogin,
     }
 }
