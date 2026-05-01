@@ -8,14 +8,15 @@ import { SortEnum } from "@/utils/enums";
 interface Props {
     search: string;
     onSearch: (value: string) => void;
-    sort: string;
-    onSort: (value: string) => void;
+    sort?: string;
+    onSort?: (value: string) => void;
     onCreate: () => void;
     filterModalContent?: React.ReactNode;
+    hideSort?: boolean;
 }
 
 
-export default function WorkshopControl({ search, onSearch, sort, onSort, onCreate, filterModalContent }: Props) {
+export default function WorkshopControl({ search, onSearch, sort, onSort, onCreate, filterModalContent, hideSort }: Props) {
     return (
         <div style={styles.container}>
             <Input
@@ -37,17 +38,19 @@ export default function WorkshopControl({ search, onSearch, sort, onSort, onCrea
                     />
                 </Popover>
             )}
-            <Select
-                size="large"
-                options={[
-                    { value: SortEnum.RECENT, label: 'Recently Created' },
-                    { value: SortEnum.ASC, label: 'Name (A-Z)' },
-                    { value: SortEnum.DESC, label: 'Name (Z-A)' },
-                ]}
-                value={sort}
-                onChange={(value) => onSort(value)}
-                style={{ width: '15rem' }}
-            />
+            {!hideSort && (
+                <Select
+                    size="large"
+                    options={[
+                        { value: SortEnum.RECENT, label: 'Recently Created' },
+                        { value: SortEnum.ASC, label: 'Name (A-Z)' },
+                        { value: SortEnum.DESC, label: 'Name (Z-A)' },
+                    ]}
+                    value={sort}
+                    onChange={(value) => onSort?.(value)}
+                    style={{ width: '15rem' }}
+                />
+            )}
             <Button
                 type="primary"
                 size="large"

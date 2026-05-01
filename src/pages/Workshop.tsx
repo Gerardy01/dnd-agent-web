@@ -12,6 +12,8 @@ import Wrapper from "@/components/global/Wrapper";
 import WorkshopItem from "@/components/workshop/workshopItem/WorkshopItem";
 import WorkshopFeat from "@/components/workshop/workshopFeat/WorkshopFeat";
 import WorkshopSpell from "@/components/workshop/workshopSpell/WorkshopSpell";
+import WorkshopFaction from "@/components/workshop/workshopFaction/WorkshopFaction";
+import WorkshopMonster from "@/components/workshop/workshopMonster/WorkshopMonster";
 
 const { Title, Text } = Typography;
 
@@ -62,6 +64,18 @@ export default function Workshop() {
                 {
                     selectedMenu === WorkshopMenuEnum.SPELLS && (
                         <WorkshopSpell />
+                    )
+                }
+
+                {
+                    selectedMenu === WorkshopMenuEnum.FACTIONS && (
+                        <WorkshopFaction />
+                    )
+                }
+
+                {
+                    selectedMenu === WorkshopMenuEnum.MONSTERS && (
+                        <WorkshopMonster />
                     )
                 }
 

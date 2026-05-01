@@ -22,3 +22,11 @@ export interface SpellOptionsReturn {
     spellSchools: string[];
     savingThrowStats: string[];
 }
+
+export interface MonsterOptionsReturn {
+    monsterSize: string[];
+    monsterType: string[];
+    alignment: string[];
+    movementSelection: string[];
+    sensesSelection: string[];
+}

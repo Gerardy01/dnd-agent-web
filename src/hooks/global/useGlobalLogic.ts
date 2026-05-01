@@ -17,7 +17,7 @@ export default function useGlobalLogic() {
     const { serverErrorModal } = useStaticModal();
 
     const { setAccount } = useAccountStore();
-    const { setItemOptions, setEffectOptions, setFeatOptions, setSpellOptions } = useReferenceStore();
+    const { setItemOptions, setEffectOptions, setFeatOptions, setSpellOptions, setMonsterOptions } = useReferenceStore();
 
     const [pageLoad, setPageLoad] = useState<boolean>(true);
     const [getAccountLoad, setGetAccountLoad] = useState<boolean>(true);
@@ -25,6 +25,7 @@ export default function useGlobalLogic() {
     const [getEffectOptionsLoad, setGetEffectOptionsLoad] = useState<boolean>(true);
     const [getFeatOptionsLoad, setGetFeatOptionsLoad] = useState<boolean>(true);
     const [getSpellOptionsLoad, setGetSpellOptionsLoad] = useState<boolean>(true);
+    const [getMonsterOptionsLoad, setGetMonsterOptionsLoad] = useState<boolean>(true);
 
     useEffect(() => {
         getAccountData();
@@ -32,12 +33,13 @@ export default function useGlobalLogic() {
         getEffectOptionsData();
         getFeatOptionsData();
         getSpellOptionsData();
+        getMonsterOptionsData();
     }, []);
 
     useEffect(() => {
-        if (getAccountLoad || getReferenceLoad || getEffectOptionsLoad || getFeatOptionsLoad || getSpellOptionsLoad) return;
+        if (getAccountLoad || getReferenceLoad || getEffectOptionsLoad || getFeatOptionsLoad || getSpellOptionsLoad || getMonsterOptionsLoad) return;
         setPageLoad(false);
-    }, [getAccountLoad, getReferenceLoad, getEffectOptionsLoad, getFeatOptionsLoad, getSpellOptionsLoad]);
+    }, [getAccountLoad, getReferenceLoad, getEffectOptionsLoad, getFeatOptionsLoad, getSpellOptionsLoad, getMonsterOptionsLoad]);
 
     const getAccountData = async () => {
         setGetAccountLoad(true);
@@ -152,6 +154,31 @@ export default function useGlobalLogic() {
 
         } finally {
             setGetSpellOptionsLoad(false);
+        }
+    }
+
+    const getMonsterOptionsData = async () => {
+        setGetMonsterOptionsLoad(true);
+
+        try {
+
+            const [err, data] = await referenceApi.getMonsterOptions();
+
+            if (err) {
+                serverErrorModal();
+                return;
+            }
+
+            setMonsterOptions({
+                monsterSize: data.monsterSize,
+                monsterType: data.monsterType,
+                alignment: data.alignment,
+                movementSelection: data.movementSelection,
+                sensesSelection: data.sensesSelection,
+            });
+
+        } finally {
+            setGetMonsterOptionsLoad(false);
         }
     }
 
