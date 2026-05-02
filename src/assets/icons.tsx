@@ -39,11 +39,12 @@ export const FactionsIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export const MonstersIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-        <circle cx="9" cy="12" r="2" />
-        <circle cx="15" cy="12" r="2" />
-        <path d="M8 20v2h8v-2" />
-        <path d="m12.5 17-.5-1-.5 1h1z" />
-        <path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20" />
+        <path d="M12 2l-1 4h2l-1-4Z" />
+        <path d="M5 8l-2 3 2 4h14l2-4-2-3H5Z" />
+        <path d="M8 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z" />
+        <path d="M14 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z" />
+        <path d="M9 16l3 1 3-1" />
+        <path d="M3 8L1 5m20 3l2-3" />
     </svg>
 );
 

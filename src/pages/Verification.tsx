@@ -35,7 +35,7 @@ export default function Verification() {
     return (
         <div style={styles.page}>
             <div style={styles.container}>
-                <div style={styles.contentHolder}>
+                <div style={styles.contentHolder} className="verification-card">
                     <div style={styles.header}>
                         <div style={styles.iconWrapper}>
                             <MailOutlined
@@ -59,8 +59,10 @@ export default function Verification() {
                     )}
 
                     <Input.OTP
+                        size="large"
+                        style={styles.otpInput}
                         value={otp}
-                        onInput={values => handleChangeOtp(values.join(""))}
+                        onChange={handleChangeOtp}
                     />
                     <div style={styles.footer}>
                         <Text type="secondary">{t('verification.didntReceive')} </Text>
@@ -107,7 +109,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         padding: '2rem'
     },
     contentHolder: {
-        maxWidth: '20rem',
+        maxWidth: '26rem',
         flex: 1,
         backgroundColor: '#F5F1E7', // Birch Wood
         padding: '2rem',
@@ -137,5 +139,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     footer: {
         textAlign: 'center',
         margin: '1.2rem 0px',
+    },
+    otpInput: {
+        width: '100%',
+        marginBottom: '1.5rem',
     },
 };

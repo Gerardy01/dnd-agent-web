@@ -7,3 +7,88 @@
 .profile-btn:hover {
     background-color: #c2baa6 !important;
 }
+
+/* Premium OTP Input Styles */
+.ant-otp {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+.ant-otp .ant-input {
+    width: 46px !important;
+    height: 56px !important;
+    border-radius: 10px !important;
+    border: 1.5px solid #C2BAA6 !important;
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: #4A4436 !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-align: center !important;
+    padding: 0 !important;
+}
+
+.ant-otp .ant-input:focus {
+    border-color: #D95C14 !important;
+    box-shadow: 0 0 0 4px rgba(217, 92, 20, 0.15) !important;
+    background-color: #fff !important;
+    transform: translateY(-2px);
+}
+
+.ant-otp .ant-input:hover {
+    border-color: #A3967F !important;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.verification-card {
+    animation: slideUp 0.6s ease-out;
+}
+
+/* Primary Button Refinement */
+.verification-card .ant-btn-primary {
+    background-color: #D95C14 !important;
+    border-color: #D95C14 !important;
+    border-radius: 10px !important;
+    height: 50px !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    box-shadow: 0 4px 12px rgba(217, 92, 20, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.verification-card .ant-btn-primary:hover:not(:disabled) {
+    background-color: #BF4E0F !important;
+    border-color: #BF4E0F !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(217, 92, 20, 0.3) !important;
+}
+
+.verification-card .ant-btn-primary:disabled {
+    background-color: #E2DDD1 !important;
+    border-color: #D6D0C2 !important;
+    color: #A3967F !important;
+}
+
+/* Link Refinement */
+.verification-card .ant-typography-link {
+    color: #D95C14 !important;
+    font-weight: 600 !important;
+}
+
+.verification-card .ant-typography-link:hover {
+    color: #BF4E0F !important;
+    text-decoration: underline !important;
+}

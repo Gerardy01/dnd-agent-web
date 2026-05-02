@@ -39,3 +39,11 @@ export const getCurrencyColor = (currency: string) => {
 export const numberFormat = (number: number) => {
     return number.toLocaleString();
 }
+
+export const getCRColor = (cr: number) => {
+    if (cr === 0) return '#bdc3c7';
+    if (cr <= 4) return '#2ecc71';
+    if (cr <= 10) return '#f1c40f';
+    if (cr <= 16) return '#e67e22';
+    return '#e74c3c';
+}

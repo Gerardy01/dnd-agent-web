@@ -1,6 +1,9 @@
 import { Modal, Typography, Tag, Button } from "antd";
 import { InfoCircleOutlined, EditOutlined, ThunderboltOutlined, CodeSandboxOutlined } from "@ant-design/icons";
 
+// utils
+import { getCRColor } from "@/utils/utility";
+
 // components
 import DisplayModalSkeleton from "@/components/global/common/DisplayModalSkeleton";
 import DisplaySectionHeader from "@/components/global/common/DisplaySectionHeader";
@@ -33,19 +36,6 @@ export default function MonsterDisplayModal({ open, onClose, onEdit, getMonster 
 
     const { t } = useTranslation();
 
-    const getCRColor = (cr: number) => {
-        if (cr === 0) return '#bdc3c7';
-        if (cr <= 4) return '#2ecc71';
-        if (cr <= 10) return '#f1c40f';
-        if (cr <= 16) return '#e67e22';
-        return '#e74c3c';
-    }
-
-    const calculateModifier = (score: number) => {
-        const mod = Math.floor((score - 10) / 2);
-        return mod >= 0 ? `+${mod}` : `${mod}`;
-    };
-
     return (
         <Modal
             open={open}
@@ -71,11 +61,11 @@ export default function MonsterDisplayModal({ open, onClose, onEdit, getMonster 
                 <div style={{ display: 'flex', height: '100%' }}>
                     <div style={styles.leftSideContent}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div style={{ ...styles.crBadge, backgroundColor: getCRColor(monster.stats.cr) }}>
-                                CR {monster.stats.cr}
+                            <div style={{ ...styles.typeBadge, backgroundColor: getCRColor(monster.stats.cr) }}>
+                                <Text style={{ color: 'white' }}>{`CR ${monster.stats.cr}`}</Text>
                             </div>
-                            <Text italic style={{ color: '#8c8069' }}>
-                                {`${t(`monsters.${monster.size}`)} ${t(`monsters.${monster.type}`)}, ${t(`monsters.${monster.alignment}`)}`}
+                            <Text italic style={{ fontSize: '1rem' }}>
+                                {`${t(`monsters.${monster.size}`)} ${t(`monsters.${monster.type}`)}`}
                             </Text>
                         </div>
                         <div style={styles.imagePreviewContainer}>
@@ -87,38 +77,9 @@ export default function MonsterDisplayModal({ open, onClose, onEdit, getMonster 
                         </div>
                         <div style={styles.itemDetails}>
                             <div style={styles.itemDetailsChild}>
-                                <Text style={{ width: '40%', textTransform: 'uppercase' }}>{t('monsters.ac')}</Text>
-                                <Text strong style={{ textAlign: 'right' }}>{monster.stats.ac}</Text>
+                                <Text style={{ width: '40%', textTransform: 'uppercase' }}>{t('monsters.alignment')}</Text>
+                                <Text strong style={{ textAlign: 'right' }}>{t(`monsters.${monster.alignment}`)}</Text>
                             </div>
-                            <div style={styles.itemDetailsChild}>
-                                <Text style={{ width: '40%', textTransform: 'uppercase' }}>{t('monsters.hp')}</Text>
-                                <Text strong style={{ textAlign: 'right' }}>
-                                    {monster.stats.minHp} - {monster.stats.maxHp}
-                                </Text>
-                            </div>
-
-                            {monster.speed && Object.keys(monster.speed).length > 0 && (
-                                <div style={styles.itemDetailsChild}>
-                                    <Text style={{ width: '40%', textTransform: 'uppercase' }}>{t('monsters.speed')}</Text>
-                                    <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column' }}>
-                                        {Object.entries(monster.speed).map(([key, value]) => (
-                                            <Text strong key={key}>{value} ft. ({t(`monsters.${key}`)})</Text>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {monster.senses && Object.keys(monster.senses).length > 0 && (
-                                <div style={styles.itemDetailsChild}>
-                                    <Text style={{ width: '40%', textTransform: 'uppercase' }}>{t('monsters.senses')}</Text>
-                                    <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column' }}>
-                                        {Object.entries(monster.senses).map(([key, value]) => (
-                                            <Text strong key={key}>{value} ft. ({t(`monsters.${key}`)})</Text>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
                             {monster.languages && (
                                 <div style={styles.itemDetailsChild}>
                                     <Text style={{ width: '40%', textTransform: 'uppercase' }}>{t('monsters.languages')}</Text>
@@ -133,20 +94,7 @@ export default function MonsterDisplayModal({ open, onClose, onEdit, getMonster 
                             <Title level={1} style={styles.rightSideTitle}>{monster.name}</Title>
                         </div>
 
-                        {/* Ability Scores */}
-                        <div style={styles.abilityScoresContainer}>
-                            {['str', 'dex', 'con', 'int', 'wis', 'cha'].map((stat) => (
-                                <div key={stat} style={styles.abilityScoreCard}>
-                                    <Text style={styles.abilityScoreLabel}>{stat.toUpperCase()}</Text>
-                                    <Text style={styles.abilityScoreValue}>
-                                        {monster.stats[stat as keyof typeof monster.stats]}
-                                        <Text style={{ color: '#8c8069', fontSize: '1rem', marginLeft: '0.3rem' }}>
-                                            ({calculateModifier(monster.stats[stat as keyof typeof monster.stats])})
-                                        </Text>
-                                    </Text>
-                                </div>
-                            ))}
-                        </div>
+                        {/* COMBAT STATISTICS moved below appearance */}
 
                         <DisplaySectionHeader icon={<InfoCircleOutlined />} title={`${t('monsters.description')}`.toUpperCase()} />
                         <div style={styles.descriptionText}>
@@ -162,55 +110,124 @@ export default function MonsterDisplayModal({ open, onClose, onEdit, getMonster 
                             ))}
                         </div>
 
-                        {/* Additional Properties */}
-                        {monster.additionalProperties && (
-                            (monster.additionalProperties.immunities && monster.additionalProperties.immunities.length > 0) ||
-                            (monster.additionalProperties.resistances && monster.additionalProperties.resistances.length > 0) ||
-                            (monster.additionalProperties.vulnerabilities && monster.additionalProperties.vulnerabilities.length > 0) ||
-                            (monster.additionalProperties.conditionImmunities && monster.additionalProperties.conditionImmunities.length > 0)
+                        {/* Combat Statistics */}
+                        <DisplaySectionHeader icon={<ThunderboltOutlined />} title="COMBAT STATISTICS" />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem', marginBottom: '1rem' }}>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <div style={{ ...styles.abilityScoreCard, flex: 1 }}>
+                                    <Text style={styles.abilityScoreLabel}>{t('monsters.ac')}</Text>
+                                    <Text style={styles.abilityScoreValue}>{monster.stats.ac}</Text>
+                                </div>
+                                <div style={{ ...styles.abilityScoreCard, flex: 1 }}>
+                                    <Text style={styles.abilityScoreLabel}>{t('monsters.hpRange')}</Text>
+                                    <Text style={styles.abilityScoreValue}>
+                                        {monster.stats.minHp || 0} - {monster.stats.maxHp || 0}
+                                        <Text style={{ fontSize: '0.9rem', color: '#8c8069', marginLeft: '0.5rem', fontWeight: 'normal' }}>
+                                            (Avg: {Math.floor(((monster.stats.minHp || 0) + (monster.stats.maxHp || 0)) / 2)})
+                                        </Text>
+                                    </Text>
+                                </div>
+                            </div>
+                            <div style={styles.abilityScoresContainer}>
+                                {['str', 'dex', 'con', 'int', 'wis', 'cha'].map((stat) => (
+                                    <div key={stat} style={styles.abilityScoreCard}>
+                                        <Text style={styles.abilityScoreLabel}>{stat.toUpperCase()}</Text>
+                                        <Text style={styles.abilityScoreValue}>
+                                            {monster.stats[stat as keyof typeof monster.stats]}
+                                        </Text>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Attributes and Immunities */}
+                        {(
+                            (monster.speed && Object.keys(monster.speed).some(k => monster.speed[k as keyof typeof monster.speed] > 0)) ||
+                            (monster.senses && Object.keys(monster.senses).some(k => monster.senses[k as keyof typeof monster.senses] > 0)) ||
+                            (monster.additionalProperties && (
+                                (monster.additionalProperties.immunities && monster.additionalProperties.immunities.length > 0) ||
+                                (monster.additionalProperties.resistances && monster.additionalProperties.resistances.length > 0) ||
+                                (monster.additionalProperties.vulnerabilities && monster.additionalProperties.vulnerabilities.length > 0) ||
+                                (monster.additionalProperties.conditionImmunities && monster.additionalProperties.conditionImmunities.length > 0)
+                            ))
                         ) && (
                                 <>
                                     <DisplaySectionHeader icon={<ThunderboltOutlined />} title={`${t('items.attributesAndImmunities')}`.toUpperCase()} />
                                     <div style={styles.attributesContainer}>
-                                        {monster.additionalProperties.immunities && monster.additionalProperties.immunities.length > 0 && (
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Text style={styles.attributeLabel}>{`${t('items.immunity')}`.toUpperCase()}:</Text>
-                                                <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
-                                                    {monster.additionalProperties.immunities.map(imm => (
-                                                        <Tag key={imm} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${imm}`)}</Tag>
+                                        {/* Speed */}
+                                        {monster.speed && Object.keys(monster.speed).some(k => monster.speed[k as keyof typeof monster.speed] > 0) && (
+                                            <div style={styles.profileBox}>
+                                                <Text style={styles.propertyLabel}>{`${t('monsters.speed')}`.toUpperCase()}</Text>
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+                                                    {Object.entries(monster.speed).filter(([_, v]) => v > 0).map(([key, value]) => (
+                                                        <div key={key} style={styles.profileItem}>
+                                                            <Text style={styles.profileValue}>{value} ft.</Text>
+                                                            <div style={styles.profileDivider}></div>
+                                                            <Text style={styles.profileType}>{String(t(`monsters.${key}`)).toUpperCase()}</Text>
+                                                        </div>
                                                     ))}
                                                 </div>
                                             </div>
                                         )}
-                                        {monster.additionalProperties.resistances && monster.additionalProperties.resistances.length > 0 && (
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Text style={styles.attributeLabel}>{`${t('items.resistance')}`.toUpperCase()}:</Text>
-                                                <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
-                                                    {monster.additionalProperties.resistances.map(res => (
-                                                        <Tag key={res} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${res}`)}</Tag>
+                                        {/* Senses */}
+                                        {monster.senses && Object.keys(monster.senses).some(k => monster.senses[k as keyof typeof monster.senses] > 0) && (
+                                            <div style={styles.profileBox}>
+                                                <Text style={styles.propertyLabel}>{`${t('monsters.senses')}`.toUpperCase()}</Text>
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+                                                    {Object.entries(monster.senses).filter(([_, v]) => v > 0).map(([key, value]) => (
+                                                        <div key={key} style={styles.profileItem}>
+                                                            <Text style={styles.profileValue}>{value} ft.</Text>
+                                                            <div style={styles.profileDivider}></div>
+                                                            <Text style={styles.profileType}>{String(t(`monsters.${key}`)).toUpperCase()}</Text>
+                                                        </div>
                                                     ))}
                                                 </div>
                                             </div>
                                         )}
-                                        {monster.additionalProperties.vulnerabilities && monster.additionalProperties.vulnerabilities.length > 0 && (
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Text style={styles.attributeLabel}>{`${t('items.vulnerability')}`.toUpperCase()}:</Text>
-                                                <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
-                                                    {monster.additionalProperties.vulnerabilities.map(vul => (
-                                                        <Tag key={vul} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${vul}`)}</Tag>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                        {monster.additionalProperties.conditionImmunities && monster.additionalProperties.conditionImmunities.length > 0 && (
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Text style={styles.attributeLabel}>{`${t('items.conditionImmunity')}`.toUpperCase()}:</Text>
-                                                <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
-                                                    {monster.additionalProperties.conditionImmunities.map(cond => (
-                                                        <Tag key={cond} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${cond}`)}</Tag>
-                                                    ))}
-                                                </div>
-                                            </div>
+
+                                        {monster.additionalProperties && (
+                                            <>
+                                                {monster.additionalProperties.immunities && monster.additionalProperties.immunities.length > 0 && (
+                                                    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                                                        <Text style={styles.attributeLabel}>{`${t('items.immunity')}`.toUpperCase()}:</Text>
+                                                        <div style={{ flex: 1, display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                            {monster.additionalProperties.immunities.map(imm => (
+                                                                <Tag key={imm} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${imm}`)}</Tag>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {monster.additionalProperties.resistances && monster.additionalProperties.resistances.length > 0 && (
+                                                    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                                                        <Text style={styles.attributeLabel}>{`${t('items.resistance')}`.toUpperCase()}:</Text>
+                                                        <div style={{ flex: 1, display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                            {monster.additionalProperties.resistances.map(res => (
+                                                                <Tag key={res} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${res}`)}</Tag>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {monster.additionalProperties.vulnerabilities && monster.additionalProperties.vulnerabilities.length > 0 && (
+                                                    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                                                        <Text style={styles.attributeLabel}>{`${t('items.vulnerability')}`.toUpperCase()}:</Text>
+                                                        <div style={{ flex: 1, display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                            {monster.additionalProperties.vulnerabilities.map(vul => (
+                                                                <Tag key={vul} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${vul}`)}</Tag>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {monster.additionalProperties.conditionImmunities && monster.additionalProperties.conditionImmunities.length > 0 && (
+                                                    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                                                        <Text style={styles.attributeLabel}>{`${t('items.conditionImmunity')}`.toUpperCase()}:</Text>
+                                                        <div style={{ flex: 1, display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                            {monster.additionalProperties.conditionImmunities.map(cond => (
+                                                                <Tag key={cond} color="#e8e4d9" style={styles.attributeTag}>{t(`effects.${cond}`)}</Tag>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                 </>
@@ -304,6 +321,16 @@ const styles: { [key: string]: React.CSSProperties } = {
         overflow: 'hidden',
         marginTop: '1rem',
         backgroundColor: 'white',
+    },
+    typeBadge: {
+        display: 'inline-block',
+        padding: '3px 12px',
+        borderRadius: '16px',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: '10px',
+        textTransform: 'capitalize'
     },
     imagePreview: {
         width: '100%',
@@ -410,5 +437,47 @@ const styles: { [key: string]: React.CSSProperties } = {
         fontSize: '1rem',
         lineHeight: '1.6',
         color: '#4a463d',
+    },
+    propertyLabel: {
+        fontSize: '0.85rem',
+        fontWeight: 'bold',
+        letterSpacing: '1px',
+        color: '#8c8069',
+        display: 'block'
+    },
+    profileBox: {
+        border: '1px solid #d3c9b3',
+        borderRadius: '8px',
+        padding: '1.2rem',
+        backgroundColor: '#fcfbf9',
+        marginBottom: '0.5rem'
+    },
+    profileItem: {
+        border: '1px solid #d3c9b3',
+        borderRadius: '4px',
+        padding: '0.5rem 1rem',
+        display: 'inline-flex',
+        alignItems: 'center',
+        backgroundColor: '#ffffff',
+        marginTop: '0.5rem'
+    },
+    profileValue: {
+        fontFamily: 'Georgia, serif',
+        fontSize: '1.2rem',
+        fontWeight: 'bold',
+        color: '#d35400',
+        marginRight: '0.8rem'
+    },
+    profileDivider: {
+        width: '1px',
+        height: '1.5rem',
+        backgroundColor: '#d3c9b3',
+        marginRight: '0.8rem'
+    },
+    profileType: {
+        fontSize: '0.7rem',
+        fontWeight: 'bold',
+        color: '#8c8069',
+        letterSpacing: '1px'
     }
 }

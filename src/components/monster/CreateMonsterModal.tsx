@@ -389,7 +389,7 @@ export default function CreateMonsterModal({ open, onClose, onSubmit }: Props) {
                                         <div style={styles.statBox}>
                                             <div style={styles.statBoxLabel}>CR</div>
                                             <Form.Item name="cr" initialValue={0} noStyle>
-                                                <InputNumber mode="spinner" style={styles.statBoxInput} min={0} bordered={false} controls={false} />
+                                                <InputNumber step={0.1} mode="spinner" style={styles.statBoxInput} min={0} bordered={false} controls={false} />
                                             </Form.Item>
                                         </div>
                                     </Col>
