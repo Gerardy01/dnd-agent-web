@@ -29,7 +29,7 @@ export default function useMainCommonWrap() {
             icon: <HomeOutlined />,
             label: t("global.home"),
             onClick: () => {
-                navigate("/dashboard");
+                navigate("/");
                 setSelectedSidebar(SidebarMenuEnum.DASHBOARD);
             }
         },
@@ -59,7 +59,7 @@ export default function useMainCommonWrap() {
 
     const selectedSidebarInit = () => {
         const path = window.location.pathname;
-        if (path === "/dashboard") {
+        if (path === "/") {
             setSelectedSidebar(SidebarMenuEnum.DASHBOARD);
         }
 

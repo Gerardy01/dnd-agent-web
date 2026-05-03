@@ -35,7 +35,8 @@ export default function useWorkshopMonster() {
     const [sortValue, setSortValue] = useState<string>(SortEnum.RECENT);
     const [sizeFilterValue, setSizeFilterValue] = useState<string[]>([]);
     const [typeFilterValue, setTypeFilterValue] = useState<string[]>([]);
-    const [alignmentFilterValue, setAlignmentFilterValue] = useState<string[]>([]);
+    const [minCRFilterValue, setMinCRFilterValue] = useState<number | null>(0);
+    const [maxCRFilterValue, setMaxCRFilterValue] = useState<number | null>(30);
 
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
 
@@ -56,9 +57,9 @@ export default function useWorkshopMonster() {
         value: type,
     }));
 
-    const alignmentSelection = monsterOptions.alignment.map((alignment) => ({
-        label: t(`monsters.${alignment}`),
-        value: alignment,
+    const crSelection = Array.from({ length: 31 }, (_, i) => ({
+        label: i.toString(),
+        value: i,
     }));
 
     useEffect(() => {
@@ -90,7 +91,8 @@ export default function useWorkshopMonster() {
             !searchValue &&
             sizeFilterValue.length === 0 &&
             typeFilterValue.length === 0 &&
-            alignmentFilterValue.length === 0
+            minCRFilterValue === 0 &&
+            maxCRFilterValue === 30
         ) return setFilteredWorkshopMonsters(workshopMonsters);
 
         let filtered = [...workshopMonsters];
@@ -113,14 +115,20 @@ export default function useWorkshopMonster() {
             );
         }
 
-        if (alignmentFilterValue.length > 0) {
+        if (minCRFilterValue !== null) {
             filtered = filtered.filter((monster) =>
-                alignmentFilterValue.includes(monster.alignment)
+                monster.stats.cr >= minCRFilterValue
+            );
+        }
+
+        if (maxCRFilterValue !== null) {
+            filtered = filtered.filter((monster) =>
+                monster.stats.cr <= maxCRFilterValue
             );
         }
 
         setFilteredWorkshopMonsters(filtered);
-    }, [searchValue, sizeFilterValue, typeFilterValue, alignmentFilterValue]);
+    }, [searchValue, sizeFilterValue, typeFilterValue, minCRFilterValue, maxCRFilterValue]);
 
     useEffect(() => {
         if (sortValue === SortEnum.RECENT) {
@@ -134,7 +142,7 @@ export default function useWorkshopMonster() {
         if (sortValue === SortEnum.DESC) {
             setFilteredWorkshopMonsters((prev) => [...prev].sort((a, b) => b.name.localeCompare(a.name)));
         }
-    }, [sortValue, searchValue, sizeFilterValue, typeFilterValue, alignmentFilterValue]);
+    }, [sortValue, searchValue, sizeFilterValue, typeFilterValue, minCRFilterValue, maxCRFilterValue]);
 
     const getWorkshopMonsterData = async () => {
         setLoading(true);
@@ -175,8 +183,12 @@ export default function useWorkshopMonster() {
         setTypeFilterValue(value);
     }
 
-    const handleAlignmentFilter = (value: string[]) => {
-        setAlignmentFilterValue(value);
+    const handleMinCRFilter = (value: number | null) => {
+        setMinCRFilterValue(value);
+    }
+
+    const handleMaxCRFilter = (value: number | null) => {
+        setMaxCRFilterValue(value);
     }
 
     const handleSelectMonster = (monsterId: number | null) => {
@@ -278,7 +290,8 @@ export default function useWorkshopMonster() {
     const resetFilters = () => {
         setSizeFilterValue([]);
         setTypeFilterValue([]);
-        setAlignmentFilterValue([]);
+        setMinCRFilterValue(0);
+        setMaxCRFilterValue(30);
     }
 
     return {
@@ -289,10 +302,11 @@ export default function useWorkshopMonster() {
         createModalOpen,
         sizeSelection,
         typeSelection,
-        alignmentSelection,
         sizeFilterValue,
         typeFilterValue,
-        alignmentFilterValue,
+        minCRFilterValue,
+        maxCRFilterValue,
+        crSelection,
         monsterWidth,
         selectedMonsterId,
         editedMonsterId,
@@ -301,7 +315,8 @@ export default function useWorkshopMonster() {
         handleCreateModal,
         handleSizeFilter,
         handleTypeFilter,
-        handleAlignmentFilter,
+        handleMinCRFilter,
+        handleMaxCRFilter,
         resetFilters,
         uponDelete,
         handleSelectMonster,

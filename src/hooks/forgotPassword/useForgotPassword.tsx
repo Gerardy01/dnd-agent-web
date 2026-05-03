@@ -33,7 +33,7 @@ export default function useForgotPassword() {
         const loggedIn = await isLoggedIn();
 
         if (loggedIn) {
-            navigate('/dashboard');
+            navigate('/');
             return;
         }
 

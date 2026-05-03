@@ -35,7 +35,7 @@ export default function useLogin() {
     const checkLoggedIn = async () => {
         const loggedIn = await isLoggedIn();
 
-        if (loggedIn) navigate('/dashboard');
+        if (loggedIn) navigate('/');
 
         setPageLoad(false);
         return;

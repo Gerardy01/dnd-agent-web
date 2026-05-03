@@ -10,7 +10,6 @@ import GlobalLogic from "@/components/global/GlobalLogic";
 import MainCommonWrap from "@/components/global/MainCommonWrap";
 
 // pages
-import Home from "@/pages/Home";
 import Register from "@/pages/Register";
 import Verification from "@/pages/Verification";
 import Login from "@/pages/Login";
@@ -28,7 +27,6 @@ function App() {
             <AntApp>
                 <Router>
                     <Routes>
-                        <Route path="/" element={<Home />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/verification" element={<Verification />} />
@@ -38,7 +36,7 @@ function App() {
                         <Route element={<ProtectedRoutes />}>
                             <Route element={<GlobalLogic />}>
                                 <Route element={<MainCommonWrap />}>
-                                    <Route path="/dashboard" element={<Dashboard />} />
+                                    <Route path="/" element={<Dashboard />} />
                                     <Route path="/campaigns" element={<Campaign />} />
                                     <Route path="/workshop" element={<Workshop />} />
                                     <Route path="/settings" element={<Settings />} />

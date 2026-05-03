@@ -123,7 +123,7 @@ export default function useVerification() {
             }
 
             setAccessToken(data.accessToken);
-            navigate("/dashboard");
+            navigate("/");
 
         } finally {
             setLoad(false);

@@ -25,10 +25,11 @@ export default function WorkshopMonster() {
         createModalOpen,
         sizeSelection,
         typeSelection,
-        alignmentSelection,
         sizeFilterValue,
         typeFilterValue,
-        alignmentFilterValue,
+        minCRFilterValue,
+        maxCRFilterValue,
+        crSelection,
         monsterWidth,
         selectedMonsterId,
         editedMonsterId,
@@ -37,7 +38,8 @@ export default function WorkshopMonster() {
         handleCreateModal,
         handleSizeFilter,
         handleTypeFilter,
-        handleAlignmentFilter,
+        handleMinCRFilter,
+        handleMaxCRFilter,
         resetFilters,
         uponDelete,
         handleSelectMonster,
@@ -87,15 +89,30 @@ export default function WorkshopMonster() {
                                 value={typeFilterValue}
                                 onChange={value => handleTypeFilter(value)}
                             />
-                            <Select
-                                style={{ width: '100%' }}
-                                size="large"
-                                placeholder={t('monsters.alignmentPlaceholder')}
-                                mode="multiple"
-                                options={alignmentSelection}
-                                value={alignmentFilterValue}
-                                onChange={value => handleAlignmentFilter(value)}
-                            />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                <Text strong>{t('monsters.challengeRating')}</Text>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <Select
+                                        style={{ flex: 1 }}
+                                        size="large"
+                                        placeholder={t('monsters.from')}
+                                        options={crSelection}
+                                        value={minCRFilterValue}
+                                        onChange={value => handleMinCRFilter(value)}
+                                        allowClear
+                                    />
+                                    <Text>-</Text>
+                                    <Select
+                                        style={{ flex: 1 }}
+                                        size="large"
+                                        placeholder={t('monsters.to')}
+                                        options={crSelection}
+                                        value={maxCRFilterValue}
+                                        onChange={value => handleMaxCRFilter(value)}
+                                        allowClear
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
