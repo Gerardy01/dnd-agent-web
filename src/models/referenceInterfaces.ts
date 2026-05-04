@@ -37,4 +37,5 @@ export interface ClassOptionsReturn {
     spellcastingType: string[];
     diceSelection: string[];
     classFeatureType: string[];
+    resourceRecoveryType: string[];
 }

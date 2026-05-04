@@ -202,6 +202,7 @@ export default function useGlobalLogic() {
                 spellcastingType: data.spellcastingType,
                 diceSelection: data.diceSelection,
                 classFeatureType: data.classFeatureType,
+                resourceRecoveryType: data.resourceRecoveryType,
             });
 
         } finally {

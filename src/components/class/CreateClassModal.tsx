@@ -1,5 +1,5 @@
 import { Button, Checkbox, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Tag, Typography } from "antd";
-import { CloseOutlined, DeleteOutlined, MinusOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { CloseOutlined, DeleteOutlined, MinusOutlined, PictureOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 
 // assets
 import { SparklesIcon } from "@/assets";
@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 
 // components
 import ImageForm from "@/components/global/form/ImageForm";
+import ClassResourceForm from "./ClassResourceForm";
 
 // interfaces
 import type { CreateClassDTO } from "@/models/classInterfaces";
@@ -100,6 +101,7 @@ const FeatureForm = ({ initialValues, onSave, onCancel, featureTypeSelection, t,
     );
 };
 
+
 interface Props {
     open: boolean;
     onClose: () => void;
@@ -146,6 +148,14 @@ export default function CreateClassModal({ open, onClose, onSubmit, workshopSpel
         handleSaveFeature,
         featureErrMsg,
         spellErrMsg,
+        resources,
+        editingResourceIndex,
+        resourceErrMsg,
+        handleStartAddResource,
+        handleStartEditResource,
+        handleCancelResource,
+        handleSaveResource,
+        handleDeleteResource,
     } = useCreateClass(onClose, onSubmit, workshopSpells);
 
     const { t } = useTranslation();
@@ -624,6 +634,102 @@ export default function CreateClassModal({ open, onClose, onSubmit, workshopSpel
                                 </Form.Item>
                             </div>
                         </div>
+
+                        <div style={styles.formContainer}>
+                            <div style={styles.formHeader}>
+                                <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                                    {t('classes.resources')}
+                                </Title>
+                                <Text type="secondary">{t('classes.resourcesDescription')}</Text>
+                            </div>
+                            <div style={{ ...styles.formContent, maxHeight: '40rem', overflowY: 'auto' }}>
+                                <Form.Item
+                                    help={resourceErrMsg}
+                                    validateStatus={resourceErrMsg ? 'error' : ''}
+                                    style={{ marginBottom: 0 }}
+                                >
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                        {resources.map((resource, index) => (
+                                            <div key={index}>
+                                                {editingResourceIndex === index ? (
+                                                    <ClassResourceForm
+                                                        initialValues={resource}
+                                                        onSave={handleSaveResource}
+                                                        onCancel={handleCancelResource}
+                                                        isEdit
+                                                        imageUrlEdit={resource.previewUrl || ""}
+                                                    />
+                                                ) : (
+                                                    <div style={styles.resourceCard} onClick={() => handleStartEditResource(index)}>
+                                                        <div style={{ ...styles.resourceColorBar, backgroundColor: resource.color }} />
+                                                        <div style={styles.resourceImageContainer}>
+                                                            {resource.previewUrl || resource.image ? (
+                                                                <img src={resource.previewUrl || resource.image || ""} alt={resource.name} style={styles.resourceImage} />
+                                                            ) : (
+                                                                <div style={styles.resourceImagePlaceholder}>
+                                                                    <PictureOutlined style={{ fontSize: '1.2rem', color: '#8c7a52' }} />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                <Text strong style={{ fontSize: '1rem' }}>{resource.name}</Text>
+                                                                <Button
+                                                                    icon={<DeleteOutlined />}
+                                                                    danger
+                                                                    type="text"
+                                                                    size="small"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleDeleteResource(index);
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
+                                                                <Tag color="orange" style={{ fontSize: '0.7rem', padding: '0 0.4rem', borderRadius: '4px' }}>
+                                                                    Short: {resource.resourceRecovery.shortRest.value} ({resource.resourceRecovery.shortRest.type})
+                                                                </Tag>
+                                                                <Tag color="purple" style={{ fontSize: '0.7rem', padding: '0 0.4rem', borderRadius: '4px' }}>
+                                                                    Long: {resource.resourceRecovery.longRest.value} ({resource.resourceRecovery.longRest.type})
+                                                                </Tag>
+                                                            </div>
+                                                            <Text
+                                                                type="secondary"
+                                                                style={{
+                                                                    display: '-webkit-box',
+                                                                    WebkitLineClamp: 2,
+                                                                    WebkitBoxOrient: 'vertical',
+                                                                    overflow: 'hidden',
+                                                                    fontSize: '0.85rem',
+                                                                    lineHeight: '1.4'
+                                                                }}
+                                                            >
+                                                                {resource.description}
+                                                            </Text>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+
+                                        {editingResourceIndex === -1 ? (
+                                            <ClassResourceForm
+                                                onSave={handleSaveResource}
+                                                onCancel={handleCancelResource}
+                                            />
+                                        ) : (
+                                            <Button
+                                                onClick={handleStartAddResource}
+                                                style={styles.addBonusBtn}
+                                                icon={<PlusOutlined />}
+                                            >
+                                                {t('classes.addResource')}
+                                            </Button>
+                                        )}
+                                    </div>
+                                </Form.Item>
+                            </div>
+                        </div>
                     </Form>
                 </div>
             </div>
@@ -833,5 +939,78 @@ const styles: { [key: string]: React.CSSProperties } = {
     addBonusBtn: {
         marginTop: '0.5rem',
         width: '100%',
+    },
+    resourceCard: {
+        backgroundColor: '#fff',
+        border: '1px solid #e0dcd3',
+        borderRadius: '0.75rem',
+        padding: '1rem 1.25rem',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+        position: 'relative',
+        display: 'flex',
+        gap: '1rem',
+        alignItems: 'flex-start',
+    },
+    resourceColorBar: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        width: '4px',
+        borderTopLeftRadius: '0.75rem',
+        borderBottomLeftRadius: '0.75rem',
+    },
+    resourceImageContainer: {
+        width: '3.5rem',
+        height: '3.5rem',
+        borderRadius: '0.5rem',
+        overflow: 'hidden',
+        flexShrink: 0,
+        border: '1px solid #e0dcd3',
+        backgroundColor: '#f5f2ea',
+    },
+    resourceImage: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+    },
+    resourceImagePlaceholder: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    resourceImageUploadContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '1.5rem',
+    },
+    resourceImagePreview: {
+        width: '12rem',
+        height: '12rem',
+        borderRadius: '1rem',
+        border: '2px dashed #d4cebe',
+        backgroundColor: '#fbf9f6',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'all 0.2s ease',
+    },
+    resourceImageRemoveBtn: {
+        position: 'absolute',
+        top: '0.5rem',
+        right: '0.5rem',
+        zIndex: 2,
+    },
+    recoveryInputCard: {
+        borderRadius: '0.5rem',
+        padding: '0.75rem',
     },
 }

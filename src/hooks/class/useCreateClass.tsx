@@ -9,9 +9,11 @@ import useReferenceStore from "@/stores/useReferenceStore";
 import { SpellPreparationTypeEnum } from "@/utils/enums";
 
 // interfaces
-import type { CreateClassDTO, SpellcastingProperties, MaxKnown, Features } from "@/models/classInterfaces";
+import type { CreateClassDTO, SpellcastingProperties, MaxKnown, Features, CreateClassResourceDTO } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
-
+export interface CreateClassResourceWithPreview extends CreateClassResourceDTO {
+    previewUrl?: string;
+}
 interface SpellGroup {
     level: number;
     spells: WorkshopSpellReturn[];
@@ -50,6 +52,10 @@ export default function useCreateClass(
 
     const [featureErrMsg, setFeatureErrMsg] = useState<string>('');
     const [spellErrMsg, setSpellErrMsg] = useState<string>('');
+
+    const [resources, setResources] = useState<CreateClassResourceWithPreview[]>([]);
+    const [editingResourceIndex, setEditingResourceIndex] = useState<number | null>(null); // null: none, -1: adding new
+    const [resourceErrMsg, setResourceErrMsg] = useState<string>('');
 
     const [spellSearch, setSpellSearch] = useState<string>('');
     const [selectedSpellIds, setSelectedSpellIds] = useState<number[]>([]);
@@ -110,6 +116,9 @@ export default function useCreateClass(
         setFeatureErrMsg('');
         setSpellErrMsg('');
         setEditingFeatureIndex(null);
+        setResources([]);
+        setResourceErrMsg('');
+        setEditingResourceIndex(null);
     }
 
     const handleCloseModal = () => {
@@ -179,6 +188,39 @@ export default function useCreateClass(
         setFeatureErrMsg("");
     }
 
+    const handleStartAddResource = () => {
+        setEditingResourceIndex(-1);
+        setResourceErrMsg("");
+    }
+
+    const handleStartEditResource = (index: number) => {
+        setEditingResourceIndex(index);
+    }
+
+    const handleCancelResource = () => {
+        setEditingResourceIndex(null);
+    }
+
+    const handleSaveResource = (resource: CreateClassResourceDTO, previewUrl: string) => {
+        setResources((prev) => {
+            let newList = [...prev];
+            const resourceWithPreview: CreateClassResourceWithPreview = { ...resource, previewUrl };
+            if (editingResourceIndex === -1) {
+                newList.push(resourceWithPreview);
+            } else if (editingResourceIndex !== null) {
+                newList[editingResourceIndex] = resourceWithPreview;
+            }
+            return newList;
+        });
+        setEditingResourceIndex(null);
+        setResourceErrMsg("");
+    }
+
+    const handleDeleteResource = (index: number) => {
+        setResources((prev) => prev.filter((_, i) => i !== index));
+        setResourceErrMsg("");
+    }
+
     const submitCreateClass: FormProps<CreateClassFormValues>['onFinish'] = async (values) => {
         let hasError = false;
 
@@ -206,8 +248,8 @@ export default function useCreateClass(
                 spellcastingType: values.spellcastingType || "",
                 maxCantripKnown: maxCantripKnown,
                 maxSpellKnown: values.spellPreparationType !== SpellPreparationTypeEnum.PREPARED ? maxSpellKnown : [],
-                preparedLvlBonus: values.preparedLvlBonus,
-                preparedModBonus: values.preparedModBonus,
+                preparedLvlBonus: values.preparedLvlBonus ?? 0,
+                preparedModBonus: !!values.preparedModBonus,
             };
 
             const payload: CreateClassDTO = {
@@ -218,7 +260,7 @@ export default function useCreateClass(
                 subclassLevel: values.subclassLevel,
                 spellcastingProperties: isSpellcaster ? spellcastingProperties : null,
                 features: features,
-                resources: [],
+                resources: resources.map(({ previewUrl, ...rest }) => rest),
                 spellIds: isSpellcaster ? selectedSpellIds : [],
             };
 
@@ -266,5 +308,13 @@ export default function useCreateClass(
         handleSaveFeature,
         featureErrMsg,
         spellErrMsg,
+        resources,
+        editingResourceIndex,
+        resourceErrMsg,
+        handleStartAddResource,
+        handleStartEditResource,
+        handleCancelResource,
+        handleSaveResource,
+        handleDeleteResource,
     }
 }

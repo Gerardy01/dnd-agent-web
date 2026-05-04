@@ -60,6 +60,7 @@ const useReferenceStore = create<ReferenceState>((set) => ({
         spellcastingType: [],
         diceSelection: [],
         classFeatureType: [],
+        resourceRecoveryType: [],
     },
     setItemOptions: (itemOptions: ItemOptionsReturn) => set({ itemOptions }),
     setEffectOptions: (effectOptions: EffectOptionsReturn) => set({ effectOptions }),

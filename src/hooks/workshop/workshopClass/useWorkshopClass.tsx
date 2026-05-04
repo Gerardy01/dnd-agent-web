@@ -22,8 +22,8 @@ export default function useWorkshopClass() {
     const { successNotification } = useNotification();
 
     const [loading, setLoading] = useState<boolean>(true);
-    const [getClassLoading, setGetClassLoading] = useState<boolean>(false);
-    const [getSpellsLoading, setGetSpellsLoading] = useState<boolean>(false);
+    const [getClassLoading, setGetClassLoading] = useState<boolean>(true);
+    const [getSpellsLoading, setGetSpellsLoading] = useState<boolean>(true);
 
     const [workshopClasses, setWorkshopClasses] = useState<WorkshopClassReturn[]>([]);
     const [filteredWorkshopClasses, setFilteredWorkshopClasses] = useState<WorkshopClassReturn[]>([]);

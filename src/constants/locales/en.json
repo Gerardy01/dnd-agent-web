@@ -643,7 +643,21 @@
         "reactive": "Reactive",
         "editFeature": "Edit Feature",
         "featureRequired": "At least one feature is required",
-        "spellRequired": "At least one spell is required for spellcasters"
+        "spellRequired": "At least one spell is required for spellcasters",
+        "resources": "Resources",
+        "resourcesDescription": "Add resources that this class grants (e.g. Sorcery Points, Ki Points)",
+        "resource": "Resource",
+        "resourceName": "Resource Name",
+        "resourceNamePlaceholder": "Name",
+        "resourceDescription": "Resource Description",
+        "resourceDescriptionPlaceholder": "Description",
+        "resourceColor": "Resource Color",
+        "resourceColorPlaceholder": "e.g. #000000",
+        "addResource": "Add Resource",
+        "editResource": "Edit Resource",
+        "maxPerLevel": "Max Per Level",
+        "flat": "Flat",
+        "percentage": "Percentage"
     },
     "error": {
         "account": {
