@@ -17,7 +17,7 @@ export default function useGlobalLogic() {
     const { serverErrorModal } = useStaticModal();
 
     const { setAccount } = useAccountStore();
-    const { setItemOptions, setEffectOptions, setFeatOptions, setSpellOptions, setMonsterOptions } = useReferenceStore();
+    const { setItemOptions, setEffectOptions, setFeatOptions, setSpellOptions, setMonsterOptions, setClassOptions } = useReferenceStore();
 
     const [pageLoad, setPageLoad] = useState<boolean>(true);
     const [getAccountLoad, setGetAccountLoad] = useState<boolean>(true);
@@ -26,6 +26,7 @@ export default function useGlobalLogic() {
     const [getFeatOptionsLoad, setGetFeatOptionsLoad] = useState<boolean>(true);
     const [getSpellOptionsLoad, setGetSpellOptionsLoad] = useState<boolean>(true);
     const [getMonsterOptionsLoad, setGetMonsterOptionsLoad] = useState<boolean>(true);
+    const [getClassOptionsLoad, setGetClassOptionsLoad] = useState<boolean>(true);
 
     useEffect(() => {
         getAccountData();
@@ -34,12 +35,13 @@ export default function useGlobalLogic() {
         getFeatOptionsData();
         getSpellOptionsData();
         getMonsterOptionsData();
+        getClassOptionsData();
     }, []);
 
     useEffect(() => {
-        if (getAccountLoad || getReferenceLoad || getEffectOptionsLoad || getFeatOptionsLoad || getSpellOptionsLoad || getMonsterOptionsLoad) return;
+        if (getAccountLoad || getReferenceLoad || getEffectOptionsLoad || getFeatOptionsLoad || getSpellOptionsLoad || getMonsterOptionsLoad || getClassOptionsLoad) return;
         setPageLoad(false);
-    }, [getAccountLoad, getReferenceLoad, getEffectOptionsLoad, getFeatOptionsLoad, getSpellOptionsLoad, getMonsterOptionsLoad]);
+    }, [getAccountLoad, getReferenceLoad, getEffectOptionsLoad, getFeatOptionsLoad, getSpellOptionsLoad, getMonsterOptionsLoad, getClassOptionsLoad]);
 
     const getAccountData = async () => {
         setGetAccountLoad(true);
@@ -179,6 +181,31 @@ export default function useGlobalLogic() {
 
         } finally {
             setGetMonsterOptionsLoad(false);
+        }
+    }
+
+    const getClassOptionsData = async () => {
+        setGetClassOptionsLoad(true);
+
+        try {
+
+            const [err, data] = await referenceApi.getClassOptions();
+
+            if (err) {
+                serverErrorModal();
+                return;
+            }
+
+            setClassOptions({
+                spellcastingAbility: data.spellcastingAbility,
+                spellPreparationType: data.spellPreparationType,
+                spellcastingType: data.spellcastingType,
+                diceSelection: data.diceSelection,
+                classFeatureType: data.classFeatureType,
+            });
+
+        } finally {
+            setGetClassOptionsLoad(false);
         }
     }
 

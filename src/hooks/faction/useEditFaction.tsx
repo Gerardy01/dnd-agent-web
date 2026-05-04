@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Form, type FormProps } from "antd";
+import { Form, type FormProps, type ColorPickerProps } from "antd";
+
+type Color = Parameters<NonNullable<ColorPickerProps['onChange']>>[0];
 
 // interfaces
 import type { Faction } from "@/models/factionInterfaces";
@@ -47,7 +49,7 @@ export default function useEditFaction(
         setImageUrl(url);
     };
 
-    const handleColorChange = (color: any) => {
+    const handleColorChange = (color: Color | string) => {
         const hex = typeof color === 'string' ? color : color.toHexString();
         editFactionForm.setFieldsValue({ color: hex });
     };

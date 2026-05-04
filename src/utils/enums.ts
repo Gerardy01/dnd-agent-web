@@ -98,3 +98,9 @@ export const ItemBonusStatEnum = {
     SPEED: "speed",
     HP: "hp",
 } as const;
+
+export const SpellPreparationTypeEnum = {
+    PREPARED: "prepared",
+    KNOWN: "known",
+    PACT_MAGIC: "pact_magic",
+} as const;

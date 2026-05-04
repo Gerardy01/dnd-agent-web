@@ -30,3 +30,11 @@ export interface MonsterOptionsReturn {
     movementSelection: string[];
     sensesSelection: string[];
 }
+
+export interface ClassOptionsReturn {
+    spellcastingAbility: string[];
+    spellPreparationType: string[];
+    spellcastingType: string[];
+    diceSelection: string[];
+    classFeatureType: string[];
+}

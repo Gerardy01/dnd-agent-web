@@ -1,0 +1,837 @@
+import { Button, Checkbox, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Tag, Typography } from "antd";
+import { CloseOutlined, DeleteOutlined, MinusOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+
+// assets
+import { SparklesIcon } from "@/assets";
+
+// utils
+import { SpellPreparationTypeEnum } from "@/utils/enums";
+
+// hooks
+import useCreateClass from "@/hooks/class/useCreateClass";
+import { useTranslation } from "react-i18next";
+
+// components
+import ImageForm from "@/components/global/form/ImageForm";
+
+// interfaces
+import type { CreateClassDTO } from "@/models/classInterfaces";
+import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
+import type { Features } from "@/models/classInterfaces";
+
+const { Title, Text } = Typography;
+
+interface FeatureFormProps {
+    initialValues?: Features;
+    onSave: (feature: Features) => void;
+    onCancel: () => void;
+    featureTypeSelection: { label: string; value: string }[];
+    t: any;
+    isEdit?: boolean;
+}
+
+const FeatureForm = ({ initialValues, onSave, onCancel, featureTypeSelection, t, isEdit = false }: FeatureFormProps) => {
+    const [form] = Form.useForm();
+
+    return (
+        <div style={styles.bonusCard}>
+            <div style={styles.bonusCardHeader}>
+                <Text strong style={{ fontSize: '0.95rem' }}>
+                    {isEdit ? t('classes.editFeature') : t('classes.addFeature')}
+                </Text>
+                <Button icon={<CloseOutlined />} type="text" onClick={onCancel} size="small" />
+            </div>
+            <div style={styles.bonusCardContent}>
+                <Form
+                    form={form}
+                    layout="vertical"
+                    initialValues={initialValues || { level: 1, type: 'active' }}
+                    onFinish={onSave}
+                    requiredMark={false}
+                    component={false}
+                >
+                    <Form.Item
+                        label={t('classes.featureName')}
+                        name="name"
+                        rules={[{ required: true, message: t('global.fieldRequired') }]}
+                        labelCol={{ style: { fontWeight: 'bold', fontSize: '0.85rem' } }}
+                    >
+                        <Input placeholder={t('classes.featureNamePlaceholder')} maxLength={50} size="large" />
+                    </Form.Item>
+                    <Form.Item
+                        label={t('classes.featureDescription')}
+                        name="description"
+                        rules={[{ required: true, message: t('global.fieldRequired') }]}
+                        labelCol={{ style: { fontWeight: 'bold', fontSize: '0.85rem' } }}
+                    >
+                        <Input.TextArea rows={4} placeholder={t('classes.featureDescriptionPlaceholder')} maxLength={1250} showCount size="large" />
+                    </Form.Item>
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                label={t('classes.levelRequired')}
+                                name="level"
+                                rules={[{ required: true, message: t('global.fieldRequired') }]}
+                                labelCol={{ style: { fontWeight: 'bold', fontSize: '0.85rem' } }}
+                            >
+                                <InputNumber min={1} max={99} style={{ width: '100%' }} mode="spinner" size="large" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                label={t('classes.featureType')}
+                                name="type"
+                                rules={[{ required: true, message: t('global.fieldRequired') }]}
+                                labelCol={{ style: { fontWeight: 'bold', fontSize: '0.85rem' } }}
+                            >
+                                <Select options={featureTypeSelection} placeholder={t('classes.featureTypePlaceholder')} size="large" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
+                        <Button onClick={onCancel}>{t('global.cancel')}</Button>
+                        <Button type="primary" onClick={() => form.submit()}>
+                            {isEdit ? t('global.save') : t('global.add')}
+                        </Button>
+                    </div>
+                </Form>
+            </div>
+        </div>
+    );
+};
+
+interface Props {
+    open: boolean;
+    onClose: () => void;
+    onSubmit: (data: CreateClassDTO) => Promise<void>;
+    workshopSpells: WorkshopSpellReturn[];
+}
+
+
+
+export default function CreateClassModal({ open, onClose, onSubmit, workshopSpells }: Props) {
+
+    const {
+        createClassForm,
+        submitLoad,
+        isSpellcaster,
+        diceSelection,
+        spellcastingAbilitySelection,
+        spellPreparationSelection,
+        spellcastingTypeSelection,
+        preparedLvlBonusSelection,
+        maxKnownTotal,
+        setIsSpellcaster,
+        handleFileChange,
+        submitCreateClass,
+        handleCloseModal,
+        handleMaxKnownTotal,
+        maxCantripKnown,
+        maxSpellKnown,
+        handleMaxCantripKnown,
+        handleMaxSpellKnown,
+        scrollRef,
+        spellList,
+        spellSearch,
+        setSpellSearch,
+        selectedSpellIds,
+        handleToggleSpell,
+        features,
+        featureTypeSelection,
+        handleDeleteFeature,
+        editingFeatureIndex,
+        handleStartAddFeature,
+        handleStartEditFeature,
+        handleCancelFeature,
+        handleSaveFeature,
+        featureErrMsg,
+        spellErrMsg,
+    } = useCreateClass(onClose, onSubmit, workshopSpells);
+
+    const { t } = useTranslation();
+
+    const spellPreparationType = Form.useWatch('spellPreparationType', createClassForm);
+
+    return (
+        <Modal
+            open={open}
+            footer={null}
+            closable={false}
+            destroyOnHidden={true}
+            width={'70rem'}
+            centered
+            style={{ margin: '2rem 0px' }}
+            styles={{
+                container: {
+                    padding: '0px',
+                    backgroundColor: '#f5f2ea',
+                    overflow: 'hidden'
+                },
+                body: {
+                    overflow: 'auto',
+                    height: 'calc(100vh - 4rem)',
+                    scrollbarWidth: 'none'
+                }
+            }}
+        >
+            <div style={styles.header}>
+                <div>
+                    <Title level={2} style={{ margin: '0px' }}>{t('classes.createClassTitle')}</Title>
+                    <Text style={{ fontSize: '1rem' }}>{t('classes.createClassDescription')}</Text>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <Button
+                        icon={<SparklesIcon style={{ fontSize: '1.5rem' }} />}
+                        style={{ padding: '1.2rem 1rem' }}
+                        disabled={submitLoad}
+                    >
+                        {t('global.generateWithAi')}
+                    </Button>
+                    <Button
+                        style={{ padding: '1.2rem 1.5rem' }}
+                        type="primary"
+                        onClick={() => createClassForm.submit()}
+                        loading={submitLoad}
+                    >
+                        {t('classes.createClass')}
+                    </Button>
+                    <Divider vertical style={styles.titleDivider} />
+                    <Button
+                        icon={<CloseOutlined />}
+                        style={{ padding: '1.2rem', borderRadius: '50%' }}
+                        onClick={handleCloseModal}
+                        disabled={submitLoad}
+                        type="text"
+                    />
+                </div>
+            </div>
+
+            <div style={styles.content}>
+                <div style={styles.imageFormContainer}>
+                    <ImageForm
+                        title={t('classes.classImage')}
+                        submitLoad={submitLoad}
+                        onFileChange={handleFileChange}
+                    />
+                </div>
+
+                <div style={{ flex: '1' }}>
+                    <Form
+                        name="createClass"
+                        layout="vertical"
+                        form={createClassForm}
+                        style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+                        onFinish={submitCreateClass}
+                        scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
+                    >
+                        <div style={styles.formContainer}>
+                            <div style={styles.formHeader}>
+                                <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                                    {t('classes.basicInformation')}
+                                </Title>
+                                <Text type="secondary">{t('classes.basicInformationDescription')}</Text>
+                            </div>
+                            <div style={styles.formContent}>
+                                <Form.Item
+                                    name="name"
+                                    label={t('classes.className')}
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    rules={[{ required: true, message: t('global.fieldRequired') }]}
+                                >
+                                    <Input placeholder={t('classes.classNamePlaceholder')} size="large" maxLength={100} />
+                                </Form.Item>
+                                <Form.Item
+                                    name="description"
+                                    label={t('classes.description')}
+                                    labelCol={{ style: { fontWeight: 'bold' } }}
+                                    rules={[{ required: true, message: t('global.fieldRequired') }]}
+                                >
+                                    <Input.TextArea rows={5} placeholder={t('classes.descriptionPlaceholder')} maxLength={500} showCount />
+                                </Form.Item>
+
+                                <Row style={styles.formRow}>
+                                    <Col style={{ width: '48%' }}>
+                                        <Form.Item
+                                            name="hitDie"
+                                            label={t('classes.hitDie')}
+                                            labelCol={{ style: { fontWeight: 'bold' } }}
+                                            initialValue="d8"
+                                            required
+                                        >
+                                            <Select
+                                                placeholder={t('classes.hitDiePlaceholder')}
+                                                size="large"
+                                                options={diceSelection}
+                                                showSearch
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col style={{ width: '48%' }}>
+                                        <Form.Item
+                                            name="subclassLevel"
+                                            label={t('classes.subclassLevel')}
+                                            labelCol={{ style: { fontWeight: 'bold' } }}
+                                            initialValue={3}
+                                            required
+                                        >
+                                            <InputNumber
+                                                placeholder={t('classes.subclassLevelPlaceholder')}
+                                                size="large"
+                                                min={1}
+                                                max={20}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+
+                                <div style={styles.bonusCard}>
+                                    <div style={styles.bonusCardHeader}>
+                                        <div>
+                                            <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t('classes.isSpellcaster')}</Text>
+                                            <Text type="secondary" style={{ fontSize: '0.82rem' }}>{t('classes.isSpellcasterDescription')}</Text>
+                                        </div>
+                                        <Switch
+                                            checked={isSpellcaster}
+                                            onChange={setIsSpellcaster}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        {isSpellcaster && (
+                            <div style={styles.formContainer}>
+                                <div style={styles.formHeader}>
+                                    <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                                        {t('classes.spellcastingProperties')}
+                                    </Title>
+                                    <Text type="secondary">{t('classes.spellcastingPropertiesDescription')}</Text>
+                                </div>
+                                <div style={styles.formContent}>
+                                    <Row style={styles.formRow}>
+                                        <Col style={{ width: '48%' }}>
+                                            <Form.Item
+                                                name="spellcastingAbility"
+                                                label={t('classes.spellcastingAbility')}
+                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                rules={[{ required: true, message: t('global.fieldRequired') }]}
+                                            >
+                                                <Select
+                                                    placeholder={t('classes.spellcastingAbilityPlaceholder')}
+                                                    size="large"
+                                                    options={spellcastingAbilitySelection}
+                                                    showSearch
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+                                    <Row style={styles.formRow}>
+                                        <Col style={{ width: '48%' }}>
+                                            <Form.Item
+                                                name="spellPreparationType"
+                                                label={t('classes.preparationType')}
+                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                rules={[{ required: true, message: t('global.fieldRequired') }]}
+                                            >
+                                                <Select
+                                                    placeholder={t('classes.preparationTypePlaceholder')}
+                                                    size="large"
+                                                    options={spellPreparationSelection}
+                                                    showSearch
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col style={{ width: '48%' }}>
+                                            <Form.Item
+                                                name="spellcastingType"
+                                                label={t('classes.spellcastingType')}
+                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                rules={[{ required: true, message: t('global.fieldRequired') }]}
+                                            >
+                                                <Select
+                                                    placeholder={t('classes.spellcastingTypePlaceholder')}
+                                                    size="large"
+                                                    options={spellcastingTypeSelection}
+                                                    showSearch
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+
+                                    <div style={styles.maxKnownCard}>
+                                        <div style={styles.bonusCardHeader}>
+                                            <div>
+                                                <Text strong style={{ fontSize: '0.85rem', display: 'block' }}>
+                                                    Maximum Cantrips/Spells Known by Level
+                                                </Text>
+                                            </div>
+                                            <Button type="primary">
+                                                Presets
+                                            </Button>
+                                        </div>
+                                        <div style={styles.maxKnownCardContent}>
+                                            <div ref={scrollRef} style={styles.maxKnownRow}>
+                                                {Array.from({ length: maxKnownTotal }).map((_, index) => {
+                                                    return (
+                                                        <div key={index} style={styles.maxKnownCol}>
+                                                            <Text strong>{index + 1}</Text>
+                                                            <InputNumber
+                                                                style={styles.maxKnownInput}
+                                                                min={0}
+                                                                max={50}
+                                                                value={maxCantripKnown[index]?.amount || 0}
+                                                                onChange={(val) => handleMaxCantripKnown(index, val || 0)}
+                                                                mode="spinner"
+                                                                controls={false}
+
+                                                            />
+                                                            {spellPreparationType !== SpellPreparationTypeEnum.PREPARED && (
+                                                                <InputNumber
+                                                                    style={styles.maxKnownInput}
+                                                                    min={0}
+                                                                    max={50}
+                                                                    value={maxSpellKnown[index]?.amount || 0}
+                                                                    onChange={(val) => handleMaxSpellKnown(index, val || 0)}
+                                                                    mode="spinner"
+                                                                    controls={false}
+                                                                />
+                                                            )}
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                            <div style={styles.maxKnownLabelContainer}>
+                                                <Text strong>Cantrips</Text>
+                                                {spellPreparationType !== SpellPreparationTypeEnum.PREPARED && (
+                                                    <Text strong>Spells</Text>
+                                                )}
+                                            </div>
+                                            <div style={styles.maxKnownControlContainer}>
+                                                <Button
+                                                    type="text"
+                                                    icon={<PlusOutlined />}
+                                                    onClick={() => handleMaxKnownTotal(maxKnownTotal + 1)}
+                                                />
+                                                <Button
+                                                    type="text"
+                                                    icon={<MinusOutlined />}
+                                                    onClick={() => handleMaxKnownTotal(maxKnownTotal - 1)}
+                                                    disabled={maxKnownTotal === 1}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {spellPreparationType === SpellPreparationTypeEnum.PREPARED && (
+                                        <>
+                                            <Form.Item
+                                                name="preparedLvlBonus"
+                                                label={t('classes.preparedLevelBonus')}
+                                                labelCol={{ style: { fontWeight: 'bold' } }}
+                                                initialValue={0}
+                                                rules={[{ required: true, message: t('global.fieldRequired') }]}
+                                            >
+                                                <Select
+                                                    placeholder={t('classes.preparedLevelBonusPlaceholder')}
+                                                    size="large"
+                                                    options={preparedLvlBonusSelection}
+                                                />
+                                            </Form.Item>
+
+                                            <div style={styles.bonusCard}>
+                                                <div style={styles.bonusCardHeader}>
+                                                    <div>
+                                                        <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t('classes.preparedModifierBonus')}</Text>
+                                                        <Text type="secondary" style={{ fontSize: '0.82rem' }}>{t('classes.preparedModifierBonusDescription')}</Text>
+                                                    </div>
+                                                    <Form.Item name="preparedModBonus" valuePropName="checked" noStyle initialValue={false}>
+                                                        <Switch />
+                                                    </Form.Item>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    <div style={styles.bonusCard}>
+                                        <div style={styles.bonusCardHeader}>
+                                            <div>
+                                                <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>Spells</Text>
+                                                <Text type="secondary" style={{ fontSize: '0.8rem' }}>
+                                                    {selectedSpellIds.length} selected
+                                                </Text>
+                                            </div>
+                                        </div>
+                                        <div style={styles.bonusCardContent}>
+                                            <Form.Item
+                                                help={spellErrMsg}
+                                                validateStatus={spellErrMsg ? 'error' : ''}
+                                                style={{ marginBottom: 0 }}
+                                            >
+                                                <Input
+                                                    placeholder={t('classes.spellSearchPlaceholder')}
+                                                    size="large"
+                                                    prefix={<SearchOutlined />}
+                                                    value={spellSearch}
+                                                    onChange={(e) => setSpellSearch(e.target.value)}
+                                                    style={{ marginBottom: '0.75rem' }}
+                                                />
+                                                <div style={styles.spellList}>
+                                                    {spellList.length === 0 ? (
+                                                        <Text type="secondary" style={{ textAlign: 'center', display: 'block', padding: '1rem' }}>
+                                                            No spells found
+                                                        </Text>
+                                                    ) : (
+                                                        spellList.map((group) => (
+                                                            <div key={group.level} style={styles.spellGroup}>
+                                                                <div style={styles.spellGroupHeader}>
+                                                                    <div style={styles.spellGroupBadge}>
+                                                                        <Text strong style={{ color: '#fff', fontSize: '0.75rem', lineHeight: 1 }}>
+                                                                            {group.level === 0 ? 'C' : group.level}
+                                                                        </Text>
+                                                                    </div>
+                                                                    <Text strong style={{ fontSize: '0.9rem' }}>
+                                                                        {group.level === 0 ? 'Cantrips' : `Level ${group.level} Spells`}
+                                                                    </Text>
+                                                                    <Text type="secondary" style={{ marginLeft: 'auto', fontSize: '0.82rem' }}>
+                                                                        {group.spells.length}
+                                                                    </Text>
+                                                                </div>
+                                                                <div style={styles.spellGrid}>
+                                                                    {group.spells.map((spell) => {
+                                                                        const isSelected = selectedSpellIds.includes(spell.workshopSpellId);
+                                                                        return (
+                                                                            <div
+                                                                                key={spell.workshopSpellId}
+                                                                                style={{
+                                                                                    ...styles.spellCard,
+                                                                                    ...(isSelected ? styles.spellCardSelected : {}),
+                                                                                }}
+                                                                                onClick={() => handleToggleSpell(spell.workshopSpellId)}
+                                                                            >
+                                                                                <Checkbox checked={isSelected} style={{ flexShrink: 0 }} />
+                                                                                <div style={styles.spellCardImage}>
+                                                                                    {spell.image ? (
+                                                                                        <img src={spell.image} alt={spell.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.3rem' }} />
+                                                                                    ) : (
+                                                                                        <div style={styles.spellCardImagePlaceholder} />
+                                                                                    )}
+                                                                                </div>
+                                                                                <Text
+                                                                                    strong
+                                                                                    style={{ fontSize: '0.82rem', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                                                                                    title={spell.name}
+                                                                                >
+                                                                                    {spell.name}
+                                                                                </Text>
+                                                                                <Text
+                                                                                    type="secondary"
+                                                                                    style={{ fontSize: '0.72rem', backgroundColor: '#e8e4da', padding: '0.15rem 0.4rem', borderRadius: '0.3rem', whiteSpace: 'nowrap', flexShrink: 0 }}
+                                                                                >
+                                                                                    {group.level === 0 ? 'Cantrip' : `Lvl ${group.level}`}
+                                                                                </Text>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    )}
+                                                </div>
+                                            </Form.Item>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        )}
+
+                        <div style={styles.formContainer}>
+                            <div style={styles.formHeader}>
+                                <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                                    {t('classes.features')}
+                                </Title>
+                                <Text type="secondary">{t('classes.featuresDescription')}</Text>
+                            </div>
+                            <div style={{ ...styles.formContent, maxHeight: '40rem', overflowY: 'auto' }}>
+                                <Form.Item
+                                    help={featureErrMsg}
+                                    validateStatus={featureErrMsg ? 'error' : ''}
+                                    style={{ marginBottom: 0 }}
+                                >
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                        {features.map((feature, index) => (
+                                            <div key={index}>
+                                                {editingFeatureIndex === index ? (
+                                                    <FeatureForm
+                                                        initialValues={feature}
+                                                        onSave={handleSaveFeature}
+                                                        onCancel={handleCancelFeature}
+                                                        featureTypeSelection={featureTypeSelection}
+                                                        t={t}
+                                                        isEdit
+                                                    />
+                                                ) : (
+                                                    <div style={styles.featureCard} onClick={() => handleStartEditFeature(index)}>
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                                <Text strong style={{ fontSize: '1rem' }}>{feature.name}</Text>
+                                                                <Tag color={feature.type === 'active' ? 'blue' : 'default'} style={{ textTransform: 'capitalize', borderRadius: '4px' }}>
+                                                                    {t(`classes.${feature.type}`)}
+                                                                </Tag>
+                                                            </div>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                                <Text type="secondary" style={{ fontSize: '0.85rem', fontWeight: 500 }}>
+                                                                    Lvl {feature.level}
+                                                                </Text>
+                                                                <Button
+                                                                    icon={<DeleteOutlined />}
+                                                                    danger
+                                                                    type="text"
+                                                                    size="small"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleDeleteFeature(index);
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <Text type="secondary" style={{ display: 'block', marginTop: '0.5rem', fontSize: '0.85rem', lineHeight: '1.4' }}>
+                                                            {feature.description}
+                                                        </Text>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+
+                                        {editingFeatureIndex === -1 ? (
+                                            <FeatureForm
+                                                onSave={handleSaveFeature}
+                                                onCancel={handleCancelFeature}
+                                                featureTypeSelection={featureTypeSelection}
+                                                t={t}
+                                            />
+                                        ) : (
+                                            <Button
+                                                onClick={handleStartAddFeature}
+                                                style={styles.addBonusBtn}
+                                                icon={<PlusOutlined />}
+                                            >
+                                                {t('classes.addFeature')}
+                                            </Button>
+                                        )}
+                                    </div>
+                                </Form.Item>
+                            </div>
+                        </div>
+                    </Form>
+                </div>
+            </div>
+        </Modal>
+    )
+}
+
+const styles: { [key: string]: React.CSSProperties } = {
+    header: {
+        padding: '1rem 1.5rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#f0eee3',
+        borderBottom: '1px solid #e0dcd3',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1,
+    },
+    titleDivider: {
+        height: '2rem',
+        backgroundColor: '#e0dcd3',
+        margin: '0px'
+    },
+    content: {
+        padding: '1.7rem 1.5rem',
+        display: 'flex',
+        gap: '1.6rem',
+        alignItems: 'flex-start',
+    },
+    imageFormContainer: {
+        width: '30%',
+        minWidth: '20rem',
+        position: 'sticky',
+        top: '7.7rem',
+        alignSelf: 'flex-start',
+        overflowY: 'auto',
+    },
+    formContainer: {
+        backgroundColor: '#fbf9f6',
+        borderRadius: '1rem',
+        border: '1px solid #e0dcd3'
+    },
+    formHeader: {
+        padding: '1rem 1.5rem',
+        borderBottom: '1px solid #e0dcd3',
+    },
+    formContent: {
+        padding: '1.5rem',
+    },
+    formRow: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    bonusCard: {
+        backgroundColor: '#f5f2ea',
+        border: '1px solid #e0dcd3',
+        borderRadius: '0.6rem',
+        overflow: 'hidden',
+        marginBottom: '0.75rem',
+    },
+    featureCard: {
+        backgroundColor: '#fff',
+        border: '1px solid #e0dcd3',
+        borderRadius: '0.75rem',
+        padding: '1rem 1.25rem',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+        position: 'relative',
+    },
+    bonusCardHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0.9rem 1.1rem',
+    },
+    bonusCardContent: {
+        padding: '1rem 1.1rem',
+        borderTop: '1px solid #e0dcd3',
+    },
+    maxKnownCard: {
+        backgroundColor: '#f5f2ea',
+        border: '1px solid #e0dcd3',
+        borderRadius: '0.6rem',
+        overflow: 'hidden',
+        marginBottom: '1.2rem',
+    },
+    maxKnownCardContent: {
+        padding: '1rem 1.1rem',
+        borderTop: '1px solid #e0dcd3',
+        position: 'relative',
+    },
+    maxKnownRow: {
+        display: 'flex',
+        gap: '0.5rem',
+        width: 'calc(100vw - 30rem)',
+        maxWidth: '40rem',
+        overflowX: 'auto',
+        paddingLeft: '5rem',
+        paddingBottom: '1rem',
+        paddingRight: '3rem',
+    },
+    maxKnownCol: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem',
+        alignItems: 'center',
+    },
+    maxKnownInput: {
+        width: '2.35rem',
+    },
+    maxKnownLabelContainer: {
+        height: '100%',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        fontSize: '1rem',
+        padding: '3.1rem 1rem 0px 1rem',
+        backgroundColor: '#f5f2ea',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1.3rem',
+        borderRight: '1px solid #e0dcd3',
+    },
+    maxKnownControlContainer: {
+        height: '100%',
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        fontSize: '1rem',
+        backgroundColor: '#f5f2ea',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '1rem',
+        borderLeft: '1px solid #e0dcd3',
+        padding: '0px 0.5rem',
+    },
+    spellList: {
+        maxHeight: '28rem',
+        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.75rem',
+    },
+    spellGroup: {
+        borderRadius: '0.5rem',
+        border: '1px solid #e0dcd3',
+        overflow: 'hidden',
+    },
+    spellGroupHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.6rem',
+        padding: '0.6rem 0.75rem',
+        backgroundColor: '#f0eee3',
+        borderBottom: '1px solid #e0dcd3',
+    },
+    spellGroupBadge: {
+        width: '1.4rem',
+        height: '1.4rem',
+        borderRadius: '0.3rem',
+        backgroundColor: '#8c7a52',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+    },
+    spellGrid: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '0',
+    },
+    spellCard: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        padding: '0.55rem 0.75rem',
+        cursor: 'pointer',
+        borderBottom: '1px solid #e8e4da',
+        transition: 'background-color 0.15s',
+        backgroundColor: '#fbf9f6',
+        userSelect: 'none',
+    },
+    spellCardSelected: {
+        backgroundColor: '#f0e9d8',
+        outline: '1.5px solid #b8a070',
+        outlineOffset: '-1.5px',
+    },
+    spellCardImage: {
+        width: '2rem',
+        height: '2rem',
+        borderRadius: '0.3rem',
+        overflow: 'hidden',
+        flexShrink: 0,
+        backgroundColor: '#e0dcd3',
+    },
+    spellCardImagePlaceholder: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#d0ccc0',
+    },
+    addBonusBtn: {
+        marginTop: '0.5rem',
+        width: '100%',
+    },
+}

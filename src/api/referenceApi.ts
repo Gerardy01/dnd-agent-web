@@ -10,7 +10,8 @@ import type {
     EffectOptionsReturn, 
     FeatOptionsReturn, 
     SpellOptionsReturn,
-    MonsterOptionsReturn 
+    MonsterOptionsReturn,
+    ClassOptionsReturn
 } from "@/models/referenceInterfaces";
 
 export class ReferenceApi {
@@ -53,6 +54,15 @@ export class ReferenceApi {
     async getMonsterOptions(): Promise<[undefined, MonsterOptionsReturn] | [ErrorResponse]> {
         const [error, res] = await catchFetchError(axiosPrivate.get<FetchResponse<MonsterOptionsReturn>>(
             '/reference/monster-options',
+        ));
+
+        if (error) return [error];
+        return [error, res.data.data];
+    }
+
+    async getClassOptions(): Promise<[undefined, ClassOptionsReturn] | [ErrorResponse]> {
+        const [error, res] = await catchFetchError(axiosPrivate.get<FetchResponse<ClassOptionsReturn>>(
+            '/reference/class-options',
         ));
 
         if (error) return [error];
