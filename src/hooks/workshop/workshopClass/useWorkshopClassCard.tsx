@@ -1,7 +1,13 @@
 import { useState } from "react";
 import type { MenuProps } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+
+// api
+import { workshopClassApi } from "@/api";
+
+// hooks
 import { useTranslation } from "react-i18next";
+import useStaticModal from "@/hooks/global/useStaticModal";
 
 export default function useWorkshopClassCard(
     classId: number,
@@ -9,6 +15,7 @@ export default function useWorkshopClassCard(
     onEditClick?: () => void
 ) {
     const { t } = useTranslation();
+    const { confirmationModal, serverErrorModal } = useStaticModal();
 
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const [isMenuHovered, setIsMenuHovered] = useState<boolean>(false);
@@ -16,12 +23,8 @@ export default function useWorkshopClassCard(
     const items: MenuProps['items'] = [
         {
             key: 'edit',
-            label: (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <EditOutlined style={{ marginRight: 8 }} />
-                    {t('global.edit')}
-                </div>
-            ),
+            label: t('global.edit'),
+            icon: <EditOutlined />,
             onClick: (e) => {
                 e.domEvent.stopPropagation();
                 if (onEditClick) onEditClick();
@@ -29,17 +32,17 @@ export default function useWorkshopClassCard(
         },
         {
             key: 'delete',
-            label: (
-                <div style={{ display: 'flex', alignItems: 'center', color: '#ff4d4f' }}>
-                    <DeleteOutlined style={{ marginRight: 8 }} />
-                    {t('global.delete')}
-                </div>
-            ),
+            label: t('global.delete'),
+            icon: <DeleteOutlined />,
+            danger: true,
             onClick: (e) => {
                 e.domEvent.stopPropagation();
-                // TODO: Add delete logic later
-                console.log("Delete class", classId);
-                uponDelete(classId);
+                confirmationModal({
+                    title: t('global.delete'),
+                    content: t('classes.deleteConfirmDesc'),
+                    centered: true,
+                    onOkWithPromise: onDelete,
+                });
             },
         },
     ];
@@ -50,6 +53,17 @@ export default function useWorkshopClassCard(
 
     const handleMenuHover = (value: boolean) => {
         setIsMenuHovered(value);
+    }
+
+    const onDelete = async () => {
+        const [err] = await workshopClassApi.deleteClass(classId);
+
+        if (err) {
+            serverErrorModal();
+            return;
+        }
+
+        uponDelete(classId);
     }
 
     return {

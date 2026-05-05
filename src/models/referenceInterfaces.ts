@@ -31,6 +31,12 @@ export interface MonsterOptionsReturn {
     sensesSelection: string[];
 }
 
+export type PresetMaxKnown = {
+    name: string;
+    maxCantripKnown: number[];
+    maxSpellKnown: number[];
+}
+
 export interface ClassOptionsReturn {
     spellcastingAbility: string[];
     spellPreparationType: string[];
@@ -38,4 +44,5 @@ export interface ClassOptionsReturn {
     diceSelection: string[];
     classFeatureType: string[];
     resourceRecoveryType: string[];
+    presetMaxKnown: readonly PresetMaxKnown[];
 }

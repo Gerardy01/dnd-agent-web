@@ -1,4 +1,4 @@
-import { Divider, Dropdown, Tag, Typography } from "antd";
+import { Dropdown, Tag, Typography } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 
 // assets
@@ -16,7 +16,7 @@ interface Props {
     onEditClick?: () => void;
 }
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 
 export default function WorkshopClassCard({ item, uponDelete, onClick, onEditClick }: Props) {
@@ -49,7 +49,7 @@ export default function WorkshopClassCard({ item, uponDelete, onClick, onEditCli
                         transition: 'transform 0.3s ease',
                     }}
                 />
-                
+
                 <Dropdown menu={{ items }} placement="bottom" trigger={['click']}>
                     <button
                         style={{
@@ -73,12 +73,18 @@ export default function WorkshopClassCard({ item, uponDelete, onClick, onEditCli
                             color="purple"
                             variant="outlined"
                             style={styles.pill}
-
                         >
                             <SparklesIcon style={{ marginRight: 6, opacity: 0.8 }} />
                             Spellcaster
                         </Tag>
                     )}
+                    <Tag
+                        color="orange"
+                        variant="outlined"
+                        style={{ ...styles.pill, marginLeft: 'auto' }}
+                    >
+                        Hit Dice: {item.hitDie}
+                    </Tag>
                 </div>
 
                 <Title level={4} style={styles.title}>{item.name}</Title>
@@ -91,16 +97,6 @@ export default function WorkshopClassCard({ item, uponDelete, onClick, onEditCli
                     "{item.description}"
                 </Paragraph>
 
-                <Divider style={{ margin: '0px' }} />
-
-                <div style={styles.footer}>
-                    <Text style={styles.weight}>
-                        Hit Die
-                    </Text>
-                    <Text style={styles.cost}>
-                        {item.hitDie}
-                    </Text>
-                </div>
             </div>
         </div>
     );
@@ -166,9 +162,8 @@ const styles: { [key: string]: React.CSSProperties } = {
         alignItems: 'center',
         padding: '0px 12px',
         borderRadius: '20px',
-        fontSize: '10px',
+        fontSize: '11px',
         fontWeight: 'bold',
-        textTransform: 'uppercase'
     },
     title: {
         margin: '0 0 8px 0',
@@ -179,20 +174,4 @@ const styles: { [key: string]: React.CSSProperties } = {
         marginBottom: '20px',
         flex: 1,
     },
-    footer: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingTop: '0.8rem'
-    },
-    weight: {
-        fontWeight: 'bold',
-        display: 'flex',
-        alignItems: 'center'
-    },
-    cost: {
-        fontWeight: 'bold',
-        display: 'flex',
-        alignItems: 'center'
-    }
 };

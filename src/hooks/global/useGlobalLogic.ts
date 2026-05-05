@@ -203,6 +203,7 @@ export default function useGlobalLogic() {
                 diceSelection: data.diceSelection,
                 classFeatureType: data.classFeatureType,
                 resourceRecoveryType: data.resourceRecoveryType,
+                presetMaxKnown: data.presetMaxKnown,
             });
 
         } finally {

@@ -5,6 +5,7 @@ import WorkshopControl from "@/components/workshop/WorkshopControl";
 import WorkshopClassCard from "@/components/workshop/workshopClass/WorkshopClassCard";
 import CardSkeleton from "@/components/workshop/CardSkeleton";
 import CreateClassModal from "@/components/class/CreateClassModal";
+import EditClassModal from "@/components/class/EditClassModal";
 
 // hooks
 import useWorkshopClass from "@/hooks/workshop/workshopClass/useWorkshopClass";
@@ -21,10 +22,16 @@ export default function WorkshopClass() {
         sortValue,
         createModalOpen,
         cardWidth,
+        editedClassId,
         handleSearch,
         handleSort,
         handleCreateModal,
         handleCreateClass,
+        handleSelectClass,
+        handleEditClassClick,
+        handleEditClass,
+        handleGetClassDetails,
+        uponDelete,
         spells,
     } = useWorkshopClass();
 
@@ -54,9 +61,9 @@ export default function WorkshopClass() {
                         <div key={cls.workshopClassId} style={{ width: cardWidth }}>
                             <WorkshopClassCard
                                 item={cls}
-                                uponDelete={() => { }}
-                                onClick={() => { }}
-                                onEditClick={() => { }}
+                                uponDelete={uponDelete}
+                                onClick={() => handleSelectClass(cls.workshopClassId)}
+                                onEditClick={() => handleEditClassClick(cls.workshopClassId)}
                             />
                         </div>
                     ))
@@ -75,6 +82,16 @@ export default function WorkshopClass() {
                 onSubmit={handleCreateClass}
                 workshopSpells={spells}
             />
+
+            {editedClassId && (
+                <EditClassModal
+                    open={!!editedClassId}
+                    onClose={() => handleEditClassClick(null)}
+                    onSubmit={handleEditClass}
+                    getData={handleGetClassDetails}
+                    workshopSpells={spells}
+                />
+            )}
 
         </div>
     );

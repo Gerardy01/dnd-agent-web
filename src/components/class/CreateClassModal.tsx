@@ -1,8 +1,5 @@
-import { Button, Checkbox, Col, Divider, Form, Input, InputNumber, Modal, Row, Select, Switch, Tag, Typography } from "antd";
+import { Button, Checkbox, Col, Divider, Form, Input, InputNumber, Modal, Popover, Row, Select, Switch, Tag, Typography } from "antd";
 import { CloseOutlined, DeleteOutlined, MinusOutlined, PictureOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-
-// assets
-import { SparklesIcon } from "@/assets";
 
 // utils
 import { SpellPreparationTypeEnum } from "@/utils/enums";
@@ -11,95 +8,20 @@ import { SpellPreparationTypeEnum } from "@/utils/enums";
 import useCreateClass from "@/hooks/class/useCreateClass";
 import { useTranslation } from "react-i18next";
 
+// assets
+import { SparklesIcon } from "@/assets";
+
 // components
 import ImageForm from "@/components/global/form/ImageForm";
 import ClassResourceForm from "./ClassResourceForm";
+import FeatureForm from "./FeatureForm";
 
 // interfaces
 import type { CreateClassDTO } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
-import type { Features } from "@/models/classInterfaces";
 
 const { Title, Text } = Typography;
 
-interface FeatureFormProps {
-    initialValues?: Features;
-    onSave: (feature: Features) => void;
-    onCancel: () => void;
-    featureTypeSelection: { label: string; value: string }[];
-    t: any;
-    isEdit?: boolean;
-}
-
-const FeatureForm = ({ initialValues, onSave, onCancel, featureTypeSelection, t, isEdit = false }: FeatureFormProps) => {
-    const [form] = Form.useForm();
-
-    return (
-        <div style={styles.bonusCard}>
-            <div style={styles.bonusCardHeader}>
-                <Text strong style={{ fontSize: '0.95rem' }}>
-                    {isEdit ? t('classes.editFeature') : t('classes.addFeature')}
-                </Text>
-                <Button icon={<CloseOutlined />} type="text" onClick={onCancel} size="small" />
-            </div>
-            <div style={styles.bonusCardContent}>
-                <Form
-                    form={form}
-                    layout="vertical"
-                    initialValues={initialValues || { level: 1, type: 'active' }}
-                    onFinish={onSave}
-                    requiredMark={false}
-                    component={false}
-                >
-                    <Form.Item
-                        label={t('classes.featureName')}
-                        name="name"
-                        rules={[{ required: true, message: t('global.fieldRequired') }]}
-                        labelCol={{ style: { fontWeight: 'bold', fontSize: '0.85rem' } }}
-                    >
-                        <Input placeholder={t('classes.featureNamePlaceholder')} maxLength={50} size="large" />
-                    </Form.Item>
-                    <Form.Item
-                        label={t('classes.featureDescription')}
-                        name="description"
-                        rules={[{ required: true, message: t('global.fieldRequired') }]}
-                        labelCol={{ style: { fontWeight: 'bold', fontSize: '0.85rem' } }}
-                    >
-                        <Input.TextArea rows={4} placeholder={t('classes.featureDescriptionPlaceholder')} maxLength={1250} showCount size="large" />
-                    </Form.Item>
-                    <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                label={t('classes.levelRequired')}
-                                name="level"
-                                rules={[{ required: true, message: t('global.fieldRequired') }]}
-                                labelCol={{ style: { fontWeight: 'bold', fontSize: '0.85rem' } }}
-                            >
-                                <InputNumber min={1} max={99} style={{ width: '100%' }} mode="spinner" size="large" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                                label={t('classes.featureType')}
-                                name="type"
-                                rules={[{ required: true, message: t('global.fieldRequired') }]}
-                                labelCol={{ style: { fontWeight: 'bold', fontSize: '0.85rem' } }}
-                            >
-                                <Select options={featureTypeSelection} placeholder={t('classes.featureTypePlaceholder')} size="large" />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
-                        <Button onClick={onCancel}>{t('global.cancel')}</Button>
-                        <Button type="primary" onClick={() => form.submit()}>
-                            {isEdit ? t('global.save') : t('global.add')}
-                        </Button>
-                    </div>
-                </Form>
-            </div>
-        </div>
-    );
-};
 
 
 interface Props {
@@ -156,10 +78,11 @@ export default function CreateClassModal({ open, onClose, onSubmit, workshopSpel
         handleCancelResource,
         handleSaveResource,
         handleDeleteResource,
+        handleApplyPreset,
+        presets,
     } = useCreateClass(onClose, onSubmit, workshopSpells);
 
     const { t } = useTranslation();
-
     const spellPreparationType = Form.useWatch('spellPreparationType', createClassForm);
 
     return (
@@ -377,9 +300,36 @@ export default function CreateClassModal({ open, onClose, onSubmit, workshopSpel
                                                     Maximum Cantrips/Spells Known by Level
                                                 </Text>
                                             </div>
-                                            <Button type="primary">
-                                                Presets
-                                            </Button>
+                                            <Popover
+                                                content={
+                                                    <div style={styles.presetContainer}>
+                                                        <Title level={5} style={{ gridColumn: 'span 2', margin: '0 0 0.5rem 0' }}>
+                                                            Preset Options
+                                                        </Title>
+                                                        {presets.map((preset) => (
+                                                            <Button
+                                                                key={preset.name}
+                                                                onClick={() => handleApplyPreset(preset)}
+                                                            >
+                                                                <Text strong style={{ textTransform: 'capitalize' }}>
+                                                                    {t(`classes.presets.${preset.name}`, preset.name.replace(/([A-Z])/g, ' $1').trim())}
+                                                                </Text>
+                                                            </Button>
+                                                        ))}
+                                                    </div>
+                                                }
+                                                trigger="click"
+                                                placement="bottom"
+                                                styles={{
+                                                    container: {
+                                                        padding: '1rem', backgroundColor: '#fbf9f6', border: '1px solid #e0dcd3'
+                                                    }
+                                                }}
+                                            >
+                                                <Button type="primary">
+                                                    Presets
+                                                </Button>
+                                            </Popover>
                                         </div>
                                         <div style={styles.maxKnownCardContent}>
                                             <div ref={scrollRef} style={styles.maxKnownRow}>
@@ -578,7 +528,6 @@ export default function CreateClassModal({ open, onClose, onSubmit, workshopSpel
                                                         onSave={handleSaveFeature}
                                                         onCancel={handleCancelFeature}
                                                         featureTypeSelection={featureTypeSelection}
-                                                        t={t}
                                                         isEdit
                                                     />
                                                 ) : (
@@ -619,7 +568,6 @@ export default function CreateClassModal({ open, onClose, onSubmit, workshopSpel
                                                 onSave={handleSaveFeature}
                                                 onCancel={handleCancelFeature}
                                                 featureTypeSelection={featureTypeSelection}
-                                                t={t}
                                             />
                                         ) : (
                                             <Button
@@ -828,7 +776,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     maxKnownRow: {
         display: 'flex',
         gap: '0.5rem',
-        width: 'calc(100vw - 30rem)',
+        width: 'calc(100vw - 32rem)',
         maxWidth: '40rem',
         overflowX: 'auto',
         paddingLeft: '5rem',
@@ -1013,4 +961,20 @@ const styles: { [key: string]: React.CSSProperties } = {
         borderRadius: '0.5rem',
         padding: '0.75rem',
     },
+    presetContainer: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gap: '0.75rem',
+        width: '18rem',
+    },
+    presetBtn: {
+        height: '3.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        border: '1px solid #e0dcd3',
+        borderRadius: '0.6rem',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+    }
 }

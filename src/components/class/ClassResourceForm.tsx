@@ -1,20 +1,19 @@
-import { Button, ColorPicker, Form, Input, InputNumber, Select, Typography, type ColorPickerProps } from "antd";
-import { CloseOutlined, DeleteOutlined, PictureOutlined, PlusOutlined, MinusOutlined } from "@ant-design/icons";
-import { useEffect, useRef, useState } from "react";
+import { Button, ColorPicker, Form, Input, InputNumber, Select, Spin, Typography } from "antd";
+import { CloseOutlined, DeleteOutlined, PictureOutlined, PlusOutlined, MinusOutlined, UploadOutlined } from "@ant-design/icons";
+
+// assets
+import { SparklesIcon } from "@/assets";
 
 // hooks
-import useImageForm from "@/hooks/global/form/useImageForm";
+import useClassResourceForm from "@/hooks/class/useClassResourceForm";
 import { useTranslation } from "react-i18next";
-import useReferenceStore from "@/stores/useReferenceStore";
 
 // interfaces
-import type { CreateClassResourceDTO, MaxKnown } from "@/models/classInterfaces";
+import type { CreateClassResourceDTO } from "@/models/classInterfaces";
 
 const { Text } = Typography;
 
-type Color = Parameters<NonNullable<ColorPickerProps['onChange']>>[0];
-
-interface ResourceFormProps {
+interface Props {
     initialValues?: CreateClassResourceDTO;
     onSave: (resource: CreateClassResourceDTO, imageUrl: string) => void;
     onCancel: () => void;
@@ -22,69 +21,26 @@ interface ResourceFormProps {
     imageUrlEdit?: string;
 }
 
-const ClassResourceForm = ({ initialValues, onSave, onCancel, isEdit = false, imageUrlEdit = undefined }: ResourceFormProps) => {
-    const { t } = useTranslation();
-    const [form] = Form.useForm();
-    const { classOptions } = useReferenceStore();
+export default function ClassResourceForm({ initialValues, onSave, onCancel, isEdit = false, imageUrlEdit = undefined }: Props) {
     const {
-        fileInputRef,
+        form,
+        colorValue,
+        maxPerLevel,
+        scrollRef,
+        maxTotal,
         imageUrl,
+        fileInputRef,
+        recoveryTypeSelection,
+        handleColorChange,
+        handleMaxChange,
+        handleMaxTotalChange,
         handleFileChange,
         handleRemoveImage,
-    } = useImageForm((key) => form.setFieldsValue({ image: key }), imageUrlEdit || initialValues?.image);
+        onFinish,
+        loading,
+    } = useClassResourceForm({ initialValues, onSave, imageUrlEdit });
 
-    const colorValue = Form.useWatch('color', form);
-    const [maxPerLevel, setMaxPerLevel] = useState<MaxKnown[]>(initialValues?.maxPerLevel || [...Array(20)].map((_, i) => ({ level: i + 1, amount: 0 })));
-    const scrollRef = useRef<HTMLDivElement>(null);
-
-    const handleColorChange = (color: Color | string) => {
-        const hex = typeof color === 'string' ? color : color.toHexString();
-        form.setFieldsValue({ color: hex });
-    };
-
-    const handleMaxChange = (index: number, amount: number) => {
-        setMaxPerLevel((prev) => {
-            const newState = [...prev];
-            newState[index] = { ...newState[index], amount };
-            return newState;
-        });
-    }
-
-    const recoveryTypeSelection = classOptions.resourceRecoveryType.map((type) => ({ label: t(`classes.${type}`), value: type }));
-
-    const [maxTotal, setMaxTotal] = useState<number>(maxPerLevel.length);
-
-    const handleMaxTotalChange = (newTotal: number) => {
-        setMaxTotal(newTotal);
-        setMaxPerLevel((prev) => {
-            if (newTotal > prev.length) {
-                return [...prev, ...[...Array(newTotal - prev.length)].map((_, i) => ({ level: prev.length + i + 1, amount: 0 }))];
-            } else {
-                return prev.slice(0, newTotal);
-            }
-        });
-    }
-
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTo({
-                left: scrollRef.current.scrollWidth,
-                behavior: 'smooth'
-            });
-        }
-    }, [maxTotal]);
-
-    const onFinish = (values: any) => {
-        onSave({
-            ...values,
-            image: values.image || initialValues?.image || null,
-            maxPerLevel: maxPerLevel,
-            resourceRecovery: {
-                shortRest: values.shortRest,
-                longRest: values.longRest
-            }
-        }, imageUrl);
-    }
+    const { t } = useTranslation();
 
     return (
         <div style={styles.bonusCard}>
@@ -123,8 +79,14 @@ const ClassResourceForm = ({ initialValues, onSave, onCancel, isEdit = false, im
                                 <img src={imageUrl} alt="Resource" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             ) : (
                                 <div style={styles.resourceImagePlaceholder}>
-                                    <PictureOutlined style={{ fontSize: '2.5rem', color: '#8c7a52', marginBottom: '0.5rem' }} />
-                                    <Text type="secondary" style={{ fontSize: '0.85rem' }}>{t('global.dropImageHere')}</Text>
+                                    {!loading ? (
+                                        <>
+                                            <PictureOutlined style={{ fontSize: '2.5rem', color: '#8c7a52', marginBottom: '0.5rem' }} />
+                                            <Text type="secondary" style={{ fontSize: '0.85rem' }}>{t('global.dropImageHere')}</Text>
+                                        </>
+                                    ) : (
+                                        <Spin size="large" />
+                                    )}
                                 </div>
                             )}
                             {imageUrl && (
@@ -143,6 +105,23 @@ const ClassResourceForm = ({ initialValues, onSave, onCancel, isEdit = false, im
                         <Form.Item name="image" noStyle>
                             <Input type="hidden" />
                         </Form.Item>
+                        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
+                            <Button
+                                icon={<UploadOutlined />}
+                                style={{ borderColor: '#d4cebe', borderRadius: '8px' }}
+                                onClick={() => fileInputRef.current?.click()}
+                                loading={loading}
+                            >
+                                {t('global.upload')}
+                            </Button>
+                            <Button
+                                icon={<SparklesIcon style={{ fontSize: '1rem' }} />}
+                                style={{ borderColor: '#d4cebe', borderRadius: '8px' }}
+                                loading={loading}
+                            >
+                                {t('global.generate')}
+                            </Button>
+                        </div>
                     </div>
 
                     <Form.Item
@@ -257,8 +236,8 @@ const ClassResourceForm = ({ initialValues, onSave, onCancel, isEdit = false, im
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
-                        <Button onClick={onCancel}>{t('global.cancel')}</Button>
-                        <Button type="primary" onClick={() => form.submit()}>
+                        <Button onClick={onCancel} disabled={loading}>{t('global.cancel')}</Button>
+                        <Button type="primary" onClick={() => form.submit()} loading={loading}>
                             {isEdit ? t('global.save') : t('global.add')}
                         </Button>
                     </div>
@@ -266,9 +245,9 @@ const ClassResourceForm = ({ initialValues, onSave, onCancel, isEdit = false, im
             </div>
         </div>
     );
-};
+}
 
-const styles: Record<string, React.CSSProperties> = {
+const styles: { [key: string]: React.CSSProperties } = {
     bonusCard: {
         backgroundColor: '#f8f6f0',
         border: '1px solid #e0dcd3',
@@ -300,7 +279,7 @@ const styles: Record<string, React.CSSProperties> = {
     maxKnownRow: {
         display: 'flex',
         gap: '0.5rem',
-        width: 'calc(100vw - 30rem)',
+        width: 'calc(100vw - 37rem)',
         maxWidth: '40rem',
         overflowX: 'auto',
         paddingLeft: '3.8rem',
@@ -346,7 +325,8 @@ const styles: Record<string, React.CSSProperties> = {
     },
     resourceImageUploadContainer: {
         display: 'flex',
-        justifyContent: 'center',
+        flexDirection: 'column',
+        alignItems: 'center',
         marginBottom: '1.5rem',
     },
     resourceImagePreview: {
@@ -382,5 +362,3 @@ const styles: Record<string, React.CSSProperties> = {
         padding: '0.75rem',
     },
 };
-
-export default ClassResourceForm;

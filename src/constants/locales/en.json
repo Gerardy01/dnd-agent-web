@@ -130,7 +130,12 @@
         "monsters": "Monsters",
         "items": "Items",
         "spells": "Spells",
-        "feats": "Feats"
+        "feats": "Feats",
+        "createNew": "Create New",
+        "searchByName": "Search by name...",
+        "recentlyCreated": "Recently Created",
+        "nameAsc": "Name (A-Z)",
+        "nameDesc": "Name (Z-A)"
     },
     "items": {
         "gear": "Gear",

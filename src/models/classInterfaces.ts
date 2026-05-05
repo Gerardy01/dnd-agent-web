@@ -64,3 +64,13 @@ export interface WorkshopClassReturn {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface WorkshopClassDetailReturn extends WorkshopClassReturn {
+    resources: CreateClassResourceDTO[];
+    spellIds: number[];
+}
+
+export interface UpdateWorkshopClassDTO extends CreateClassDTO {
+    workshopClassId: number;
+    isImageUpdated: boolean;
+}

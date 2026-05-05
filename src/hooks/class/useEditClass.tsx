@@ -9,18 +9,20 @@ import useReferenceStore from "@/stores/useReferenceStore";
 import { SpellPreparationTypeEnum } from "@/utils/enums";
 
 // interfaces
-import type { CreateClassDTO, SpellcastingProperties, MaxKnown, Features, CreateClassResourceDTO } from "@/models/classInterfaces";
+import type { SpellcastingProperties, MaxKnown, Features, CreateClassResourceDTO, WorkshopClassDetailReturn } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
 import type { PresetMaxKnown } from "@/models/referenceInterfaces";
+
 export interface CreateClassResourceWithPreview extends CreateClassResourceDTO {
     previewUrl?: string;
 }
+
 interface SpellGroup {
     level: number;
     spells: WorkshopSpellReturn[];
 }
 
-interface CreateClassFormValues {
+interface EditClassFormValues {
     name: string;
     description: string;
     hitDie: string;
@@ -32,34 +34,98 @@ interface CreateClassFormValues {
     preparedModBonus: boolean;
 }
 
-export default function useCreateClass(
+export default function useEditClass(
     onClose: () => void,
-    onSubmit: (data: CreateClassDTO) => Promise<void>,
+    onEditSubmit: (data: WorkshopClassDetailReturn, prevData: WorkshopClassDetailReturn) => Promise<void>,
+    getData: () => Promise<WorkshopClassDetailReturn | null>,
     spells: WorkshopSpellReturn[]
 ) {
-
     const { t } = useTranslation();
-    const [createClassForm] = Form.useForm();
-
+    const [editClassForm] = Form.useForm();
     const { classOptions } = useReferenceStore();
 
+    const [classData, setClassData] = useState<WorkshopClassDetailReturn | null>(null);
     const [submitLoad, setSubmitLoad] = useState<boolean>(false);
     const [imageUrl, setImageUrl] = useState<string>("");
 
     const [isSpellcaster, setIsSpellcaster] = useState<boolean>(false);
-
     const [features, setFeatures] = useState<Features[]>([]);
-    const [editingFeatureIndex, setEditingFeatureIndex] = useState<number | null>(null); // null: none, -1: adding new
-
+    const [editingFeatureIndex, setEditingFeatureIndex] = useState<number | null>(null);
     const [featureErrMsg, setFeatureErrMsg] = useState<string>('');
     const [spellErrMsg, setSpellErrMsg] = useState<string>('');
 
     const [resources, setResources] = useState<CreateClassResourceWithPreview[]>([]);
-    const [editingResourceIndex, setEditingResourceIndex] = useState<number | null>(null); // null: none, -1: adding new
+    const [editingResourceIndex, setEditingResourceIndex] = useState<number | null>(null);
     const [resourceErrMsg, setResourceErrMsg] = useState<string>('');
 
     const [spellSearch, setSpellSearch] = useState<string>('');
     const [selectedSpellIds, setSelectedSpellIds] = useState<number[]>([]);
+
+    const [maxKnownTotal, setMaxKnownTotal] = useState<number>(20);
+    const [maxCantripKnown, setMaxCantripKnown] = useState<MaxKnown[]>([...Array(maxKnownTotal)].map((_, i) => ({ level: i + 1, amount: 0 })));
+    const [maxSpellKnown, setMaxSpellKnown] = useState<MaxKnown[]>([...Array(maxKnownTotal)].map((_, i) => ({ level: i + 1, amount: 0 })));
+
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        getInitialData();
+    }, []);
+
+    useEffect(() => {
+        if (!classData) return;
+
+        editClassForm.setFieldsValue({
+            name: classData.name,
+            description: classData.description,
+            hitDie: classData.hitDie,
+            subclassLevel: classData.subclassLevel,
+            spellcastingAbility: classData.spellcastingProperties?.spellcastingAbility,
+            spellPreparationType: classData.spellcastingProperties?.preparationType,
+            spellcastingType: classData.spellcastingProperties?.spellcastingType,
+            preparedLvlBonus: classData.spellcastingProperties?.preparedLvlBonus || 0,
+            preparedModBonus: classData.spellcastingProperties?.preparedModBonus || false,
+        });
+
+        setImageUrl(classData.image || "");
+        setIsSpellcaster(!!classData.spellcastingProperties);
+        setFeatures(classData.features || []);
+        setResources(classData.resources.map(r => ({ ...r, previewUrl: r.image || "" })) || []);
+        setSelectedSpellIds(classData.spellIds || []);
+
+        if (classData.spellcastingProperties) {
+            const maxKnownCount = classData.spellcastingProperties.maxCantripKnown.length;
+            setMaxKnownTotal(maxKnownCount);
+            setMaxCantripKnown(classData.spellcastingProperties.maxCantripKnown);
+            setMaxSpellKnown(classData.spellcastingProperties.maxSpellKnown.length > 0 ? classData.spellcastingProperties.maxSpellKnown : [...Array(maxKnownCount)].map((_, i) => ({ level: i + 1, amount: 0 })));
+        }
+
+    }, [classData, editClassForm]);
+
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTo({
+                left: scrollRef.current.scrollWidth,
+                behavior: 'smooth'
+            });
+        }
+    }, [maxKnownTotal]);
+
+    const getInitialData = async (): Promise<void> => {
+        const data = await getData();
+        setClassData(data);
+    };
+
+    const diceSelection = classOptions.diceSelection.map((dice) => ({ label: dice, value: dice }));
+    const spellcastingAbilitySelection = classOptions.spellcastingAbility.map((ability) => ({ label: t(`items.${ability}`), value: ability }));
+    const spellPreparationSelection = classOptions.spellPreparationType.map((prep) => ({ label: t(`classes.${prep}`), value: prep }));
+    const spellcastingTypeSelection = classOptions.spellcastingType.map((type) => ({ label: t(`classes.${type}`), value: type }));
+    const featureTypeSelection = classOptions.classFeatureType.map((type) => ({ label: t(`classes.${type}`), value: type }));
+
+    const preparedLvlBonusSelection = [
+        { label: t('classes.noLevelBonus'), value: 0 },
+        { label: t('classes.halfLevelBonus'), value: 50 },
+        { label: t('classes.fullLevelBonus'), value: 100 },
+    ];
 
     const filteredSpells = spellSearch
         ? spells.filter((s) => s.name.toLowerCase().includes(spellSearch.toLowerCase()))
@@ -75,79 +141,43 @@ export default function useCreateClass(
         return groups;
     }, []).sort((a, b) => a.level - b.level);
 
-    const [maxKnownTotal, setMaxKnownTotal] = useState<number>(20);
-
-    const [maxCantripKnown, setMaxCantripKnown] = useState<MaxKnown[]>([...Array(maxKnownTotal)].map((_, i) => ({ level: i + 1, amount: 0 })));
-    const [maxSpellKnown, setMaxSpellKnown] = useState<MaxKnown[]>([...Array(maxKnownTotal)].map((_, i) => ({ level: i + 1, amount: 0 })));
-
-    const scrollRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTo({
-                left: scrollRef.current.scrollWidth,
-                behavior: 'smooth'
-            });
-        }
-    }, [maxKnownTotal]);
-
-    const diceSelection = classOptions.diceSelection.map((dice) => ({ label: dice, value: dice }));
-    const spellcastingAbilitySelection = classOptions.spellcastingAbility.map((ability) => ({ label: t(`items.${ability}`), value: ability }));
-    const spellPreparationSelection = classOptions.spellPreparationType.map((prep) => ({ label: t(`classes.${prep}`), value: prep }));
-    const spellcastingTypeSelection = classOptions.spellcastingType.map((type) => ({ label: t(`classes.${type}`), value: type }));
-    const featureTypeSelection = classOptions.classFeatureType.map((type) => ({ label: t(`classes.${type}`), value: type }));
-
-    const preparedLvlBonusSelection = [
-        { label: t('classes.noLevelBonus'), value: 0 },
-        { label: t('classes.halfLevelBonus'), value: 50 },
-        { label: t('classes.fullLevelBonus'), value: 100 },
-    ];
-
-    const handleFileChange = (url: string) => {
+    const handleFileChange = (url: string): void => {
         setImageUrl(url);
-    }
+    };
 
-    const restartForm = () => {
-        createClassForm.resetFields();
-        setImageUrl("");
-        setIsSpellcaster(false);
-        setSpellSearch('');
-        setSelectedSpellIds([]);
-        setFeatures([]);
-        setFeatureErrMsg('');
-        setSpellErrMsg('');
-        setEditingFeatureIndex(null);
-        setResources([]);
-        setResourceErrMsg('');
-        setEditingResourceIndex(null);
-    }
-
-    const handleCloseModal = () => {
-        restartForm();
+    const handleCloseModal = (): void => {
         onClose();
-    }
+    };
 
-    const handleMaxKnownTotal = (newValue: number) => {
+    const handleMaxKnownTotal = (newValue: number): void => {
         setMaxKnownTotal(newValue);
-        setMaxCantripKnown([...Array(newValue)].map((_, i) => ({ level: i + 1, amount: 0 })));
-        setMaxSpellKnown([...Array(newValue)].map((_, i) => ({ level: i + 1, amount: 0 })));
-    }
+        setMaxCantripKnown(prev => {
+            const next = [...Array(newValue)].map((_, i) => ({ level: i + 1, amount: 0 }));
+            prev.forEach((item, i) => { if (i < newValue) next[i] = item; });
+            return next;
+        });
+        setMaxSpellKnown(prev => {
+            const next = [...Array(newValue)].map((_, i) => ({ level: i + 1, amount: 0 }));
+            prev.forEach((item, i) => { if (i < newValue) next[i] = item; });
+            return next;
+        });
+    };
 
-    const handleMaxCantripKnown = (index: number, amount: number) => {
+    const handleMaxCantripKnown = (index: number, amount: number): void => {
         setMaxCantripKnown((prev) => {
             const newState = [...prev];
             newState[index] = { ...newState[index], amount };
             return newState;
         });
-    }
+    };
 
-    const handleMaxSpellKnown = (index: number, amount: number) => {
+    const handleMaxSpellKnown = (index: number, amount: number): void => {
         setMaxSpellKnown((prev) => {
             const newState = [...prev];
             newState[index] = { ...newState[index], amount };
             return newState;
         });
-    }
+    };
 
     const nonSpellcasterPreset: PresetMaxKnown = {
         name: "nonSpellcaster",
@@ -157,68 +187,67 @@ export default function useCreateClass(
 
     const presets: PresetMaxKnown[] = [nonSpellcasterPreset, ...classOptions.presetMaxKnown];
 
-    const handleApplyPreset = (preset: PresetMaxKnown) => {
+    const handleApplyPreset = (preset: PresetMaxKnown): void => {
         setMaxCantripKnown(preset.maxCantripKnown.map((amount, i) => ({ level: i + 1, amount })));
         setMaxSpellKnown(preset.maxSpellKnown.map((amount, i) => ({ level: i + 1, amount })));
         setMaxKnownTotal(preset.maxCantripKnown.length);
-    }
+    };
 
-    const handleToggleSpell = (spellId: number) => {
+    const handleToggleSpell = (spellId: number): void => {
         setSelectedSpellIds((prev) =>
             prev.includes(spellId) ? prev.filter((id) => id !== spellId) : [...prev, spellId]
         );
         setSpellErrMsg("");
-    }
+    };
 
-    const handleStartAddFeature = () => {
+    const handleStartAddFeature = (): void => {
         setEditingFeatureIndex(-1);
         setFeatureErrMsg("");
-    }
+    };
 
-    const handleStartEditFeature = (index: number) => {
+    const handleStartEditFeature = (index: number): void => {
         setEditingFeatureIndex(index);
-    }
+    };
 
-    const handleCancelFeature = () => {
+    const handleCancelFeature = (): void => {
         setEditingFeatureIndex(null);
-    }
+    };
 
     const handleSaveFeature: FormProps<Features>['onFinish'] = async (feature) => {
         setFeatures((prev) => {
-            let newList = [...prev];
+            const newList = [...prev];
             if (editingFeatureIndex === -1) {
                 newList.push(feature);
             } else if (editingFeatureIndex !== null) {
                 newList[editingFeatureIndex] = feature;
             }
-            // Sort by level
             return newList.sort((a, b) => a.level - b.level);
         });
         setEditingFeatureIndex(null);
         setFeatureErrMsg("");
-    }
+    };
 
-    const handleDeleteFeature = (index: number) => {
+    const handleDeleteFeature = (index: number): void => {
         setFeatures((prev) => prev.filter((_, i) => i !== index));
         setFeatureErrMsg("");
-    }
+    };
 
-    const handleStartAddResource = () => {
+    const handleStartAddResource = (): void => {
         setEditingResourceIndex(-1);
         setResourceErrMsg("");
-    }
+    };
 
-    const handleStartEditResource = (index: number) => {
+    const handleStartEditResource = (index: number): void => {
         setEditingResourceIndex(index);
-    }
+    };
 
-    const handleCancelResource = () => {
+    const handleCancelResource = (): void => {
         setEditingResourceIndex(null);
-    }
+    };
 
-    const handleSaveResource = (resource: CreateClassResourceDTO, previewUrl: string) => {
+    const handleSaveResource = (resource: CreateClassResourceDTO, previewUrl: string): void => {
         setResources((prev) => {
-            let newList = [...prev];
+            const newList = [...prev];
             const resourceWithPreview: CreateClassResourceWithPreview = { ...resource, previewUrl };
             if (editingResourceIndex === -1) {
                 newList.push(resourceWithPreview);
@@ -229,14 +258,15 @@ export default function useCreateClass(
         });
         setEditingResourceIndex(null);
         setResourceErrMsg("");
-    }
+    };
 
-    const handleDeleteResource = (index: number) => {
+    const handleDeleteResource = (index: number): void => {
         setResources((prev) => prev.filter((_, i) => i !== index));
         setResourceErrMsg("");
-    }
+    };
 
-    const submitCreateClass: FormProps<CreateClassFormValues>['onFinish'] = async (values) => {
+    const submitEditClass: FormProps<EditClassFormValues>['onFinish'] = async (values) => {
+        if (!classData) return;
         let hasError = false;
 
         if (features.length === 0) {
@@ -254,10 +284,7 @@ export default function useCreateClass(
         setSubmitLoad(true);
 
         try {
-
-            let spellcastingProperties: SpellcastingProperties | null = null;
-
-            spellcastingProperties = {
+            const spellcastingProperties: SpellcastingProperties | null = isSpellcaster ? {
                 spellcastingAbility: values.spellcastingAbility || "",
                 preparationType: values.spellPreparationType || "",
                 spellcastingType: values.spellcastingType || "",
@@ -265,31 +292,31 @@ export default function useCreateClass(
                 maxSpellKnown: values.spellPreparationType !== SpellPreparationTypeEnum.PREPARED ? maxSpellKnown : [],
                 preparedLvlBonus: values.preparedLvlBonus ?? 0,
                 preparedModBonus: !!values.preparedModBonus,
-            };
+            } : null;
 
-            const payload: CreateClassDTO = {
+            const submitData: WorkshopClassDetailReturn = {
+                ...classData,
                 image: imageUrl || null,
                 name: values.name,
                 description: values.description,
                 hitDie: values.hitDie,
                 subclassLevel: values.subclassLevel,
-                spellcastingProperties: isSpellcaster ? spellcastingProperties : null,
-                features: features,
+                spellcastingProperties,
+                features,
                 resources: resources.map(({ previewUrl, ...rest }) => rest),
                 spellIds: isSpellcaster ? selectedSpellIds : [],
             };
 
-            await onSubmit(payload);
-
+            await onEditSubmit(submitData, classData);
             handleCloseModal();
-
         } finally {
             setSubmitLoad(false);
         }
-    }
+    };
 
     return {
-        createClassForm,
+        classData,
+        editClassForm,
         submitLoad,
         isSpellcaster,
         diceSelection,
@@ -302,7 +329,7 @@ export default function useCreateClass(
         maxSpellKnown,
         setIsSpellcaster,
         handleFileChange,
-        submitCreateClass,
+        submitEditClass,
         handleCloseModal,
         handleMaxKnownTotal,
         handleMaxCantripKnown,
@@ -333,5 +360,5 @@ export default function useCreateClass(
         handleDeleteResource,
         handleApplyPreset,
         presets,
-    }
+    };
 }

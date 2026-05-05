@@ -246,7 +246,7 @@ export default function CreateMonsterModal({ open, onClose, onSubmit }: Props) {
                             </div>
                             <div style={styles.formContent}>
                                 {/* Speed Card */}
-                                <div style={styles.bonusCard}>
+                                <div style={{ ...styles.bonusCard, backgroundColor: '#f8f6f0' }}>
                                     <div style={styles.bonusCardHeader}>
                                         <div>
                                             <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t('monsters.speed')}</Text>
@@ -300,7 +300,7 @@ export default function CreateMonsterModal({ open, onClose, onSubmit }: Props) {
                                 </div>
 
                                 {/* Senses Card */}
-                                <div style={styles.bonusCard}>
+                                <div style={{ ...styles.bonusCard, backgroundColor: '#f8f6f0' }}>
                                     <div style={styles.bonusCardHeader}>
                                         <div>
                                             <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t('monsters.senses')}</Text>
@@ -444,7 +444,7 @@ export default function CreateMonsterModal({ open, onClose, onSubmit }: Props) {
                             </div>
                             <div style={styles.formContent}>
                                 {actionsValue.map((action, index) => (
-                                    <div key={index} style={styles.bonusCard}>
+                                    <div key={index} style={{ ...styles.bonusCard, backgroundColor: '#f8f6f0' }}>
                                         <div style={styles.bonusCardHeader}>
                                             <div>
                                                 <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>

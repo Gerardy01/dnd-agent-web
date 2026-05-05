@@ -1,6 +1,9 @@
 import { Button, Input, Popover, Select } from "antd";
 import { FilterOutlined, PlusOutlined } from "@ant-design/icons";
 
+// hooks
+import { useTranslation } from "react-i18next";
+
 // utils
 import { SortEnum } from "@/utils/enums";
 
@@ -17,10 +20,13 @@ interface Props {
 
 
 export default function WorkshopControl({ search, onSearch, sort, onSort, onCreate, filterModalContent, hideSort }: Props) {
+
+    const { t } = useTranslation();
+
     return (
         <div style={styles.container}>
             <Input
-                placeholder="Search by name..."
+                placeholder={t('workshop.searchByName')}
                 size="large"
                 value={search}
                 onChange={(e) => onSearch(e.target.value)}
@@ -42,9 +48,9 @@ export default function WorkshopControl({ search, onSearch, sort, onSort, onCrea
                 <Select
                     size="large"
                     options={[
-                        { value: SortEnum.RECENT, label: 'Recently Created' },
-                        { value: SortEnum.ASC, label: 'Name (A-Z)' },
-                        { value: SortEnum.DESC, label: 'Name (Z-A)' },
+                        { value: SortEnum.RECENT, label: t('workshop.recentlyCreated') },
+                        { value: SortEnum.ASC, label: t('workshop.nameAsc') },
+                        { value: SortEnum.DESC, label: t('workshop.nameDesc') },
                     ]}
                     value={sort}
                     onChange={(value) => onSort?.(value)}
@@ -57,7 +63,7 @@ export default function WorkshopControl({ search, onSearch, sort, onSort, onCrea
                 icon={<PlusOutlined />}
                 onClick={onCreate}
             >
-                Create New
+                {t('workshop.createNew')}
             </Button>
         </div>
     );
