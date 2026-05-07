@@ -6,7 +6,7 @@ import { DICE_SELECTION } from "@/constants/selections";
 import useReferenceStore from "@/stores/useReferenceStore";
 import { useTranslation } from "react-i18next";
 
-import type { DamageRoll, WorkshopSpellReturn } from "@/models/spellInterfaces";
+import type { DamageRoll, Spell } from "@/models/spellInterfaces";
 
 interface EditSpellFormValues {
     name: string;
@@ -19,15 +19,15 @@ interface EditSpellFormValues {
 
 export default function useEditSpell(
     onClose: () => void,
-    onEditSubmit: (data: WorkshopSpellReturn, prevData: WorkshopSpellReturn) => Promise<void>,
-    getData: () => Promise<WorkshopSpellReturn | null>
+    onEditSubmit: (data: Spell) => Promise<void>,
+    getData: () => Promise<Spell | null>
 ) {
 
     const { t } = useTranslation();
     const { effectOptions, spellOptions } = useReferenceStore();
 
     const [editSpellForm] = Form.useForm();
-    const [spell, setSpell] = useState<WorkshopSpellReturn | null>(null);
+    const [spell, setSpell] = useState<Spell | null>(null);
     const [submitLoad, setSubmitLoad] = useState<boolean>(false);
     const [imageUrl, setImageUrl] = useState<string>("");
 
@@ -172,7 +172,7 @@ export default function useEditSpell(
             onFailDamagePercentage: failDamageAdj,
         } : null;
 
-        const submitData: WorkshopSpellReturn = {
+        const submitData: Spell = {
             ...spell,
             image: imageUrl,
             name: values.name,
@@ -187,7 +187,7 @@ export default function useEditSpell(
         setSubmitLoad(true);
 
         try {
-            await onEditSubmit(submitData, spell);
+            await onEditSubmit(submitData);
             handleCloseModal();
         } finally {
             setSubmitLoad(false);

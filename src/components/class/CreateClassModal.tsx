@@ -399,7 +399,7 @@ export default function CreateClassModal({ open, onClose, onSubmit, workshopSpel
                                                 />
                                             </Form.Item>
 
-                                            <div style={styles.bonusCard}>
+                                            <div style={{ ...styles.bonusCard, marginBottom: '1.5rem' }}>
                                                 <div style={styles.bonusCardHeader}>
                                                     <div>
                                                         <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t('classes.preparedModifierBonus')}</Text>

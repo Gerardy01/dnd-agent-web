@@ -17,7 +17,7 @@ import type { Monster } from "@/models/monsterInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
-    onSubmit: (data: Monster, prevData: Monster) => Promise<void>;
+    onSubmit: (data: Monster) => Promise<void>;
     getData: () => Promise<Monster | null>;
 }
 
@@ -386,7 +386,7 @@ export default function EditMonsterModal({ open, onClose, onSubmit, getData }: P
                                                 <div style={styles.statBox}>
                                                     <div style={styles.statBoxLabel}>AC</div>
                                                     <Form.Item name="ac" initialValue={10} noStyle>
-                                                        <InputNumber mode="spinner" style={styles.statBoxInput} min={0} bordered={false} controls={false} />
+                                                        <InputNumber mode="spinner" style={styles.statBoxInput} min={0} variant="borderless" controls={false} />
                                                     </Form.Item>
                                                 </div>
                                             </Col>

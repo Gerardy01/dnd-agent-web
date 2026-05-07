@@ -89,7 +89,6 @@ export interface UpdateWorkshopItemDTO extends CreateItemDTO {
 }
 
 export type Item = {
-    workshopItemId: number;
     image: string | null;
     name: string;
     type: string;
@@ -112,5 +111,6 @@ export type Item = {
 }
 
 export type WorkshopItemReturn = Item & {
+    workshopItemId: number;
     accountId: string;
 }

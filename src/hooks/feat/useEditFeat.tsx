@@ -19,7 +19,7 @@ interface EditFeatFormValues {
 
 export default function useEditFeat(
     onClose: () => void,
-    onEditSubmit: (feat: Feat, prevData: Feat) => Promise<void>,
+    onEditSubmit: (feat: Feat) => Promise<void>,
     getData: () => Promise<Feat | null>
 ) {
     const { t } = useTranslation();
@@ -80,7 +80,7 @@ export default function useEditFeat(
 
         setSubmitLoad(true);
         try {
-            await onEditSubmit(submitData, feat);
+            await onEditSubmit(submitData);
             handleCloseModal();
         } finally {
             setSubmitLoad(false);

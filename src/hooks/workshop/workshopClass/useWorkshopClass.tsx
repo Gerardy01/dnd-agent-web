@@ -11,7 +11,7 @@ import useStaticModal from "@/hooks/global/useStaticModal";
 import useNotification from "@/hooks/global/useNotification";
 
 // interfaces
-import type { CreateClassDTO, UpdateWorkshopClassDTO, WorkshopClassDetailReturn, WorkshopClassReturn } from "@/models/classInterfaces";
+import type { CreateClassDTO, UpdateWorkshopClassDTO, WorkshopClassDetailReturn, WorkshopClassReturn, ClassWrite } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
 
 
@@ -172,14 +172,19 @@ export default function useWorkshopClass() {
         uponCreated(res.workshopClassId);
     }
 
-    const handleEditClass = async (data: WorkshopClassDetailReturn, prevData: WorkshopClassDetailReturn): Promise<void> => {
-        const isImageUpdated = data.image !== prevData.image;
+    const handleEditClass = async (data: ClassWrite): Promise<void> => {
+        if (!editedClassId) return;
+
+        const prevClass = workshopClasses.find((cls) => cls.workshopClassId === editedClassId);
+        if (!prevClass) return;
+
+        const isImageUpdated = data.image !== prevClass.image;
 
         const updateData: UpdateWorkshopClassDTO = {
             ...data,
-            workshopClassId: prevData.workshopClassId || 0,
+            workshopClassId: editedClassId,
             isImageUpdated: isImageUpdated,
-        }
+        };
 
         const [err, res] = await workshopClassApi.editClass(updateData);
 

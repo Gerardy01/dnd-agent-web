@@ -8,12 +8,12 @@ import type { FetchResponse, ErrorResponse } from "@/models/globalInterfaces";
 import type {
     CreateMonsterDTO,
     UpdateWorkshopMonsterDTO,
-    Monster
+    WorkshopMonsterReturn
 } from "@/models/monsterInterfaces";
 
 export class WorkshopMonsterApi {
-    async getMonsters(): Promise<[undefined, Monster[]] | [ErrorResponse]> {
-        const [error, res] = await catchFetchError(axiosPrivate.get<FetchResponse<Monster[]>>(
+    async getMonsters(): Promise<[undefined, WorkshopMonsterReturn[]] | [ErrorResponse]> {
+        const [error, res] = await catchFetchError(axiosPrivate.get<FetchResponse<WorkshopMonsterReturn[]>>(
             '/workshop-monster'
         ));
 
@@ -21,8 +21,8 @@ export class WorkshopMonsterApi {
         return [error, res.data.data];
     }
 
-    async getOneMonster(id: number | string): Promise<[undefined, Monster] | [ErrorResponse]> {
-        const [error, res] = await catchFetchError(axiosPrivate.get<FetchResponse<Monster>>(
+    async getOneMonster(id: number | string): Promise<[undefined, WorkshopMonsterReturn] | [ErrorResponse]> {
+        const [error, res] = await catchFetchError(axiosPrivate.get<FetchResponse<WorkshopMonsterReturn>>(
             `/workshop-monster/${id}`
         ));
 
@@ -30,8 +30,8 @@ export class WorkshopMonsterApi {
         return [error, res.data.data];
     }
 
-    async createMonster(data: CreateMonsterDTO): Promise<[undefined, Monster] | [ErrorResponse]> {
-        const [error, res] = await catchFetchError(axiosPrivate.post<FetchResponse<Monster>>(
+    async createMonster(data: CreateMonsterDTO): Promise<[undefined, WorkshopMonsterReturn] | [ErrorResponse]> {
+        const [error, res] = await catchFetchError(axiosPrivate.post<FetchResponse<WorkshopMonsterReturn>>(
             '/workshop-monster',
             data,
         ));
@@ -40,8 +40,8 @@ export class WorkshopMonsterApi {
         return [error, res.data.data];
     }
 
-    async editMonster(data: UpdateWorkshopMonsterDTO): Promise<[undefined, Monster] | [ErrorResponse]> {
-        const [error, res] = await catchFetchError(axiosPrivate.put<FetchResponse<Monster>>(
+    async editMonster(data: UpdateWorkshopMonsterDTO): Promise<[undefined, WorkshopMonsterReturn] | [ErrorResponse]> {
+        const [error, res] = await catchFetchError(axiosPrivate.put<FetchResponse<WorkshopMonsterReturn>>(
             '/workshop-monster',
             data,
         ));

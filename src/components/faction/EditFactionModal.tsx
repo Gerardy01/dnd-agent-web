@@ -19,7 +19,7 @@ import type { Faction } from "@/models/factionInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
-    onSubmit: (faction: Faction, prevData: Faction) => Promise<void>;
+    onSubmit: (faction: Faction) => Promise<void>;
     getData: () => Promise<Faction | null>;
 }
 

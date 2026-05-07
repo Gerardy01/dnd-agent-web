@@ -12,7 +12,6 @@ export interface UpdateWorkshopFactionDTO extends CreateFactionDTO {
 }
 
 export type Faction = {
-    workshopFactionId: number;
     image: string | null;
     name: string;
     description: string;
@@ -21,5 +20,6 @@ export type Faction = {
 }
 
 export type WorkshopFactionReturn = Faction & {
+    workshopFactionId: number;
     accountId: string;
 }

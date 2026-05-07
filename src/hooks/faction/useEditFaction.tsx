@@ -14,7 +14,7 @@ interface EditFactionFormValues {
 
 export default function useEditFaction(
     onClose: () => void,
-    onEditSubmit: (faction: Faction, prevData: Faction) => Promise<void>,
+    onEditSubmit: (faction: Faction) => Promise<void>,
     getData: () => Promise<Faction | null>
 ) {
 
@@ -67,7 +67,7 @@ export default function useEditFaction(
 
         setSubmitLoad(true);
         try {
-            await onEditSubmit(submitData, faction);
+            await onEditSubmit(submitData);
             handleCloseModal();
         } finally {
             setSubmitLoad(false);

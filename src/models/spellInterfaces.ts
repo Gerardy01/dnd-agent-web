@@ -41,7 +41,6 @@ export interface UpdateWorkshopSpellDTO {
 }
 
 export type Spell = {
-    accountId: string;
     image: string | null;
     name: string;
     description: string;
@@ -55,4 +54,5 @@ export type Spell = {
 
 export type WorkshopSpellReturn = Spell & {
     workshopSpellId: number;
+    accountId: string;
 }

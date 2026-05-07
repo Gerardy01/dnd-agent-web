@@ -62,8 +62,6 @@ export interface UpdateWorkshopMonsterDTO extends CreateMonsterDTO {
 }
 
 export type Monster = {
-    workshopMonsterId: number;
-    accountId: string;
     image: string | null;
     name: string;
     alignment: string;
@@ -78,4 +76,9 @@ export type Monster = {
     additionalProperties: AdditionalProperties | null;
     actions: MonsterAction[] | null;
     createdAt: Date;
+}
+
+export type WorkshopMonsterReturn = Monster & {
+    workshopMonsterId: number;
+    accountId: string;
 }

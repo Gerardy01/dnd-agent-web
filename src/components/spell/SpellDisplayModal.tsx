@@ -13,12 +13,12 @@ import { useTranslation } from "react-i18next";
 import useSpellDisplayModal from "@/hooks/spell/useSpellDisplayModal";
 
 // interfaces
-import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
+import type { Spell } from "@/models/spellInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
     onEdit?: () => void;
-    getSpell: () => Promise<WorkshopSpellReturn | null>;
+    getSpell: () => Promise<Spell | null>;
 }
 
 const { Text, Title } = Typography;

@@ -9,11 +9,11 @@ import useReferenceStore from "@/stores/useReferenceStore";
 import { SpellPreparationTypeEnum } from "@/utils/enums";
 
 // interfaces
-import type { SpellcastingProperties, MaxKnown, Features, CreateClassResourceDTO, WorkshopClassDetailReturn } from "@/models/classInterfaces";
+import type { ClassWrite, SpellcastingProperties, MaxKnown, Features, ClassResourceDTO, ClassDetailRead } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
 import type { PresetMaxKnown } from "@/models/referenceInterfaces";
 
-export interface CreateClassResourceWithPreview extends CreateClassResourceDTO {
+export interface CreateClassResourceWithPreview extends ClassResourceDTO {
     previewUrl?: string;
 }
 
@@ -36,15 +36,15 @@ interface EditClassFormValues {
 
 export default function useEditClass(
     onClose: () => void,
-    onEditSubmit: (data: WorkshopClassDetailReturn, prevData: WorkshopClassDetailReturn) => Promise<void>,
-    getData: () => Promise<WorkshopClassDetailReturn | null>,
+    onEditSubmit: (data: ClassWrite, isImageUpdated: boolean) => Promise<void>,
+    getData: () => Promise<ClassDetailRead | null>,
     spells: WorkshopSpellReturn[]
 ) {
     const { t } = useTranslation();
     const [editClassForm] = Form.useForm();
     const { classOptions } = useReferenceStore();
 
-    const [classData, setClassData] = useState<WorkshopClassDetailReturn | null>(null);
+    const [classData, setClassData] = useState<ClassDetailRead | null>(null);
     const [submitLoad, setSubmitLoad] = useState<boolean>(false);
     const [imageUrl, setImageUrl] = useState<string>("");
 
@@ -90,7 +90,7 @@ export default function useEditClass(
         setIsSpellcaster(!!classData.spellcastingProperties);
         setFeatures(classData.features || []);
         setResources(classData.resources.map(r => ({ ...r, previewUrl: r.image || "" })) || []);
-        setSelectedSpellIds(classData.spellIds || []);
+        setSelectedSpellIds(classData.spells.map((s) => s.workshopSpellId) || []);
 
         if (classData.spellcastingProperties) {
             const maxKnownCount = classData.spellcastingProperties.maxCantripKnown.length;
@@ -245,7 +245,7 @@ export default function useEditClass(
         setEditingResourceIndex(null);
     };
 
-    const handleSaveResource = (resource: CreateClassResourceDTO, previewUrl: string): void => {
+    const handleSaveResource = (resource: ClassResourceDTO, previewUrl: string): void => {
         setResources((prev) => {
             const newList = [...prev];
             const resourceWithPreview: CreateClassResourceWithPreview = { ...resource, previewUrl };
@@ -294,8 +294,7 @@ export default function useEditClass(
                 preparedModBonus: !!values.preparedModBonus,
             } : null;
 
-            const submitData: WorkshopClassDetailReturn = {
-                ...classData,
+            const submitData: ClassWrite = {
                 image: imageUrl || null,
                 name: values.name,
                 description: values.description,
@@ -307,7 +306,9 @@ export default function useEditClass(
                 spellIds: isSpellcaster ? selectedSpellIds : [],
             };
 
-            await onEditSubmit(submitData, classData);
+            const isImageUpdated = classData.image !== imageUrl;
+
+            await onEditSubmit(submitData, isImageUpdated);
             handleCloseModal();
         } finally {
             setSubmitLoad(false);

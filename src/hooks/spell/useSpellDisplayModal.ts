@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
 // interfaces
-import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
+import type { Spell } from "@/models/spellInterfaces";
 
-export default function useSpellDisplayModal(getSpell: () => Promise<WorkshopSpellReturn | null>) {
-    const [spell, setSpell] = useState<WorkshopSpellReturn | null>(null);
+export default function useSpellDisplayModal(getSpell: () => Promise<Spell | null>) {
+    const [spell, setSpell] = useState<Spell | null>(null);
 
     useEffect(() => {
         getSpellData();

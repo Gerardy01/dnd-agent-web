@@ -10,7 +10,7 @@ import useStaticModal from "@/hooks/global/useStaticModal";
 import { SortEnum } from "@/utils/enums";
 
 // interfaces
-import type { CreateSpellDTO, UpdateWorkshopSpellDTO, WorkshopSpellReturn } from "@/models/spellInterfaces";
+import type { CreateSpellDTO, Spell, UpdateWorkshopSpellDTO, WorkshopSpellReturn } from "@/models/spellInterfaces";
 import useNotification from "@/hooks/global/useNotification";
 import { useTranslation } from "react-i18next";
 
@@ -161,7 +161,7 @@ export default function useWorkshopSpell() {
         setSelectedSpellId(spellId);
     }
 
-    const handleGetSpellDetails = async (): Promise<WorkshopSpellReturn | null> => {
+    const handleGetSpellDetails = async (): Promise<Spell | null> => {
         return workshopSpells.find(
             (spell) => spell.workshopSpellId === selectedSpellId || spell.workshopSpellId === editedSpellId
         ) || null;
@@ -171,14 +171,18 @@ export default function useWorkshopSpell() {
         setEditedSpellId(spellId);
     }
 
-    const handleEditSpell = async (data: WorkshopSpellReturn, prevData: WorkshopSpellReturn): Promise<void> => {
+    const handleEditSpell = async (data: Spell): Promise<void> => {
+
+        const prevData = workshopSpells.find(spell => spell.workshopSpellId === editedSpellId) || null;
+        if (!prevData) return;
+
         const isImageUpdated = data.image !== prevData.image;
 
-        const { image, workshopSpellId, ...rest } = data;
+        const { image, ...rest } = data;
 
         const updateData: UpdateWorkshopSpellDTO = {
             ...rest,
-            workshopSpellId: prevData.workshopSpellId || 0,
+            workshopSpellId: editedSpellId || 0,
             isImageUpdated: isImageUpdated,
             image: image || undefined,
         }

@@ -9,13 +9,13 @@ import useClassResourceForm from "@/hooks/class/useClassResourceForm";
 import { useTranslation } from "react-i18next";
 
 // interfaces
-import type { CreateClassResourceDTO } from "@/models/classInterfaces";
+import type { ClassResourceDTO } from "@/models/classInterfaces";
 
 const { Text } = Typography;
 
 interface Props {
-    initialValues?: CreateClassResourceDTO;
-    onSave: (resource: CreateClassResourceDTO, imageUrl: string) => void;
+    initialValues?: ClassResourceDTO;
+    onSave: (resource: ClassResourceDTO, imageUrl: string) => void;
     onCancel: () => void;
     isEdit?: boolean;
     imageUrlEdit?: string;
@@ -54,7 +54,11 @@ export default function ClassResourceForm({ initialValues, onSave, onCancel, isE
                 <Form
                     form={form}
                     layout="vertical"
-                    initialValues={initialValues || {
+                    initialValues={initialValues ? {
+                        ...initialValues,
+                        shortRest: initialValues.resourceRecovery.shortRest,
+                        longRest: initialValues.resourceRecovery.longRest
+                    } : {
                         color: '#000000',
                         shortRest: { value: 0, type: 'flat' },
                         longRest: { value: 0, type: 'flat' }
@@ -108,7 +112,7 @@ export default function ClassResourceForm({ initialValues, onSave, onCancel, isE
                         <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
                             <Button
                                 icon={<UploadOutlined />}
-                                style={{ borderColor: '#d4cebe', borderRadius: '8px' }}
+                                style={{ borderColor: '#d4cebe', borderRadius: '8px', width: '7.3rem' }}
                                 onClick={() => fileInputRef.current?.click()}
                                 loading={loading}
                             >
@@ -116,7 +120,7 @@ export default function ClassResourceForm({ initialValues, onSave, onCancel, isE
                             </Button>
                             <Button
                                 icon={<SparklesIcon style={{ fontSize: '1rem' }} />}
-                                style={{ borderColor: '#d4cebe', borderRadius: '8px' }}
+                                style={{ borderColor: '#d4cebe', borderRadius: '8px', width: '7.3rem' }}
                                 loading={loading}
                             >
                                 {t('global.generate')}

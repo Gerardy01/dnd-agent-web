@@ -12,12 +12,12 @@ import { useTranslation } from "react-i18next";
 import ImageForm from "@/components/global/form/ImageForm";
 
 // interfaces
-import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
+import type { Spell } from "@/models/spellInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
-    onSubmit: (data: WorkshopSpellReturn, prevData: WorkshopSpellReturn) => Promise<void>;
-    getData: () => Promise<WorkshopSpellReturn | null>;
+    onSubmit: (data: Spell) => Promise<void>;
+    getData: () => Promise<Spell | null>;
 }
 
 const { Title, Text } = Typography;

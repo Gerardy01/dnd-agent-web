@@ -18,7 +18,7 @@ import FeatureForm from "./FeatureForm";
 import EditModalSkeleton from "@/components/global/common/EditModalSkeleton";
 
 // interfaces
-import type { WorkshopClassDetailReturn } from "@/models/classInterfaces";
+import type { ClassWrite, ClassDetailRead } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
 
 const { Title, Text } = Typography;
@@ -26,8 +26,8 @@ const { Title, Text } = Typography;
 interface Props {
     open: boolean;
     onClose: () => void;
-    onSubmit: (data: WorkshopClassDetailReturn, prevData: WorkshopClassDetailReturn) => Promise<void>;
-    getData: () => Promise<WorkshopClassDetailReturn | null>;
+    onSubmit: (data: ClassWrite, isImageUpdated: boolean) => Promise<void>;
+    getData: () => Promise<ClassDetailRead | null>;
     workshopSpells: WorkshopSpellReturn[];
 }
 
@@ -403,7 +403,7 @@ export default function EditClassModal({ open, onClose, onSubmit, getData, works
                                                         />
                                                     </Form.Item>
 
-                                                    <div style={styles.bonusCard}>
+                                                    <div style={{ ...styles.bonusCard, marginBottom: '1.5rem' }}>
                                                         <div style={styles.bonusCardHeader}>
                                                             <div>
                                                                 <Text strong style={{ fontSize: '0.95rem', display: 'block' }}>{t('classes.preparedModifierBonus')}</Text>

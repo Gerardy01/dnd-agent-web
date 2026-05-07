@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import useReferenceStore from "@/stores/useReferenceStore";
 
 // interfaces
-import type { CreateMonsterDTO, Monster, UpdateWorkshopMonsterDTO } from "@/models/monsterInterfaces";
+import type { CreateMonsterDTO, Monster, UpdateWorkshopMonsterDTO, WorkshopMonsterReturn } from "@/models/monsterInterfaces";
 
 export default function useWorkshopMonster() {
 
@@ -27,8 +27,8 @@ export default function useWorkshopMonster() {
 
     const [loading, setLoading] = useState<boolean>(true);
 
-    const [workshopMonsters, setWorkshopMonsters] = useState<Monster[]>([]);
-    const [filteredWorkshopMonsters, setFilteredWorkshopMonsters] = useState<Monster[]>([]);
+    const [workshopMonsters, setWorkshopMonsters] = useState<WorkshopMonsterReturn[]>([]);
+    const [filteredWorkshopMonsters, setFilteredWorkshopMonsters] = useState<WorkshopMonsterReturn[]>([]);
 
     const [search, setSearch] = useState<string>("");
     const [searchValue, setSearchValue] = useState<string>("");
@@ -225,13 +225,16 @@ export default function useWorkshopMonster() {
         uponCreated(res.workshopMonsterId);
     }
 
-    const handleEditMonster = async (data: Monster, prevData: Monster): Promise<void> => {
+    const handleEditMonster = async (data: Monster): Promise<void> => {
+
+        const prevData = workshopMonsters.find(monster => monster.workshopMonsterId === editedMonsterId) || null;
+        if (!prevData) return;
 
         const isImageUpdated = data.image !== prevData.image;
 
         const updateData: UpdateWorkshopMonsterDTO = {
             ...data,
-            workshopMonsterId: prevData.workshopMonsterId || 0,
+            workshopMonsterId: editedMonsterId || 0,
             isImageUpdated: isImageUpdated,
         }
 

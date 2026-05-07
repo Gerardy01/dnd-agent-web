@@ -173,13 +173,16 @@ export default function useWorkshopFeat() {
         setFeats((prev) => [...prev, res]);
     }
 
-    const handleEditFeat = async (data: Feat, prevData: Feat): Promise<void> => {
+    const handleEditFeat = async (data: Feat): Promise<void> => {
+
+        const prevData = feats.find(feat => feat.workshopFeatId === editedFeatId) || null;
+        if (!prevData) return;
 
         const isImageUpdated = data.image !== prevData.image;
 
         const updateData: UpdateWorkshopFeatDTO = {
             ...data,
-            workshopFeatId: prevData.workshopFeatId || 0,
+            workshopFeatId: editedFeatId || 0,
             isImageUpdated: isImageUpdated,
         };
 
@@ -237,4 +240,4 @@ export default function useWorkshopFeat() {
         handleEditFeat,
         uponDelete,
     }
-}
+}

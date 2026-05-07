@@ -245,13 +245,16 @@ export default function useWorkshopItem() {
         uponCreated(res.workshopItemId);
     }
 
-    const handleEditItem = async (data: Item, prevData: Item): Promise<void> => {
+    const handleEditItem = async (data: Item): Promise<void> => {
+
+        const prevData = workshopItems.find(item => item.workshopItemId === editedItemId) || null;
+        if (!prevData) return;
 
         const isImageUpdated = data.image !== prevData.image;
 
         const updateData: UpdateWorkshopItemDTO = {
             ...data,
-            workshopItemId: prevData.workshopItemId || 0,
+            workshopItemId: editedItemId || 0,
             isImageUpdated: isImageUpdated,
         }
 

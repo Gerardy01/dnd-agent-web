@@ -1,3 +1,5 @@
+import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
+
 export interface MaxKnown {
     level: number;
     amount: number;
@@ -30,7 +32,7 @@ export interface ResourceRecovery {
     longRest: ResourceRecoveryProps;
 }
 
-export interface CreateClassResourceDTO {
+export interface ClassResourceDTO {
     image: string | null;
     name: string;
     description: string;
@@ -47,13 +49,28 @@ export interface CreateClassDTO {
     subclassLevel: number;
     spellcastingProperties: SpellcastingProperties | null;
     features: Features[];
-    resources: CreateClassResourceDTO[];
+    resources: ClassResourceDTO[];
     spellIds: number[];
 }
 
-export interface WorkshopClassReturn {
+export interface UpdateWorkshopClassDTO extends CreateClassDTO {
     workshopClassId: number;
-    accountId: string;
+    isImageUpdated: boolean;
+}
+
+export interface ClassWrite {
+    image: string | null;
+    name: string;
+    description: string;
+    hitDie: string;
+    subclassLevel: number;
+    spellcastingProperties: SpellcastingProperties | null;
+    features: Features[];
+    resources: ClassResourceDTO[];
+    spellIds: number[];
+}
+
+export type ClassRead = {
     image: string | null;
     name: string;
     description: string;
@@ -62,15 +79,19 @@ export interface WorkshopClassReturn {
     spellcastingProperties: SpellcastingProperties | null;
     features: Features[];
     createdAt: Date;
-    updatedAt: Date;
 }
 
-export interface WorkshopClassDetailReturn extends WorkshopClassReturn {
-    resources: CreateClassResourceDTO[];
-    spellIds: number[];
+export type ClassDetailRead = ClassRead & {
+    resources: ClassResourceDTO[];
+    spells: WorkshopSpellReturn[];
 }
 
-export interface UpdateWorkshopClassDTO extends CreateClassDTO {
+export type WorkshopClassReturn = ClassRead & {
     workshopClassId: number;
-    isImageUpdated: boolean;
+    accountId: string;
+}
+
+export type WorkshopClassDetailReturn = WorkshopClassReturn & {
+    resources: ClassResourceDTO[];
+    spells: WorkshopSpellReturn[];
 }

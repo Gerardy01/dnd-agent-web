@@ -20,7 +20,7 @@ import type { Item } from "@/models/itemInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
-    onSubmit: (data: Item, prevData: Item) => Promise<void>;
+    onSubmit: (data: Item) => Promise<void>;
     getData: () => Promise<Item | null>;
 }
 

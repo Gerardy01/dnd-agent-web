@@ -17,7 +17,7 @@ import type { Feat } from "@/models/featInterfaces";
 interface Props {
     open: boolean;
     onClose: () => void;
-    onSubmit: (feat: Feat, prevData: Feat) => Promise<void>;
+    onSubmit: (feat: Feat) => Promise<void>;
     getData: () => Promise<Feat | null>;
 }
 

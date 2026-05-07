@@ -167,12 +167,16 @@ export default function useWorkshopFaction() {
         setFactions((prev) => [res, ...prev]);
     }
 
-    const handleEditFaction = async (data: Faction, prevData: Faction): Promise<void> => {
+    const handleEditFaction = async (data: Faction): Promise<void> => {
+
+        const prevData = factions.find(faction => faction.workshopFactionId === editedFactionId) || null;
+        if (!prevData) return;
+
         const isImageUpdated = data.image !== prevData.image;
 
         const updateData: UpdateWorkshopFactionDTO = {
             ...data,
-            workshopFactionId: prevData.workshopFactionId || 0,
+            workshopFactionId: editedFactionId || 0,
             isImageUpdated: isImageUpdated,
         };
 

@@ -7,7 +7,7 @@ import useImageForm from "@/hooks/global/form/useImageForm";
 import useReferenceStore from "@/stores/useReferenceStore";
 
 // interfaces
-import type { CreateClassResourceDTO, MaxKnown, ResourceRecoveryProps } from "@/models/classInterfaces";
+import type { ClassResourceDTO, MaxKnown, ResourceRecoveryProps } from "@/models/classInterfaces";
 
 type Color = Parameters<NonNullable<ColorPickerProps['onChange']>>[0];
 
@@ -21,8 +21,8 @@ interface ResourceFormValues {
 }
 
 interface UseClassResourceFormProps {
-    initialValues?: CreateClassResourceDTO;
-    onSave: (resource: CreateClassResourceDTO, imageUrl: string) => void;
+    initialValues?: ClassResourceDTO;
+    onSave: (resource: ClassResourceDTO, imageUrl: string) => void;
     imageUrlEdit?: string;
 }
 
@@ -58,7 +58,8 @@ export default function useClassResourceForm({ initialValues, onSave, imageUrlEd
     } = useImageForm((key) => form.setFieldsValue({ image: key }), imageUrlEdit || initialValues?.image);
 
     const colorValue = Form.useWatch('color', form);
-    const [maxPerLevel, setMaxPerLevel] = useState<MaxKnown[]>(initialValues?.maxPerLevel || [...Array(20)].map((_, i) => ({ level: i + 1, amount: 0 })));
+    const defaultMaxPerLevel = [2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6];
+    const [maxPerLevel, setMaxPerLevel] = useState<MaxKnown[]>(initialValues?.maxPerLevel || defaultMaxPerLevel.map((amount, i) => ({ level: i + 1, amount })));
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const handleColorChange = (color: Color | string): void => {

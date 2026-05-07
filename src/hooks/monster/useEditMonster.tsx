@@ -42,7 +42,7 @@ interface SelectionValue {
 
 export default function useEditMonster(
     onClose: () => void,
-    onEditSubmit: (data: Monster, prevData: Monster) => Promise<void>,
+    onEditSubmit: (data: Monster) => Promise<void>,
     getData: () => Promise<Monster | null>
 ) {
 
@@ -310,7 +310,7 @@ export default function useEditMonster(
         setSubmitLoad(true);
 
         try {
-            await onEditSubmit(submitData, monster);
+            await onEditSubmit(submitData);
             handleCloseModal();
         } finally {
             setSubmitLoad(false);

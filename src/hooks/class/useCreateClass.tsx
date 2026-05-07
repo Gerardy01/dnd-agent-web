@@ -9,10 +9,10 @@ import useReferenceStore from "@/stores/useReferenceStore";
 import { SpellPreparationTypeEnum } from "@/utils/enums";
 
 // interfaces
-import type { CreateClassDTO, SpellcastingProperties, MaxKnown, Features, CreateClassResourceDTO } from "@/models/classInterfaces";
+import type { CreateClassDTO, SpellcastingProperties, MaxKnown, Features, ClassResourceDTO } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
 import type { PresetMaxKnown } from "@/models/referenceInterfaces";
-export interface CreateClassResourceWithPreview extends CreateClassResourceDTO {
+export interface CreateClassResourceWithPreview extends ClassResourceDTO {
     previewUrl?: string;
 }
 interface SpellGroup {
@@ -216,7 +216,7 @@ export default function useCreateClass(
         setEditingResourceIndex(null);
     }
 
-    const handleSaveResource = (resource: CreateClassResourceDTO, previewUrl: string) => {
+    const handleSaveResource = (resource: ClassResourceDTO, previewUrl: string) => {
         setResources((prev) => {
             let newList = [...prev];
             const resourceWithPreview: CreateClassResourceWithPreview = { ...resource, previewUrl };

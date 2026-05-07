@@ -72,7 +72,7 @@ interface WeaponToggle {
 
 export default function useEditItem(
     onClose: () => void,
-    onEditSubmit: (item: Item, prevData: Item) => Promise<void>,
+    onEditSubmit: (item: Item) => Promise<void>,
     getData: () => Promise<Item | null>
 ) {
     const { t } = useTranslation();
@@ -461,7 +461,7 @@ export default function useEditItem(
 
         setSubmitLoad(true);
         try {
-            await onEditSubmit(submitData, item);
+            await onEditSubmit(submitData);
             handleCloseModal();
         } finally {
             setSubmitLoad(false);

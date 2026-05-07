@@ -9,9 +9,9 @@ import useWorkshopMonsterCard from "@/hooks/workshop/workshopMonster/useWorkshop
 import { useTranslation } from "react-i18next";
 
 // interfaces
-import type { Monster } from "@/models/monsterInterfaces";
+import type { WorkshopMonsterReturn } from "@/models/monsterInterfaces";
 interface Props {
-    monster: Monster;
+    monster: WorkshopMonsterReturn;
     uponDelete: (workshopMonsterId: number) => void;
     onClick?: () => void;
     onEditClick?: () => void;
@@ -27,7 +27,7 @@ export default function WorkshopMonsterCard({ monster, uponDelete, onClick, onEd
         isMenuHovered,
         handleHover,
         handleMenuHover,
-    } = useWorkshopMonsterCard(monster.workshopMonsterId, uponDelete, onEditClick);
+    } = useWorkshopMonsterCard(monster, uponDelete, onEditClick);
 
     const { t } = useTranslation();
 

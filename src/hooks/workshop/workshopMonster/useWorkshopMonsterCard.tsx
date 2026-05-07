@@ -9,9 +9,11 @@ import { workshopMonsterApi } from "@/api";
 import { useTranslation } from "react-i18next";
 import useStaticModal from "@/hooks/global/useStaticModal";
 
+// interfaces
+import type { WorkshopMonsterReturn } from "@/models/monsterInterfaces";
 
 export default function useWorkshopMonsterCard(
-    monsterId: number,
+    monster: WorkshopMonsterReturn,
     uponDelete: (workshopMonsterId: number) => void,
     onEditClick?: () => void,
 ) {
@@ -58,14 +60,14 @@ export default function useWorkshopMonsterCard(
     }
 
     const onDelete = async () => {
-        const [err] = await workshopMonsterApi.deleteMonster(monsterId);
+        const [err] = await workshopMonsterApi.deleteMonster(monster.workshopMonsterId);
 
         if (err) {
             serverErrorModal();
             return;
         }
 
-        uponDelete(monsterId);
+        uponDelete(monster.workshopMonsterId);
     }
 
     return {

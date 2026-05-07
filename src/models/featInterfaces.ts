@@ -12,7 +12,6 @@ export interface UpdateWorkshopFeatDTO extends CreateFeatDTO {
 }
 
 export type Feat = {
-    workshopFeatId: number;
     image: string | null;
     name: string;
     description: string;
@@ -22,5 +21,6 @@ export type Feat = {
 }
 
 export type WorkshopFeatReturn = Feat & {
+    workshopFeatId: number;
     accountId: string;
 }
