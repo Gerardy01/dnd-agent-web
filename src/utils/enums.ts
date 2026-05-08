@@ -104,3 +104,11 @@ export const SpellPreparationTypeEnum = {
     KNOWN: "known",
     PACT_MAGIC: "pact_magic",
 } as const;
+
+export const ClassDisplayTabEnum = {
+    OVERVIEW: "overview",
+    FEATURES: "features",
+    RESOURCES: "resources",
+    SPELLS: "spells",
+    SUBCLASS: "subclass"
+} as const;

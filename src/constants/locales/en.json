@@ -587,6 +587,7 @@
         "valueColumnHeader": "Value"
     },
     "classes": {
+        "overview": "Overview",
         "createSuccess": "Class created successfully",
         "editSuccess": "Class updated successfully",
         "createClassTitle": "Create New Class",

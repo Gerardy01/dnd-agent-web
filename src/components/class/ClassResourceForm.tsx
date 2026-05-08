@@ -19,9 +19,11 @@ interface Props {
     onCancel: () => void;
     isEdit?: boolean;
     imageUrlEdit?: string;
+    isLoading?: boolean;
+    isWider?: boolean;
 }
 
-export default function ClassResourceForm({ initialValues, onSave, onCancel, isEdit = false, imageUrlEdit = undefined }: Props) {
+export default function ClassResourceForm({ initialValues, onSave, onCancel, isEdit = false, imageUrlEdit = undefined, isLoading = false, isWider = false }: Props) {
     const {
         form,
         colorValue,
@@ -174,7 +176,16 @@ export default function ClassResourceForm({ initialValues, onSave, onCancel, isE
                             <Text strong style={{ fontSize: '0.85rem' }}>{t('classes.maxPerLevel')}</Text>
                         </div>
                         <div style={styles.maxKnownCardContent}>
-                            <div ref={scrollRef} style={{ ...styles.maxKnownRow, maxWidth: '35rem', paddingRight: '0px' }}>
+                            <div
+                                ref={scrollRef}
+                                style={{
+                                    ...styles.maxKnownRow,
+                                    maxWidth: isWider ? '70rem' : '35rem',
+                                    minWidth: isWider ? '39.9rem' : 'none',
+                                    width: isWider ? 'calc(100vw - 33rem)' : 'calc(100vw - 37rem)',
+                                    paddingRight: '0px'
+                                }}
+                            >
                                 {maxPerLevel.map((item, index) => (
                                     <div key={index} style={styles.maxKnownCol}>
                                         <Text strong>{index + 1}</Text>
@@ -240,8 +251,8 @@ export default function ClassResourceForm({ initialValues, onSave, onCancel, isE
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
-                        <Button onClick={onCancel} disabled={loading}>{t('global.cancel')}</Button>
-                        <Button type="primary" onClick={() => form.submit()} loading={loading}>
+                        <Button onClick={onCancel} disabled={loading || isLoading}>{t('global.cancel')}</Button>
+                        <Button type="primary" onClick={() => form.submit()} loading={loading || isLoading}>
                             {isEdit ? t('global.save') : t('global.add')}
                         </Button>
                     </div>

@@ -16,9 +16,10 @@ interface Props {
     onCancel: () => void;
     featureTypeSelection: { label: string; value: string }[];
     isEdit?: boolean;
+    isLoading?: boolean;
 }
 
-export default function FeatureForm({ initialValues, onSave, onCancel, featureTypeSelection, isEdit = false }: Props) {
+export default function FeatureForm({ initialValues, onSave, onCancel, featureTypeSelection, isEdit = false, isLoading = false }: Props) {
     const { t } = useTranslation();
     const { form, onFinish } = useFeatureForm({ onSave });
 
@@ -28,7 +29,7 @@ export default function FeatureForm({ initialValues, onSave, onCancel, featureTy
                 <Text strong style={{ fontSize: '0.95rem' }}>
                     {isEdit ? t('classes.editFeature') : t('classes.addFeature')}
                 </Text>
-                <Button icon={<CloseOutlined />} type="text" onClick={onCancel} size="small" />
+                <Button icon={<CloseOutlined />} type="text" onClick={onCancel} size="small" disabled={isLoading} />
             </div>
             <div style={styles.bonusCardContent}>
                 <Form
@@ -38,6 +39,7 @@ export default function FeatureForm({ initialValues, onSave, onCancel, featureTy
                     onFinish={onFinish}
                     requiredMark={false}
                     component={false}
+                    disabled={isLoading}
                 >
                     <Form.Item
                         label={t('classes.featureName')}
@@ -78,8 +80,8 @@ export default function FeatureForm({ initialValues, onSave, onCancel, featureTy
                         </Col>
                     </Row>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
-                        <Button onClick={onCancel}>{t('global.cancel')}</Button>
-                        <Button type="primary" onClick={() => form.submit()}>
+                        <Button onClick={onCancel} disabled={isLoading}>{t('global.cancel')}</Button>
+                        <Button type="primary" onClick={() => form.submit()} loading={isLoading}>
                             {isEdit ? t('global.save') : t('global.add')}
                         </Button>
                     </div>

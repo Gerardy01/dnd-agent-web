@@ -9,6 +9,7 @@ import EditClassModal from "@/components/class/EditClassModal";
 
 // hooks
 import useWorkshopClass from "@/hooks/workshop/workshopClass/useWorkshopClass";
+import WorkshopClassDisplayModal from "./WorkshopClassDisplayModal";
 
 const { Text } = Typography;
 
@@ -23,6 +24,7 @@ export default function WorkshopClass() {
         createModalOpen,
         cardWidth,
         editedClassId,
+        selectedClassId,
         handleSearch,
         handleSort,
         handleCreateModal,
@@ -90,6 +92,18 @@ export default function WorkshopClass() {
                     onSubmit={handleEditClass}
                     getData={handleGetClassDetails}
                     workshopSpells={spells}
+                />
+            )}
+
+            {selectedClassId && (
+                <WorkshopClassDisplayModal
+                    open={!!selectedClassId}
+                    workshopClassId={selectedClassId}
+                    onClose={() => handleSelectClass(null)}
+                    onEdit={() => {
+                        handleEditClassClick(selectedClassId);
+                        handleSelectClass(null);
+                    }}
                 />
             )}
 
