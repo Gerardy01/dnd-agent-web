@@ -10,6 +10,8 @@ import DisplayModalSkeletonV2 from "@/components/global/common/DisplayModalSkele
 import DisplaySectionHeader from "@/components/global/common/DisplaySectionHeader";
 import FeatureForm from "@/components/class/FeatureForm";
 import ClassResourceForm from "@/components/class/ClassResourceForm";
+import CreateSubclassForm from "@/components/class/CreateSubclassForm";
+import EditSubclassForm from "@/components/class/EditSubclassForm";
 
 // assets
 import { noItemImage, SparklesIcon } from "@/assets";
@@ -23,6 +25,13 @@ interface Props {
 }
 
 const { Text, Title } = Typography;
+
+const EmptyListDisplay = ({ message }: { message: string }) => (
+    <div style={styles.emptyContainer}>
+        <InfoCircleOutlined style={{ fontSize: '2rem', color: '#d3c9b3', marginBottom: '1rem' }} />
+        <Text style={{ color: '#8c8069', fontSize: '1.1rem', fontFamily: 'Georgia, serif' }}>{message}</Text>
+    </div>
+);
 
 export default function WorkshopClassDisplayModal({ workshopClassId, open, onClose, onEdit }: Props) {
 
@@ -50,6 +59,17 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
         handleAddResource,
         handleEditResource,
         handleDeleteResource,
+        subclasses,
+        editingSubclassIndex,
+        subclassToEdit,
+        isSubmittingSubclass,
+        handleStartAddSubclass,
+        handleStartEditSubclass,
+        handleCancelSubclass,
+        handleAddSubclass,
+        handleEditSubclass,
+        handleDeleteSubclass,
+        spells,
     } = useWorkshopClassDisplayModal({ workshopClassId, open });
 
     const { t } = useTranslation();
@@ -63,6 +83,7 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
             width={'70rem'}
             centered
             style={styles.modal}
+            maskClosable={false}
             closeIcon={
                 <div style={{
                     backgroundColor: 'rgba(0, 0, 0, 0.4)',
@@ -232,6 +253,9 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
                                             isLoading={isSubmittingFeature}
                                         />
                                     )}
+                                    {workshopClass.features.length === 0 && editingFeatureIndex !== -1 && (
+                                        <EmptyListDisplay message={t('global.noData')} />
+                                    )}
                                     {(() => {
                                         const groupedFeatures = workshopClass.features.reduce((acc, feature) => {
                                             const level = feature.level;
@@ -313,11 +337,15 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
                             <div style={{ padding: '1rem 0' }}>
                                 <DisplaySectionHeader icon={<CodeSandboxOutlined />} title={`${t('workshop.spells')}`.toUpperCase()} />
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-                                    {workshopClass.spells.map((spell, idx) => (
-                                        <div key={idx} style={styles.actionCard}>
-                                            <Text style={styles.actionName}>{spell.name}</Text>
-                                        </div>
-                                    ))}
+                                    {workshopClass.spells.length === 0 ? (
+                                        <EmptyListDisplay message={t('global.noData')} />
+                                    ) : (
+                                        workshopClass.spells.map((spell, idx) => (
+                                            <div key={idx} style={styles.actionCard}>
+                                                <Text style={styles.actionName}>{spell.name}</Text>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -345,6 +373,9 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
                                             isLoading={isSubmittingResource}
                                             isWider
                                         />
+                                    )}
+                                    {workshopClass.resources.length === 0 && editingResourceIndex !== -1 && (
+                                        <EmptyListDisplay message={t('global.noData')} />
                                     )}
                                     {workshopClass.resources.map((resource, idx) => (
                                         <div key={idx}>
@@ -431,15 +462,124 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
                             </div>
                         )}
 
-                        <div style={styles.editButtonContainer}>
-                            <Button
-                                icon={<EditOutlined />}
-                                onClick={onEdit}
-                                style={styles.editButton}
-                            >
-                                {t('global.edit')}
-                            </Button>
-                        </div>
+                        {activeTab === ClassDisplayTabEnum.SUBCLASS && (
+                            <div style={{ padding: '1rem 0' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                                    <Title level={3} style={{ letterSpacing: '1.5px', color: '#8c8069', fontFamily: 'Georgia, serif', marginBottom: '0px' }}>
+                                        {`${t('classes.subclasses')}`.toUpperCase()}
+                                    </Title>
+                                    {editingSubclassIndex === null && (
+                                        <Button
+                                            type="text"
+                                            icon={<PlusOutlined />}
+                                            style={styles.addButton}
+                                            onClick={handleStartAddSubclass}
+                                            disabled={isSubmittingSubclass}
+                                        >
+                                            {t('classes.addSubclass')}
+                                        </Button>
+                                    )}
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                                    {editingSubclassIndex === -1 && (
+                                        <div style={{ backgroundColor: '#fff', border: '1px solid #e0dcd3', borderRadius: '0.75rem', padding: '1.5rem', marginTop: '1rem' }}>
+                                            <CreateSubclassForm
+                                                onCancel={handleCancelSubclass}
+                                                onSubmit={handleAddSubclass}
+                                                spells={spells}
+                                            />
+                                        </div>
+                                    )}
+                                    {subclasses.length === 0 && editingSubclassIndex === null && (
+                                        <EmptyListDisplay message={t('global.noData')} />
+                                    )}
+                                    {subclasses.map((subclass, idx) => (
+                                        <div key={idx}>
+                                            {editingSubclassIndex === idx ? (
+                                                <div style={{ backgroundColor: '#fff', border: '1px solid #e0dcd3', borderRadius: '0.75rem', padding: '1.5rem' }}>
+                                                    <EditSubclassForm
+                                                        subclassData={subclassToEdit}
+                                                        onCancel={handleCancelSubclass}
+                                                        onSubmit={handleEditSubclass}
+                                                        spells={spells}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div style={{ ...styles.resourceCard, cursor: 'default' }}>
+                                                    <div style={styles.resourceImageContainer}>
+                                                        {subclass.image ? (
+                                                            <img src={subclass.image} alt={subclass.name} style={styles.resourceImage} />
+                                                        ) : (
+                                                            <div style={styles.resourceImagePlaceholder}>
+                                                                <PictureOutlined style={{ fontSize: '1.2rem', color: '#8c7a52' }} />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                                            <Text strong style={{ fontSize: '1rem' }}>{subclass.name}</Text>
+                                                            <Dropdown
+                                                                menu={{
+                                                                    items: [
+                                                                        {
+                                                                            key: 'edit',
+                                                                            label: t('global.edit'),
+                                                                            icon: <EditOutlined />,
+                                                                            onClick: () => handleStartEditSubclass(idx, subclass.id)
+                                                                        },
+                                                                        {
+                                                                            key: 'delete',
+                                                                            label: t('global.delete'),
+                                                                            danger: true,
+                                                                            icon: <DeleteOutlined />,
+                                                                            onClick: () => handleDeleteSubclass(subclass.id)
+                                                                        }
+                                                                    ]
+                                                                }}
+                                                                trigger={['click']}
+                                                            >
+                                                                <Button
+                                                                    type="text"
+                                                                    icon={<EllipsisOutlined />}
+                                                                    style={styles.menuButton}
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                />
+                                                            </Dropdown>
+                                                        </div>
+                                                        <Text
+                                                            type="secondary"
+                                                            style={{
+                                                                display: '-webkit-box',
+                                                                WebkitLineClamp: 2,
+                                                                WebkitBoxOrient: 'vertical',
+                                                                overflow: 'hidden',
+                                                                fontSize: '0.85rem',
+                                                                lineHeight: '1.4',
+                                                                marginTop: '0.5rem'
+                                                            }}
+                                                        >
+                                                            {subclass.description}
+                                                        </Text>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === ClassDisplayTabEnum.OVERVIEW && (
+                            <div style={styles.editButtonContainer}>
+                                <Button
+                                    icon={<EditOutlined />}
+                                    onClick={onEdit}
+                                    style={styles.editButton}
+                                >
+                                    {t('global.edit')}
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
             ) : (
@@ -740,5 +880,17 @@ const styles: { [key: string]: React.CSSProperties } = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    emptyContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '5rem 2rem',
+        backgroundColor: '#fcfbf9',
+        borderRadius: '1rem',
+        border: '2px dashed #d3c9b3',
+        marginTop: '1rem',
+        textAlign: 'center',
     },
 };

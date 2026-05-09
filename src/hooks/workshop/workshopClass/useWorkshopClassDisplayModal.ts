@@ -4,14 +4,15 @@ import { useState, useEffect } from "react";
 import { ClassDisplayTabEnum } from "@/utils/enums";
 
 // api
-import { workshopClassApi } from "@/api";
+import { workshopClassApi, workshopSpellApi } from "@/api";
 
 // hooks
 import { useTranslation } from "react-i18next";
 import useStaticModal from "@/hooks/global/useStaticModal";
 
 // interfaces
-import type { WorkshopClassDetailReturn, Features, AddFeaturePayload, EditFeaturePayload, DeleteFeaturePayload, ClassResourceReturn, ClassResourceDTO, AddResourcePayload, EditResourcePayload, DeleteResourcePayload } from "@/models/classInterfaces";
+import type { WorkshopClassDetailReturn, Features, AddFeaturePayload, EditFeaturePayload, DeleteFeaturePayload, ClassResourceReturn, ClassResourceDTO, AddResourcePayload, EditResourcePayload, DeleteResourcePayload, WorkshopClassSubDataReturn, CreateClassSubDTO, UpdateClassSubDTO, WorkshopClassSubDetailDataReturn } from "@/models/classInterfaces";
+import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
 
 // stores
 import useReferenceStore from "@/stores/useReferenceStore";
@@ -28,6 +29,7 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
     const { t } = useTranslation();
 
     const [workshopClass, setWorkshopClass] = useState<WorkshopClassDetailReturn | null>(null);
+    const [spells, setSpells] = useState<WorkshopSpellReturn[]>([]);
     const [activeTab, setActiveTab] = useState<string>(ClassDisplayTabEnum.OVERVIEW);
 
     const { classOptions } = useReferenceStore();
@@ -41,10 +43,16 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
     const [resourceToEdit, setResourceToEdit] = useState<ClassResourceReturn | null>(null);
     const [isSubmittingResource, setIsSubmittingResource] = useState<boolean>(false);
 
+    const [subclasses, setSubclasses] = useState<WorkshopClassSubDataReturn[]>([]);
+    const [editingSubclassIndex, setEditingSubclassIndex] = useState<number | null>(null); // null: none, -1: adding new
+    const [subclassToEdit, setSubclassToEdit] = useState<WorkshopClassSubDetailDataReturn | null>(null);
+    const [isSubmittingSubclass, setIsSubmittingSubclass] = useState<boolean>(false);
+
     const tabs: { key: string, label: string }[] = [
         { key: ClassDisplayTabEnum.OVERVIEW, label: t('classes.overview') },
         { key: ClassDisplayTabEnum.FEATURES, label: t('classes.features') },
         { key: ClassDisplayTabEnum.RESOURCES, label: t('classes.resources') },
+        { key: ClassDisplayTabEnum.SUBCLASS, label: t('classes.subclass') },
     ];
 
     if (workshopClass?.spells && workshopClass.spells.length > 0) {
@@ -54,6 +62,8 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
     useEffect(() => {
         if (!open) return;
         handleGetClassData();
+        handleGetSubclasses();
+        handleGetSpells();
     }, [open, workshopClassId]);
 
     useEffect(() => {
@@ -73,6 +83,20 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
         }
 
         setWorkshopClass(res);
+    }
+
+    const handleGetSubclasses = async (): Promise<void> => {
+        const [err, res] = await workshopClassApi.getSubclasses(workshopClassId);
+        if (!err) {
+            setSubclasses(res);
+        }
+    }
+
+    const handleGetSpells = async (): Promise<void> => {
+        const [err, res] = await workshopSpellApi.getSpells();
+        if (!err) {
+            setSpells(res);
+        }
     }
 
     const handleTabChange = (tab: string): void => {
@@ -231,6 +255,69 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
         });
     }
 
+    const handleStartAddSubclass = (): void => {
+        setEditingSubclassIndex(-1);
+    }
+
+    const handleStartEditSubclass = async (index: number, subclassId: number): Promise<void> => {
+        setEditingSubclassIndex(index);
+        const [err, data] = await workshopClassApi.getSubclass(subclassId, workshopClassId);
+        if (err) {
+            serverErrorModal();
+            setEditingSubclassIndex(null);
+        } else {
+            setSubclassToEdit(data);
+        }
+    }
+
+    const handleCancelSubclass = (): void => {
+        setEditingSubclassIndex(null);
+        setSubclassToEdit(null);
+    }
+
+    const handleAddSubclass = async (data: Omit<CreateClassSubDTO, 'workshopClassId'>): Promise<void> => {
+        if (!workshopClass) return;
+        setIsSubmittingSubclass(true);
+        const [err] = await workshopClassApi.createSubclass({ ...data, workshopClassId });
+        if (err) {
+            serverErrorModal();
+        } else {
+            await handleGetSubclasses();
+            handleCancelSubclass();
+        }
+        setIsSubmittingSubclass(false);
+    }
+
+    const handleEditSubclass = async (data: UpdateClassSubDTO): Promise<void> => {
+        setIsSubmittingSubclass(true);
+        const [err] = await workshopClassApi.editSubclass(data);
+        if (err) {
+            serverErrorModal();
+        } else {
+            await handleGetSubclasses();
+            handleCancelSubclass();
+        }
+        setIsSubmittingSubclass(false);
+    }
+
+    const handleDeleteSubclass = async (subclassId: number): Promise<void> => {
+        if (!workshopClass) return;
+
+        confirmationModal({
+            title: t('global.delete'),
+            content: t('items.deleteConfirmDesc'),
+            centered: true,
+            onOkWithPromise: async () => {
+                const [err] = await workshopClassApi.deleteSubclass(subclassId, workshopClassId);
+                if (err) {
+                    serverErrorModal();
+                } else {
+                    await handleGetSubclasses();
+                }
+            }
+        });
+    }
+
     return {
         workshopClass,
         activeTab,
@@ -255,5 +342,16 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
         handleAddResource,
         handleEditResource,
         handleDeleteResource,
+        subclasses,
+        editingSubclassIndex,
+        subclassToEdit,
+        isSubmittingSubclass,
+        handleStartAddSubclass,
+        handleStartEditSubclass,
+        handleCancelSubclass,
+        handleAddSubclass,
+        handleEditSubclass,
+        handleDeleteSubclass,
+        spells,
     };
 }
