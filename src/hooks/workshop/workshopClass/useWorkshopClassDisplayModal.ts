@@ -261,7 +261,7 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
 
     const handleStartEditSubclass = async (index: number, subclassId: number): Promise<void> => {
         setEditingSubclassIndex(index);
-        const [err, data] = await workshopClassApi.getSubclass(subclassId, workshopClassId);
+        const [err, data] = await workshopClassApi.getSubclass(subclassId);
         if (err) {
             serverErrorModal();
             setEditingSubclassIndex(null);
@@ -281,10 +281,10 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
         const [err] = await workshopClassApi.createSubclass({ ...data, workshopClassId });
         if (err) {
             serverErrorModal();
-        } else {
-            await handleGetSubclasses();
-            handleCancelSubclass();
+            return;
         }
+        await handleGetSubclasses();
+        handleCancelSubclass();
         setIsSubmittingSubclass(false);
     }
 
@@ -308,7 +308,7 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
             content: t('items.deleteConfirmDesc'),
             centered: true,
             onOkWithPromise: async () => {
-                const [err] = await workshopClassApi.deleteSubclass(subclassId, workshopClassId);
+                const [err] = await workshopClassApi.deleteSubclass(subclassId);
                 if (err) {
                     serverErrorModal();
                 } else {

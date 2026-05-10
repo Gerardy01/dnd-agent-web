@@ -143,18 +143,18 @@ export class WorkshopClassApi {
         return [error, res.data.data];
     }
 
-    async deleteSubclass(subclassId: number, parentClassId: number): Promise<[undefined, void] | [ErrorResponse]> {
+    async deleteSubclass(subclassId: number): Promise<[undefined, void] | [ErrorResponse]> {
         const [error] = await catchFetchError(axiosPrivate.delete(
-            `/workshop-class/subclass/${subclassId}?parentClassId=${parentClassId}`,
+            `/workshop-class/subclass/${subclassId}`,
         ));
 
         if (error) return [error];
         return [error, undefined];
     }
 
-    async getSubclass(subclassId: number, parentClassId: number): Promise<[undefined, WorkshopClassSubDetailDataReturn] | [ErrorResponse]> {
+    async getSubclass(subclassId: number): Promise<[undefined, WorkshopClassSubDetailDataReturn] | [ErrorResponse]> {
         const [error, res] = await catchFetchError(axiosPrivate.get<FetchResponse<WorkshopClassSubDetailDataReturn>>(
-            `/workshop-class/subclass/${subclassId}/detailed?parentClassId=${parentClassId}`,
+            `/workshop-class/subclass/${subclassId}/detailed`,
         ));
 
         if (error) return [error];

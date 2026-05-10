@@ -68,6 +68,7 @@ export default function ClassResourceForm({ initialValues, onSave, onCancel, isE
                     onFinish={onFinish}
                     requiredMark={false}
                     component={false}
+                    scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
                 >
                     <div style={styles.resourceImageUploadContainer}>
                         <input

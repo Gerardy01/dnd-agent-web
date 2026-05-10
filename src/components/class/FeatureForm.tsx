@@ -40,6 +40,7 @@ export default function FeatureForm({ initialValues, onSave, onCancel, featureTy
                     requiredMark={false}
                     component={false}
                     disabled={isLoading}
+                    scrollToFirstError={{ behavior: 'smooth', block: 'center' }}
                 >
                     <Form.Item
                         label={t('classes.featureName')}

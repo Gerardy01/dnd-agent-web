@@ -138,15 +138,18 @@ export type ClassResourceReturn = {
     resourceRecovery: ResourceRecovery;
 }
 
-export interface CreateClassSubDTO {
-    workshopClassId: number;
-    image?: string;
+export interface ClassSubBaseDTO {
+    image?: string | null;
     name: string;
     description: string;
     spellcastingProperties: SpellcastingProperties | null;
     features: Features[];
     resources: ClassResourceDTO[];
     spellIds: number[];
+}
+
+export interface CreateClassSubDTO extends ClassSubBaseDTO {
+    workshopClassId: number;
 }
 
 export interface WorkshopClassSubResourceDataReturn {
@@ -172,7 +175,7 @@ export interface WorkshopClassSubDataReturn {
     createdAt?: Date;
 }
 
-export interface UpdateClassSubDTO extends CreateClassSubDTO {
+export interface UpdateClassSubDTO extends ClassSubBaseDTO {
     id: number;
     isImageUpdated: boolean;
 }

@@ -13,6 +13,9 @@ import ClassResourceForm from "@/components/class/ClassResourceForm";
 import CreateSubclassForm from "@/components/class/CreateSubclassForm";
 import EditSubclassForm from "@/components/class/EditSubclassForm";
 
+// hooks
+import useSubclassCard from "@/hooks/workshop/workshopClass/useSubclassCard";
+
 // assets
 import { noItemImage, SparklesIcon } from "@/assets";
 import { ClassDisplayTabEnum } from "@/utils/enums";
@@ -71,6 +74,8 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
         handleDeleteSubclass,
         spells,
     } = useWorkshopClassDisplayModal({ workshopClassId, open });
+
+    const { hoveredIndex, handleHover } = useSubclassCard();
 
     const { t } = useTranslation();
 
@@ -505,7 +510,16 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
                                                     />
                                                 </div>
                                             ) : (
-                                                <div style={{ ...styles.resourceCard, cursor: 'default' }}>
+                                                <div
+                                                    style={{
+                                                        ...styles.resourceCard,
+                                                        cursor: 'pointer',
+                                                        boxShadow: hoveredIndex === idx ? '0 0 0px 2px orange' : 'none',
+                                                        transition: 'box-shadow 0.3s ease',
+                                                    }}
+                                                    onMouseEnter={() => handleHover(idx)}
+                                                    onMouseLeave={() => handleHover(null)}
+                                                >
                                                     <div style={styles.resourceImageContainer}>
                                                         {subclass.image ? (
                                                             <img src={subclass.image} alt={subclass.name} style={styles.resourceImage} />
@@ -842,7 +856,6 @@ const styles: { [key: string]: React.CSSProperties } = {
         border: '1px solid #e0dcd3',
         borderRadius: '0.75rem',
         padding: '1rem 1.25rem',
-        cursor: 'pointer',
         transition: 'all 0.2s ease',
         boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
         position: 'relative',

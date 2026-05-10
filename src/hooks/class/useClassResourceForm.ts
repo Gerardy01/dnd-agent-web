@@ -102,7 +102,7 @@ export default function useClassResourceForm({ initialValues, onSave, imageUrlEd
     const onFinish = (values: ResourceFormValues): void => {
         onSave({
             ...values,
-            image: values.image || initialValues?.image || null,
+            image: values.image || "",
             maxPerLevel: maxPerLevel,
             resourceRecovery: {
                 shortRest: values.shortRest,

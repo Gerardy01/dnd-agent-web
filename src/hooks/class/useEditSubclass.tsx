@@ -287,7 +287,6 @@ export default function useEditSubclass(
 
             const submitData: UpdateClassSubDTO = {
                 id: subclassData.id,
-                workshopClassId: subclassData.workshopClassId,
                 image: imageUrl || undefined,
                 name: values.name,
                 description: values.description,
