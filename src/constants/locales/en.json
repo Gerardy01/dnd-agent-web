@@ -39,7 +39,8 @@
         "any": "Any",
         "min": "Min",
         "max": "Max",
-        "noData": "No Data"
+        "noData": "No Data",
+        "back": "Back"
     },
     "register": {
         "title": "Join the Quests",

@@ -18,7 +18,7 @@ import FeatureForm from "./FeatureForm";
 import EditModalSkeleton from "@/components/global/common/EditModalSkeleton";
 
 // interfaces
-import type { ClassWrite, ClassDetailRead } from "@/models/classInterfaces";
+import type { ClassWrite, WorkshopClassDetailread } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
 
 const { Title, Text } = Typography;
@@ -27,7 +27,7 @@ interface Props {
     open: boolean;
     onClose: () => void;
     onSubmit: (data: ClassWrite, isImageUpdated: boolean) => Promise<void>;
-    getData: () => Promise<ClassDetailRead | null>;
+    getData: () => Promise<WorkshopClassDetailread | null>;
     workshopSpells: WorkshopSpellReturn[];
 }
 

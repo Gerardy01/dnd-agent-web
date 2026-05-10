@@ -9,7 +9,7 @@ import useReferenceStore from "@/stores/useReferenceStore";
 import { SpellPreparationTypeEnum } from "@/utils/enums";
 
 // interfaces
-import type { ClassWrite, SpellcastingProperties, MaxKnown, Features, ClassResourceDTO, ClassDetailRead } from "@/models/classInterfaces";
+import type { ClassWrite, SpellcastingProperties, MaxKnown, Features, ClassResourceDTO, WorkshopClassDetailread } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
 import type { PresetMaxKnown } from "@/models/referenceInterfaces";
 
@@ -37,14 +37,14 @@ interface EditClassFormValues {
 export default function useEditClass(
     onClose: () => void,
     onEditSubmit: (data: ClassWrite, isImageUpdated: boolean) => Promise<void>,
-    getData: () => Promise<ClassDetailRead | null>,
+    getData: () => Promise<WorkshopClassDetailread | null>,
     spells: WorkshopSpellReturn[]
 ) {
     const { t } = useTranslation();
     const [editClassForm] = Form.useForm();
     const { classOptions } = useReferenceStore();
 
-    const [classData, setClassData] = useState<ClassDetailRead | null>(null);
+    const [classData, setClassData] = useState<WorkshopClassDetailread | null>(null);
     const [submitLoad, setSubmitLoad] = useState<boolean>(false);
     const [imageUrl, setImageUrl] = useState<string>("");
 

@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import useStaticModal from "@/hooks/global/useStaticModal";
 
 // interfaces
-import type { WorkshopClassDetailReturn, Features, AddFeaturePayload, EditFeaturePayload, DeleteFeaturePayload, ClassResourceReturn, ClassResourceDTO, AddResourcePayload, EditResourcePayload, DeleteResourcePayload, WorkshopClassSubDataReturn, CreateClassSubDTO, UpdateClassSubDTO, WorkshopClassSubDetailDataReturn } from "@/models/classInterfaces";
+import type { WorkshopClassDetailReturn, Features, AddFeaturePayload, EditFeaturePayload, DeleteFeaturePayload, ClassResourceReturn, ClassResourceDTO, AddResourcePayload, EditResourcePayload, DeleteResourcePayload, WorkshopClassSubDataReturn, CreateClassSubDTO, UpdateClassSubDTO, WorkshopClassSubDetailDataReturn, ClassDetailRead } from "@/models/classInterfaces";
 import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
 
 // stores
@@ -47,6 +47,9 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
     const [editingSubclassIndex, setEditingSubclassIndex] = useState<number | null>(null); // null: none, -1: adding new
     const [subclassToEdit, setSubclassToEdit] = useState<WorkshopClassSubDetailDataReturn | null>(null);
     const [isSubmittingSubclass, setIsSubmittingSubclass] = useState<boolean>(false);
+    
+    const [selectedSubclassData, setSelectedSubclassData] = useState<ClassDetailRead | null>(null);
+    const [selectedSubclassId, setSelectedSubclassId] = useState<number | null>(null);
 
     const tabs: { key: string, label: string }[] = [
         { key: ClassDisplayTabEnum.OVERVIEW, label: t('classes.overview') },
@@ -275,6 +278,36 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
         setSubclassToEdit(null);
     }
 
+    const handleSelectSubclass = async (subclassId: number): Promise<void> => {
+        if (!workshopClass) return;
+        setSelectedSubclassId(subclassId);
+        setSelectedSubclassData(null); // Clear previous data to show skeleton
+        const [err, data] = await workshopClassApi.getSubclass(subclassId);
+        if (err) {
+            serverErrorModal();
+            setSelectedSubclassId(null);
+        } else {
+            const subclassDataToDisplay: ClassDetailRead = {
+                image: data.image,
+                name: data.name,
+                description: data.description,
+                spellcastingProperties: data.spellcastingProperties,
+                features: data.features,
+                createdAt: data.createdAt || new Date(),
+                hitDie: workshopClass.hitDie,
+                subclassLevel: workshopClass.subclassLevel,
+                resources: data.resources as unknown as ClassResourceReturn[], // Casting as they share the same structure mostly
+                spells: data.spells,
+            };
+            setSelectedSubclassData(subclassDataToDisplay);
+        }
+    }
+
+    const handleBackFromSubclass = (): void => {
+        setSelectedSubclassId(null);
+        setSelectedSubclassData(null);
+    }
+
     const handleAddSubclass = async (data: Omit<CreateClassSubDTO, 'workshopClassId'>): Promise<void> => {
         if (!workshopClass) return;
         setIsSubmittingSubclass(true);
@@ -353,5 +386,9 @@ export default function useWorkshopClassDisplayModal({ workshopClassId, open }: 
         handleEditSubclass,
         handleDeleteSubclass,
         spells,
+        selectedSubclassId,
+        selectedSubclassData,
+        handleSelectSubclass,
+        handleBackFromSubclass,
     };
 }

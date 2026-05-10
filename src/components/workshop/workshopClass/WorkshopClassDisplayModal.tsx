@@ -12,6 +12,7 @@ import FeatureForm from "@/components/class/FeatureForm";
 import ClassResourceForm from "@/components/class/ClassResourceForm";
 import CreateSubclassForm from "@/components/class/CreateSubclassForm";
 import EditSubclassForm from "@/components/class/EditSubclassForm";
+import SubclassDisplay from "@/components/class/SubclassDisplay";
 
 // hooks
 import useSubclassCard from "@/hooks/workshop/workshopClass/useSubclassCard";
@@ -73,6 +74,10 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
         handleEditSubclass,
         handleDeleteSubclass,
         spells,
+        selectedSubclassId,
+        selectedSubclassData,
+        handleSelectSubclass,
+        handleBackFromSubclass,
     } = useWorkshopClassDisplayModal({ workshopClassId, open });
 
     const { hoveredIndex, handleHover } = useSubclassCard();
@@ -466,35 +471,43 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
                                 </div>
                             </div>
                         )}
-
                         {activeTab === ClassDisplayTabEnum.SUBCLASS && (
                             <div style={{ padding: '1rem 0' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
-                                    <Title level={3} style={{ letterSpacing: '1.5px', color: '#8c8069', fontFamily: 'Georgia, serif', marginBottom: '0px' }}>
-                                        {`${t('classes.subclasses')}`.toUpperCase()}
-                                    </Title>
-                                    {editingSubclassIndex === null && (
-                                        <Button
-                                            type="text"
-                                            icon={<PlusOutlined />}
-                                            style={styles.addButton}
-                                            onClick={handleStartAddSubclass}
-                                            disabled={isSubmittingSubclass}
-                                        >
-                                            {t('classes.addSubclass')}
-                                        </Button>
-                                    )}
-                                </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-                                    {editingSubclassIndex === -1 && (
-                                        <div style={{ backgroundColor: '#fff', border: '1px solid #e0dcd3', borderRadius: '0.75rem', padding: '1.5rem', marginTop: '1rem' }}>
-                                            <CreateSubclassForm
-                                                onCancel={handleCancelSubclass}
-                                                onSubmit={handleAddSubclass}
-                                                spells={spells}
-                                            />
+                                {selectedSubclassId !== null ? (
+                                    <div style={{ marginTop: '1rem' }}>
+                                        <SubclassDisplay 
+                                            subclassData={selectedSubclassData} 
+                                            onBack={handleBackFromSubclass} 
+                                        />
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                                            <Title level={3} style={{ letterSpacing: '1.5px', color: '#8c8069', fontFamily: 'Georgia, serif', marginBottom: '0px' }}>
+                                                {`${t('classes.subclass')}`.toUpperCase()}
+                                            </Title>
+                                            {editingSubclassIndex === null && (
+                                                <Button
+                                                    type="text"
+                                                    icon={<PlusOutlined />}
+                                                    style={styles.addButton}
+                                                    onClick={handleStartAddSubclass}
+                                                    disabled={isSubmittingSubclass}
+                                                >
+                                                    {t('classes.addSubclass')}
+                                                </Button>
+                                            )}
                                         </div>
-                                    )}
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                                            {editingSubclassIndex === -1 && (
+                                                <div style={{ backgroundColor: '#fff', border: '1px solid #e0dcd3', borderRadius: '0.75rem', padding: '1.5rem', marginTop: '1rem' }}>
+                                                    <CreateSubclassForm
+                                                        onCancel={handleCancelSubclass}
+                                                        onSubmit={handleAddSubclass}
+                                                        spells={spells}
+                                                    />
+                                                </div>
+                                            )}
                                     {subclasses.length === 0 && editingSubclassIndex === null && (
                                         <EmptyListDisplay message={t('global.noData')} />
                                     )}
@@ -519,6 +532,7 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
                                                     }}
                                                     onMouseEnter={() => handleHover(idx)}
                                                     onMouseLeave={() => handleHover(null)}
+                                                    onClick={() => handleSelectSubclass(subclass.id)}
                                                 >
                                                     <div style={styles.resourceImageContainer}>
                                                         {subclass.image ? (
@@ -580,6 +594,8 @@ export default function WorkshopClassDisplayModal({ workshopClassId, open, onClo
                                         </div>
                                     ))}
                                 </div>
+                                </>
+                                )}
                             </div>
                         )}
 

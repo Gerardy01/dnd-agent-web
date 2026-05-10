@@ -1,4 +1,4 @@
-import type { WorkshopSpellReturn } from "@/models/spellInterfaces";
+import type { WorkshopSpellReturn, Spell } from "@/models/spellInterfaces";
 
 export interface MaxKnown {
     level: number;
@@ -81,9 +81,14 @@ export type ClassRead = {
     createdAt: Date;
 }
 
-export type ClassDetailRead = ClassRead & {
+export type WorkshopClassDetailread = ClassRead & {
     resources: ClassResourceReturn[];
     spells: WorkshopSpellReturn[];
+}
+
+export type ClassDetailRead = ClassRead & {
+    resources: ClassResourceReturn[];
+    spells: Spell[];
 }
 
 export type WorkshopClassReturn = ClassRead & {
