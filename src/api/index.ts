@@ -9,6 +9,7 @@ import { WorkshopMonsterApi } from "./workshopMonsterApi";
 import { ReferenceApi } from "./referenceApi";
 import { FileApi } from "./fileApi";
 import { WorkshopClassApi } from "./workshopClassApi";
+import { WorkshopRaceApi } from "./workshopRaceApi";
 
 export const mapApi = new MapApi();
 export const accountApi = new AccountApi();
@@ -21,3 +22,4 @@ export const workshopMonsterApi = new WorkshopMonsterApi();
 export const workshopClassApi = new WorkshopClassApi();
 export const referenceApi = new ReferenceApi();
 export const fileApi = new FileApi();
+export const workshopRaceApi = new WorkshopRaceApi();

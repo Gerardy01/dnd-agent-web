@@ -635,6 +635,7 @@
         "third": "Third",
         "spellSearchPlaceholder": "Search spells...",
         "features": "Features",
+        "traits": "Traits",
         "featuresDescription": "Add features that this class grants",
         "feature": "Feature",
         "featureName": "Feature Name",
@@ -669,6 +670,16 @@
         "subclass": "Subclass",
         "subclasses": "Subclasses",
         "addSubclass": "Add Subclass"
+    },
+    "races": {
+        "trait": "Trait",
+        "addTrait": "Add Trait",
+        "editTrait": "Edit Trait",
+        "traitName": "Trait Name",
+        "traitNamePlaceholder": "Name",
+        "traitDescription": "Trait Description",
+        "traitDescriptionPlaceholder": "Description",
+        "traitRequired": "At least one trait is required"
     },
     "error": {
         "account": {

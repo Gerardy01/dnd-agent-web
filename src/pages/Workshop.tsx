@@ -15,6 +15,7 @@ import WorkshopSpell from "@/components/workshop/workshopSpell/WorkshopSpell";
 import WorkshopFaction from "@/components/workshop/workshopFaction/WorkshopFaction";
 import WorkshopMonster from "@/components/workshop/workshopMonster/WorkshopMonster";
 import WorkshopClass from "@/components/workshop/workshopClass/WorkshopClass";
+import WorkshopRace from "@/components/workshop/workshopRace/WorkshopRace";
 
 const { Title, Text } = Typography;
 
@@ -53,6 +54,12 @@ export default function Workshop() {
                 {
                     selectedMenu === WorkshopMenuEnum.ITEMS && (
                         <WorkshopItem />
+                    )
+                }
+
+                {
+                    selectedMenu === WorkshopMenuEnum.RACES && (
+                        <WorkshopRace />
                     )
                 }
 

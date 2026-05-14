@@ -16,6 +16,7 @@ import {
     AwardIcon,
 } from "@/assets/icons";
 import noItemImage from "@/assets/images/no-item.png";
+import logo from "@/assets/images/logo.png";
 
 export {
     CharactersIcon,
@@ -34,4 +35,5 @@ export {
     SwordIcon,
     AwardIcon,
     noItemImage,
+    logo,
 }

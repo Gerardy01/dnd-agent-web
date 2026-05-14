@@ -76,8 +76,14 @@ export default function useHeader() {
         navigate("/login");
     }
 
+    const onLogoClick = () => {
+        navigate("/");
+        setSelectedSidebar("");
+    }
+
     return {
         items,
         username,
+        onLogoClick,
     }
 }

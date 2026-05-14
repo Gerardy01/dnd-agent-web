@@ -1,5 +1,8 @@
 import { Dropdown, Typography } from "antd";
 
+// assets
+import { logo } from "@/assets";
+
 // hooks
 import useHeader from "@/hooks/global/useHeader";
 
@@ -8,18 +11,19 @@ interface Props {
     height?: number;
 }
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export default function Header({ height = 64 }: Props) {
 
     const {
         items,
-        username
+        username,
+        onLogoClick,
     } = useHeader();
 
     return (
         <div style={{ ...styles.header, height: `${height}px` }}>
-            <Title style={{ marginBottom: '0px' }}>LOGO</Title>
+            <img src={logo} alt="Logo" style={styles.logo} onClick={onLogoClick} />
             <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']}>
                 <div style={styles.profileBtn} className="profile-btn">
                     <div style={styles.imgHolder}>
@@ -64,5 +68,10 @@ const styles: { [key: string]: React.CSSProperties } = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    logo: {
+        height: '90%',
+        objectFit: 'contain',
+        cursor: 'pointer'
     }
 }
